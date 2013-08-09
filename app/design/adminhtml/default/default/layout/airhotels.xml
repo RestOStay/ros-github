@@ -1,0 +1,87 @@
+<?xml version="1.0"?>
+<layout version="0.1.0">
+	<airhotels_adminhtml_airhotels_index>
+		<reference name="content">
+			<block type="airhotels/adminhtml_airhotels" name="airhotels"/>
+		</reference>
+	</airhotels_adminhtml_airhotels_index>
+        
+  <!-- sales order view -->
+	<adminhtml_sales_order_view>
+		<reference name="order_items">
+			<action method="addColumnRender">
+				<column>name</column>
+				<block>airhotels/adminhtml_sales_items_column_name</block>
+				<template>airhotels/sales/items/column/name.phtml</template>
+				<type>property</type>
+			</action>
+		</reference>
+	</adminhtml_sales_order_view>
+	<!-- new sales order invoice-->
+	<adminhtml_sales_order_invoice_new>
+		<reference name="order_items">
+			<action method="addColumnRender">
+				<column>name</column>
+				<block>airhotels/adminhtml_sales_items_column_name</block>
+				<template>airhotels/sales/items/column/name.phtml</template>
+				<type>property</type>
+			</action>
+		</reference>
+	</adminhtml_sales_order_invoice_new>
+	<!-- Update in invoice order -->
+	<adminhtml_sales_order_invoice_updateqty>
+		<reference name="order_items">
+			<action method="addColumnRender">
+				<column>name</column>
+				<block>airhotels/adminhtml_sales_items_column_name</block>
+				<template>airhotels/sales/items/column/name.phtml</template>
+				<type>property</type>
+			</action>
+		</reference>
+	</adminhtml_sales_order_invoice_updateqty>
+	<!-- invoice order view -->
+	<adminhtml_sales_order_invoice_view>
+		<reference name="invoice_items">
+			<action method="addColumnRender">
+				<column>name</column>
+				<block>airhotels/adminhtml_sales_items_column_name</block>
+				<template>airhotels/sales/items/column/name.phtml</template>
+				<type>property</type>
+			</action>
+		</reference>
+	</adminhtml_sales_order_invoice_view>
+	<!-- New creditmemo invoice -->
+	<adminhtml_sales_order_creditmemo_new>
+		<reference name="order_items">
+			<action method="addColumnRender">
+				<column>name</column>
+				<block>airhotels/adminhtml_sales_items_column_name</block>
+				<template>airhotels/sales/items/column/name.phtml</template>
+				<type>property</type>
+			</action>
+		</reference>
+	</adminhtml_sales_order_creditmemo_new>
+   <!-- update creditmemo order -->
+	<adminhtml_sales_order_creditmemo_updateqty>
+		<reference name="order_items">
+			<action method="addColumnRender">
+				<column>name</column>
+				<block>airhotels/adminhtml_sales_items_column_name</block>
+				<template>airhotels/sales/items/column/name.phtml</template>
+				<type>property</type>
+			</action>
+		</reference>
+	</adminhtml_sales_order_creditmemo_updateqty>
+ <!-- creditmemo order view -->
+	<adminhtml_sales_order_creditmemo_view>
+		<reference name="creditmemo_items">
+			<action method="addColumnRender">
+				<column>name</column>
+				<block>airhotels/adminhtml_sales_items_column_name</block>
+				<template>airhotels/sales/items/column/name.phtml</template>
+				<type>property</type>
+			</action>
+		</reference>
+	</adminhtml_sales_order_creditmemo_view>
+
+</layout>

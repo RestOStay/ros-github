@@ -1,0 +1,28 @@
+<?php
+
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+?>
+<?php 
+//$customerid = Mage::getSingleton('core/session')->getProfileId();
+ $customerid  = Mage::app()->getRequest()->getParam('id');
+$customer = Mage::getModel('customer/customer')->load($customerid);
+$cust_name = $customer->getName();
+$cust_month = date("F", strtotime($customer->getCreatedAt()));
+$cust_year = date('Y',strtotime($customer->getCreatedAt()));
+$profilePhoto = Mage::getModel('airhotels/airhotels')->getCustomerPictureById($customerid);
+$about = $profilePhoto[0]["more_host"];
+
+?>
+
+<div id="profile_right" class="clearfix">
+    <div class="panel">
+        <div class="header_grid"><h1> <?php echo $this->__('Hey, I&#39;m') ?> <?php echo $cust_name.' !';?></h1> <span> <?php echo $this->__('Member Since') ?> <?php echo $cust_month .' '.$cust_year;?></span></div>
+            <div class="body_grid clearfix">
+                <p><?php echo $about;?></p>
+            </div>      
+    </div>
+</div>

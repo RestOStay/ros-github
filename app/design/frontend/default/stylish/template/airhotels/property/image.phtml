@@ -1,0 +1,227 @@
+<!-- Bring in gallery Images    -->
+
+                    <?php $_gallery = Mage::getModel('catalog/product')->load($this->getRequest()->getParam('id'))->getMediaGalleryImages();  ?>
+                    <?php $imgcount = Mage::getModel('catalog/product')->load($this->getRequest()->getParam('id'))->getMediaGalleryImages()->count();?>
+<?php 
+                    $customer = Mage::getSingleton('customer/session')->getCustomer();
+                    $cus_id = $customer->getId();
+                    $productid = $entityId = $this->getRequest()->getParam('id');
+                    $products = Mage::getModel('airhotels/property')->getpropertycollection()
+                                                               ->addAttributeToFilter('entity_id', array('eq' => $productid))
+                                                               ->addFieldToFilter(array(
+                                                                 array('attribute' => 'entity_id', 'eq' => $productid)
+                                                                 ));                    
+                    
+                     foreach ($products as $_product) {
+                     $name =  $_product['name'];
+                     $imgUrl = $_product['image'];       
+                       break;
+                     }
+if($imgcount != 0): ?>
+<div class="my-account clearfix">
+<form
+	action="<?php echo Mage::getBaseUrl().'airhotels/property/albumupdate/' ?>"
+	id="propertyalbum" name="propertyalbum" method="post"
+	enctype="multipart/form-data">
+
+<div class="more-views">
+    <div class="page-title"><h1 class="arrowbubble"><?php echo $this->__('Gallery For').' '.'"'.$name.'"'; ?></h1></div>
+<table style="border: none; float: left !important;">
+<?php
+$count = 0;
+foreach ($_gallery as $_image ):
+if($imgUrl == $_image->getFile() )
+echo "<tr class='grid_img grid_img_albumcover'> ";
+else
+echo '<tr class="grid_img">';
+
+?>
+	<td style="display: inline; border: none; float: left !important; padding: 10px;">
+	<a href="#"
+		onclick="popWin('<?php echo $this->helper('catalog/image')->init($_product, 'image', $_image->getFile()); ?>', 'gallery', 'width=300,height=300,left=50,top=50,location=no,status=yes,scrollbars=yes,resizable=yes'); return false;"><img
+		src="<?php echo $this->helper('catalog/image')->init($_product, 'thumbnail', $_image->getFile())->resize(100, 100); ?>"
+		alt="<?php echo $this->htmlEscape($_image->getLabel()) ?>"
+		title="<?php echo $this->htmlEscape($_image->getLabel()) ?>"
+		height="100" width="100" /></a> <input type="hidden"
+		value="<?php echo $this->getRequest()->getParam('id'); ?>"
+		name="entity_id" id="entity_id"> <br />
+	<p style="margin: 5px 5px 0px 0px"><input
+		style="vertical-align: middle;" type="radio"
+		value="<?php echo $_image->getfile();?>" name="album_path"
+		id="album_path"
+		<?php
+		if($imgUrl == $_image->getFile())
+		echo " checked='checked' ";
+		?> /> <?php echo $this->__('Album Cover'); ?></p>
+
+	<p style="margin: 5px 5px 0px 0px"><?php  if($imgUrl != $_image->getFile() ) : ?>
+	<input type="checkbox" name="imageCollection[]"
+		value="<?php echo $_image->value_id; ?>" style="margin-right: 5px" /><?php echo $this->__('Remove') ?>
+		<?php
+		else:
+		echo "&nbsp;";
+		endif; ?></p>
+
+	</td>
+	<?php
+	echo '</tr>';
+	$count++;
+	endforeach;
+	?>
+</table>
+</div>
+<div class="buttons-set">
+
+<input type="hidden" name="remove" id="remove_image" value=""/>
+<button type="submit" onclick="return albumCover()"
+	title="<?php echo $this->__('Save') ?>" class="button"><span><span><?php echo $this->__('Save') ?></span></span></button>
+<!--<button type="submit" onclick="return imageDelete()" name="remove"
+	value="1" title="<?php echo $this->__('Remove') ?>" class="button"><span><span><?php echo $this->__('Remove') ?></span></span></button>-->
+</div>
+</form>
+</div>
+	<?php endif; ?>
+<script type="text/javascript">
+    function imageDelete(){
+        if(jQuery(".more-views input:checkbox:checked").length ){
+            if(confirm('<?php echo $this->__('Are you sure want to remove'); ?>?') ){
+                return true;
+            }
+            else{
+                jQuery("#remove_image").val("");
+                return false;
+            }
+        }
+        else{
+            alert("<?php echo $this->__('Please select at least one image from the gallery'); ?>");
+            return false;
+        }
+       
+
+    }
+    function albumCover(){
+         if(jQuery("[name='album_path']:checked").length ==0 && jQuery(".more-views input:checkbox:checked").length == 0){
+           alert('<?php echo $this->__('Please select one image for album cover') ?>');
+           return false;
+        }
+        if(jQuery(".more-views input:checkbox:checked").length != 0){
+            var rmvlen =  jQuery(".more-views input:checkbox:checked").length;
+            jQuery("#remove_image").val(rmvlen);
+            imageDelete();
+    }
+  }
+</script>
+<?php
+	if($imgcount == 0){?>
+<div style="color: #1D95CB;font-weight: bold; font-size: 22px; margin-left: 10px;"><span><?php echo $this->__('Gallery For').' '.'"'.$name.'"'; ?></span></div>
+	<?php }?>
+<div id="swfupload-control">
+
+
+<p><?php echo $this->__('Upload upto 20 image files(jpg, png, gif), each having maximum size of 1MB') ?></p>
+<input type="button" id="button" />
+<p id="queuestatus"></p>
+<ol id="log"></ol>
+</div>
+
+<script type="text/javascript">
+<!--
+var totalQueues;
+var QueueCountApptha = 0;
+jQuery(function(){
+	jQuery('#swfupload-control').swfupload({
+			upload_url: '<?php echo  Mage::getBaseUrl().'airhotels/property/imageupload/?id='.$this->getRequest()->getParam('id')?>',
+			file_post_name: 'uploadfile',
+			file_size_limit : "1024",
+			file_types : "*.jpg;*.png;*.gif",
+			file_types_description : "Image files",
+			file_upload_limit : 20,
+			flash_url : "<?php echo str_replace("/index.php", "", Mage::getBaseUrl()).'media/image-include/swfupload/swfupload.swf' ?>",
+			button_image_url : '<?php echo $this->getSkinUrl('images/wdp_buttons_upload_114x29.png');?>',
+                        button_text : '<span class="flash_text"><?php echo $this->__('Upload')?></span>',
+		        button_text_style : '.flash_text{ font-family: Helvetica, Arial, sans-serif; font-size: 15pt; color: #CDCDCD;}',
+		        button_text_top_padding: 3,
+		        button_text_left_padding: 30,
+			button_width : 114,
+			button_height : 29,
+			"Super User":"42",
+			button_placeholder : jQuery('#button')[0],
+			debug: false
+		})
+
+		.bind('fileQueued', function(event, file){
+			var listitem='<li id="'+file.id+'" >'+
+				'File: <em>'+file.name+'</em> ('+Math.round(file.size/1024)+' KB) <span class="progressvalue" ></span>'+
+				'<div class="progressbar" ><div class="progress" ></div></div>'+
+				'<p class="status" ><?php echo  $this->__('Pending') ?></p>'+
+				'<span class="cancel" >&nbsp;</span>'+
+				'</li>';
+			jQuery('#log').append(listitem);
+			jQuery('li#'+file.id+' .cancel').bind('click', function(){
+				var swfu = jQuery.swfupload.getInstance('#swfupload-control');
+				swfu.cancelUpload(file.id);
+				jQuery('li#'+file.id).slideUp('fast');
+			});
+			// start the upload since it's queued
+			jQuery(this).swfupload('startUpload');
+
+		})
+		.bind('fileQueueError', function(event, file, errorCode, message){
+			alert('<?php echo  $this->__('Size of the file') ?>'+file.name+' <?php echo $this->__('is greater than limit') ?> ');
+		})
+		.bind('fileDialogComplete', function(event, numFilesSelected, numFilesQueued){
+			totalQueues  = numFilesQueued;
+			jQuery('#queuestatus').text('<?php echo  $this->__('Files Selected') ?>: '+numFilesSelected+' / <?php echo  $this->__('Queued Files') ?>: '+QueueCountApptha);
+		})
+		.bind('uploadStart', function(event, file){
+			jQuery('#log li#'+file.id).find('p.status').text('<?php echo  $this->__('Uploading') ?>...');
+			jQuery('#log li#'+file.id).find('span.progressvalue').text('0%');
+			jQuery('#log li#'+file.id).find('span.cancel').hide();
+		})
+		.bind('uploadProgress', function(event, file, bytesLoaded){
+			//Show Progress
+			var percentage=Math.round((bytesLoaded/file.size)*100);
+			jQuery('#log li#'+file.id).find('div.progress').css('width', percentage+'%');
+			jQuery('#log li#'+file.id).find('span.progressvalue').text(percentage+'%');
+		})
+		.bind('uploadSuccess', function(event, file, serverData){
+			appendHtmlfile(serverData,file);
+			var item=jQuery('#log li#'+file.id);
+			QueueCountApptha++;
+			item.find('div.progress').css('width', '100%');
+			item.find('span.progressvalue').text('100%');
+			var pathtofile='<a href="<?php echo Mage::getBaseDir().'/media/catalog/product/'?>'+file.name+'" target="_blank" >view &raquo;</a>';
+			item.addClass('success').find('p.status').html('<?php echo  $this->__('Done') ?>!!! ');
+			jQuery('#queuestatus').text('<?php echo  $this->__('Files Selected') ?>: '+totalQueues+' / <?php echo  $this->__('Queued Files') ?>: '+QueueCountApptha);
+			if(totalQueues == QueueCountApptha ){
+                            window.location.href='<?php echo $this->helper('core/url')->getCurrentUrl(); ?>';
+                        }
+		})
+		.bind('uploadComplete', function(event, file){				
+			// upload has completed, try the next one in the queue
+			jQuery(this).swfupload('startUpload');
+		})
+		});	
+var fileCount = 0;
+
+function appendHtmlfile(serverData,file){
+	var filename =  file.name.split(".");
+	var html = "<fieldset id='"+file.id+fileCount+"' ><legend>"+file.name+"</legend><div align='right' style='cursor:pointer' ></div>";
+	jQuery("#swfupload-control").append(html);
+	fileCount ++;
+}
+
+function showUploader(value){
+	if(value!="0"){
+		jQuery("#swfupload-control").show();
+	}
+	else{
+		jQuery("#swfupload-control").hide();
+	}
+}
+
+function removeFieldSet(id){
+	jQuery("#"+id).remove();
+}
+//-->
+</script>

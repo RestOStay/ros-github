@@ -1,0 +1,83 @@
+<html>
+<head>
+   <script type="text/javascript" src="<?php echo $this->getJsUrl('airhotels/gallery/jquery.min.js') ?>"></script>
+   <script type="text/javascript" src="<?php echo $this->getJsUrl('airhotels/calender/jquery-ui-1.8.16.custom.min.js') ?>"></script>
+   
+     <script type="text/javascript">
+<!--
+var $jq = jQuery.noConflict(); 
+alert(typeof datepicker);
+$jq(function() {
+	var dates = $jq( "#from, #to" ).datepicker({
+		defaultDate: "+1w",
+		changeMonth: true,
+		minDate: '0',
+		numberOfMonths: 1,
+		onSelect: function( selectedDate ) {
+			var option = this.id == "from" ? "minDate" : "maxDate",
+				instance = $jq( this ).data( "datepicker" ),
+				date = $jq.datepicker.parseDate(
+					instance.settings.dateFormat ||
+					$jq.datepicker._defaults.dateFormat,
+					selectedDate, instance.settings );
+			dates.not( this ).datepicker( "option", option, date );
+		}
+		
+	});
+});
+//-->
+</script>
+<script type="text/javascript">
+var $slide = jQuery.noConflict();
+$slide(window).load(function() {
+	$slide('.flexslider').flexslider();
+		});
+	</script>
+<script type="text/javascript">
+function showUser(from,to)
+{
+		
+if (to=="")
+  {
+  document.getElementById("txtHint").innerHTML="";
+  return;
+  } 
+if (window.XMLHttpRequest)
+  {// code for IE7+, Firefox, Chrome, Opera, Safari
+  xmlhttp=new XMLHttpRequest();
+  }
+else
+  {// code for IE6, IE5
+  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+  }
+xmlhttp.onreadystatechange=function()
+  {
+  if (xmlhttp.readyState==4 && xmlhttp.status==200)
+    {
+    document.getElementById("txtHint").innerHTML=xmlhttp.responseText;
+    }
+  }
+  var url = "date1.php";
+  url=url+"?from="+from;
+  url=url+"&to="+to;
+xmlhttp.open("GET",url,true);
+xmlhttp.send();
+}
+</script>
+</head>
+<body>
+
+<form>
+<div class="demo">
+		<label for="from"><?php echo  $this->__('From'); ?></label>
+		<input type="text" id="from" name="from"/>
+		<label for="to"><?php echo  $this->__('to'); ?></label>
+		<input type="text" id="to" name="to"/>   
+		</div>
+<input type="button" value="submit" onClick="showUser(from.value,to.value)">
+</form>
+<br />
+<div id="txtHint"></div>
+
+</body>
+</html>

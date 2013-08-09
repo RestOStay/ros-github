@@ -1,0 +1,135 @@
+<?php
+$customer_id = Mage::getSingleton('customer/session')->getId();
+$customerData = Mage::getModel('airhotels/airhotels')->getCustomerPictureById($customer_id);
+?>
+<div class="my-account">
+    <div class="page-title">
+    <h1 class="arrowbubble"><b class="icon_grid edit_id"></b><?php echo $this->__('My Profile') ?></h1>
+</div>
+<form action="" method="post" id="form-validate" enctype="multipart/form-data" >
+    <div class="fieldset">       
+        <h2 class="legend"><?php echo $this->__('Profile Picture') ?></h2>
+        <div class="clear"></div>
+        <ul class="form-list">
+            <li class="fields">
+                <div id="profile_img">
+                <?php
+                if($customerData[0]["imagename"] !="")
+                    
+                    {
+                      $imageResized = Mage::getBaseDir("media") . "/catalog/customer/resz_" . $customerData[0]["imagename"];
+                                $imageDirUrl  = Mage::getBaseDir("media") . "/catalog/customer/" . $customerData[0]["imagename"];
+                                if (!file_exists($imageResized) && file_exists($imageDirUrl)) :
+                                    $imageObj = new Varien_Image($imageDirUrl);
+                                    $imageObj->constrainOnly(TRUE);
+                                    $imageObj->keepAspectRatio(TRUE);
+                                    $imageObj->keepFrame(FALSE);
+                                    $imageObj->resize(120, 120);
+                                    $imageObj->save($imageResized);
+                                endif;
+                                
+                                $imageUrl = Mage::getBaseUrl('media') . "catalog/customer/" . $customerData[0]["imagename"];
+                                if (file_exists($imageResized)) {
+                                    $imageUrl = Mage::getBaseUrl('media') . "catalog/customer/resz_" . $customerData[0]["imagename"];
+                                }
+                                
+                    echo "<img src='$imageUrl' /> ";
+                    echo "<div align='right' style='clear:both;width:100%;
+' ><button style='margin-top:10px;clear:both;width:100% !important; float: left;' type='submit' class='button' name='deleteimage' ><span>".$this->__('Delete')."</span></button></div>";
+                }
+                else{?>
+                    <img src="<?php echo $this->getSkinUrl('images/no_user.jpg') ?>"  alt="" class="no_user"/>
+                <?php }
+                ?>
+                </div>
+                <div id="choose_img">
+                     <img src="<?php echo $this->getSkinUrl('images/img_upload.png');?>"  alt=""/>
+                     <span><?php echo $this->__('Upload a file from your computer') ?></span>
+                     <input id="profilePhoto"  type="file" name="profilePhoto" value="" />
+                </div>
+                <button onclick="return validateUploadPhoto()" type="submit" title="<?php echo $this->__('Change image') ?>" class="button right"><span><span><?php echo $this->__('Change profile image') ?></span></span></button>
+                </li>
+        </ul>
+    </div>
+</form>
+</div>
+<div class="personal-info">
+    <div class="page-title">
+    <h1 class="arrowbubble"><b class="icon_grid edit_id"></b><?php echo $this->__('Personal Information') ?></h1>
+</div>
+<form action="<?php echo Mage::getBaseUrl()."airhotels/index/updatemore" ?>" method="post" id="form-validate" enctype="multipart/form-data" >
+    <div class="fieldset">
+        <h2 class="legend"><?php echo $this->__('Profile Information') ?></h2>
+        <div class="clear"></div>
+        <ul class="form-list profile_info">
+            <li>
+                <div id="profile_img" class="form-space">
+                    <label class="label_align"><?php echo $this->__('Response Time:') ?></label>
+                    <input type="text" id="responseTime" name="responseTime" value="<?php echo $customerData[0]['response_time'] ?>"/>
+                    <?php echo $this->__('(Eg.In 1 hour)'); ?>
+                    <div class="clearfix"></div>
+                <div id="responseTimeErr" class="Err" style="color:red;float: right;margin-right: 96px;"></div>
+                </div>
+            </li>
+            <li>
+                <div id="profile_img">
+                    <label class="label_align"> <?php echo $this->__('More about the Host:') ?></label>
+                    <textarea name="moreabouthost" id="moreabouthost"><?php echo $customerData[0]['more_host'] ?></textarea>
+                    <div class="clearfix"></div>
+                    <div id="mailSubjectErr" class="Err" style="color:red;float: right;margin-right: 131px;"></div>
+                </div>
+            </li>
+            <li>
+                <button type="submit" title="<?php echo $this->__('Update') ?>" class="button right"><span><span><?php echo $this->__('Update profile information') ?></span></span></button>
+            </li>
+        </ul>
+    </div>
+</form>
+</div>
+<!-- <div class="fieldset">
+        <h2 class="legend"><?php echo $this->__('Payment Information') ?></h2>
+        <ul class="form-list">
+            <li>
+                <div id="profile_img">
+                    <span style="padding-right: 40px"><?php echo $this->__('Paypal Id:') ?></span>
+                    <input style="border: 1px solid #DBDBDB;" type="text" name="paypal_id" value="<?php echo $customerData[0]['paypal_id'] ?>"   />
+                    <?php echo $this->__('Enter paypal persoanl id '); ?>
+                </div>
+            </li>
+            <li>
+                <button type="submit" title="<?php echo $this->__('Payment') ?>" class="button right"><span><span><?php echo $this->__('Payment information') ?></span></span></button>
+            </li>
+        </ul>
+    </div>-->
+<script type="text/javascript">
+    $jQ = jQuery.noConflict();
+    function validateUploadPhoto(){
+        if($jQ.trim( $jQ("#profilePhoto").val()) == "" ) {
+            alert("<?php echo $this->__('Please select atleast profile picture') ?>");
+            return false;
+        }
+        else{
+            return true;
+        }
+    }
+    function profileValidation(){
+
+            var errFlag = false;
+            $jQ(".Err").html("");
+            var responseTime  = $jQ.trim($jQ("#responseTime").val());
+            var mailSubject = $jQ.trim($jQ("#moreabouthost").val());
+            if(responseTime =="" ){
+            	$jQ("#responseTimeErr").html("<?php echo " ".$this->__('Enter response time')?>");
+                 errFlag = true;
+            }
+
+            if(mailSubject ==""){
+            	$jQ("#mailSubjectErr").html("<?php echo " ".$this->__('Enter a brief description')?>");
+                errFlag = true;
+            }
+            if(errFlag)
+                return false;
+            else
+                return true;
+        }
+</script>

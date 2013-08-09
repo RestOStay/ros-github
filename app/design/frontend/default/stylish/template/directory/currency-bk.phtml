@@ -1,0 +1,37 @@
+<?php if($this->getCurrencyCount() > 0): ?>
+<span style="display:none">Select Currency:</span>
+
+     
+<select name="custom-currency-selector" id="custom-currency-selector" onchange="window.location.href=this.value" style="padding: 0px">
+<?php foreach ($this->getCurrencies() as $_code => $_name): ?>    
+    <option value="<?php echo $this->getSwitchCurrencyUrl($_code)?>"
+        <?php if($_code == $this->getCurrentCurrencyCode()): ?>
+            selected="SELECTED"
+        <?php endif; ?>>
+        <?php echo $_code ?>
+    </option>
+<?php endforeach; ?>
+</select>
+    
+    
+<?php endif; ?>
+<!--<div class="skinnedSelect">
+        <div class="text" id="text1">One</div>
+      	<select name="name" onChange="setText('text1', this);">
+      		<option value="1">One</option>
+      		<option value="2">Two</option>
+      		<option value="3">Three</option>
+      	</select>
+      </div>-->
+<script type="text/javascript">
+
+
+
+//jQuery.noConflict()
+//(function($cur) {
+//    //now I can use $ locally
+//})(jQuery)
+//    $cur('custom-currency-selector').observe('change',function(evt){
+//        window.location = $('custom-currency-selector').value;
+//    });
+</script>

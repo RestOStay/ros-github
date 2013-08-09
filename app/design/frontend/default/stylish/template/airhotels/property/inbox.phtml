@@ -1,0 +1,124 @@
+
+<div class="my-account">
+<div class="page-title">
+    <h1 class="arrowbubble"> <b class="icon_grid sentmail_id "></b> <?php echo $this->__('Email Inbox');?></h1>
+</div>
+
+<?php
+/* 
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+$model = Mage::getModel('airhotels/airhotels');
+$inboxDetails = $model->getInboxDetails();
+
+if(count($inboxDetails)){
+    ?>
+    <form name="mailform" action="" method="post">
+	    <div id="inboxSpace">
+                <div class="innerpage_btn left" style="line-height: 26px;margin-left: 10px;" onclick="confirmDelete()" ><?php echo $this->__('Delete'); ?></div>
+	        <table class="inboxTable" id="outboxList">
+	            <?php for($i=0;$i<count($inboxDetails);$i++ ){ ?>
+	            <tr style="cursor: pointer" <?php echo ($inboxDetails[$i]["read_flag"]==0)? " class = 'read' ": " class='unread' "; ?> onclick="this.className ='unread' ">
+	                <td><input type="checkbox" style="margin-left: 5px" name="messageid[]" value="<?php echo $inboxDetails[$i]["message_id"]; ?>" id="checkinbox"/></td>
+	                <td onclick="openMessage(1,'<?php echo $inboxDetails[$i]["message_id"]; ?>')">
+	                    <?php echo $this->__('From'); ?> : <?php  $customer = Mage::getModel('customer/customer')->load($inboxDetails[$i]["sender_id"]); echo ucfirst($customer->getName());
+
+
+                            $replycount = Mage::getModel('airhotels/airhotels')->getReplyCount($inboxDetails[$i]["message_id"]);
+                           
+                            if($replycount["count"]):
+                                echo " ".$this->__("Re").":"."(".$replycount["count"].")";
+                            endif;
+
+                            ?>
+	                </td>
+	                <td onclick="openMessage(1,'<?php echo $inboxDetails[$i]["message_id"]; ?>')">
+	                    <?php echo (strlen($inboxDetails[$i]["message"])>30)? substr($inboxDetails[$i]["message"],0,30) : $inboxDetails[$i]["message"]."..";   ?>
+	                </td>
+	                <td onclick="openMessage(1,'<?php echo $inboxDetails[$i]["message_id"]; ?>')">
+	                    <?php echo date("d/m/Y",strtotime ($inboxDetails[$i]["created_date"]) );  ?>
+	                </td>
+	            </tr>
+	            <?php  } ?>
+	        </table>
+	    </div>
+    </form>
+    <div id="mailSpace" style="display: none"></div>
+   
+        <?php
+}
+else{
+    ?>
+    <h1 class="no_mails">
+    <?php echo $this->__('No mails received'); ?>
+    </h1>
+    <?php
+}
+?>
+    <div class="clear"></div>
+     </div>
+<script type="text/javascript">
+        function openMessage(flag,messageId){
+            if(flag==1){
+                document.getElementById("inboxSpace").style.display = "none";
+                document.getElementById("mailSpace").style.display = "block";
+                getMessageDetails(messageId);
+            }
+            else{
+                document.getElementById("inboxSpace").style.display = "block";
+                document.getElementById("ReplyMail").style.display = "none";
+                document.getElementById("mailSpace").style.display = "none";
+            }
+        }
+        function getMessageDetails(messageId){
+            var xmlhttp = getHttp();
+            document.getElementById("mailSpace").innerHTML="<div style='margin:50px 0px 50px 0px; text-align:center;' ><img  src='<?php echo $this->getSkinUrl('images/loading1.gif') ?>' /></div>";
+            xmlhttp.onreadystatechange=function()
+            {
+                if (xmlhttp.readyState==4 && xmlhttp.status==200)
+                {
+                    document.getElementById("mailSpace").innerHTML=xmlhttp.responseText;
+                }
+            }
+            var url = "<?php echo Mage::getBaseUrl() . '/airhotels/property/showmessage/' ?>";
+            url=url+"id/"+messageId+"/show/in";
+            xmlhttp.open("GET",url,true);
+            xmlhttp.send();
+        }
+        function getHttp(){
+            var xmlhttp;
+            if (window.XMLHttpRequest)
+            {// code for IE7+, Firefox, Chrome, Opera, Safari
+                xmlhttp=new XMLHttpRequest();
+            }
+            else
+            {// code for IE6, IE5
+                xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+            }
+            return xmlhttp;
+        }
+        function confirmDelete(){
+            
+            //alert(jQuery("input:checked").length);
+            //return false;
+            if(jQuery("input:checked").length != ""){
+            if(confirm("<?php echo $this->__('Are you sure want to delete'); ?>")){
+                document.mailform.submit();
+                return true;
+            }
+           }
+            else{
+                confirm("<?php echo $this->__('Please select the checkbox to delete'); ?>");
+                return false;
+            }
+        }
+        function validateReply(){
+            if(jQuery.trim(document.getElementById("replyMessage").value).length==0){
+                alert("<?php echo $this->__('Please fill message'); ?>");
+            }
+            else{
+                document.reply.submit();
+            }
+        }
+</script>

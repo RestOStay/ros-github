@@ -1,0 +1,42 @@
+<?php
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+?>
+<?php
+//$customerid = Mage::getSingleton('core/session')->getProfileId();
+$customerid  = Mage::app()->getRequest()->getParam('id');
+$customer = $address = Mage::getModel('customer/customer')->load($customerid);
+$profilePhoto = Mage::getModel('airhotels/airhotels')->getCustomerPictureById($customerid);
+$cust_Name = $customer->getName();
+?>
+<div id="room">
+    <div class="middle" id="profile_blog">
+        <div class="profile_pic clearfix">
+            <div class="_pm_container">
+                <div class="_pm_shadow r"></div>
+                <div class="_pm_shadow l"></div>
+                <div class="_pm clearfix">
+                    <div class="_pm_inner clearfix">
+                     <?php if($profilePhoto[0]["imagename"] != '' ){
+                     
+                     echo "<img class='profilephoto' src='" . Mage::getBaseUrl('media') . "catalog/customer/" . $profilePhoto[0]["imagename"] . "' /> ";
+                     }else{
+
+                         echo "<img class='profilephoto' src='".$this->getSkinUrl('images/no_user.jpg')."' /> ";
+                     }
+
+
+                     ?>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h2><?php echo $cust_Name; ?></h2>
+        <b><strong><?php //echo $this->__('From') ?></strong> <?php //echo $this->__('Chennai, Tamilnadu') ?></b>
+    </div>
+    <div class="clear"></div>
+</div>

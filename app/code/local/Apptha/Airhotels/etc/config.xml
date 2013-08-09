@@ -1,0 +1,335 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <Apptha_Airhotels>
+            <version>0.2.5</version>
+        </Apptha_Airhotels>
+    </modules>
+    <frontend>
+        <routers>
+            <airhotels>
+                <use>standard</use>
+                <args>
+                    <module>Apptha_Airhotels</module>
+                    <frontName>restostay</frontName>
+                </args>
+            </airhotels>
+        </routers>
+        <layout>
+            <updates>
+                <airhotels>
+                    <file>airhotels.xml</file>
+                </airhotels>
+            </updates>
+        </layout>
+        <translate>
+            <modules>
+                <Apptha_Airhotels>
+                    <files>
+                        <default>Airhotels.csv</default>
+                    </files>
+                </Apptha_Airhotels>
+            </modules>
+        </translate>
+    </frontend>
+    <admin>
+        <routers>
+            <airhotels>
+                <use>admin</use>
+                <args>
+                    <module>Apptha_Airhotels</module>
+                    <frontName>airhotels</frontName>
+                </args>
+            </airhotels>
+        </routers>
+    </admin>
+    <adminhtml>
+        <menu>
+            <airhotels module="airhotels">
+                <title>Airhotels</title>
+                <sort_order>71</sort_order>               
+                <children>
+                    <items module="airhotels">
+                        <title>Booking Information</title>
+                        <sort_order>0</sort_order>
+                        <action>airhotels/adminhtml_airhotels</action>
+                    </items>
+                    <manage_property module="airhotels">
+                        <title>Manage Property</title>
+                        <sort_order>1</sort_order>
+                        <action>adminhtml/catalog_product/</action>
+                    </manage_property>
+                    <manage_review module="airhotels">
+                        <title>Manage Review</title>
+                        <sort_order>2</sort_order>
+                        <action>adminhtml/catalog_product_review</action>
+                    </manage_review>
+                    <manage_rating module="airhotels">
+                        <title>Manage Rating</title>
+                        <sort_order>3</sort_order>
+                        <action>adminhtml/rating</action>
+                    </manage_rating>
+                    <manage_configuration module="airhotels">
+                        <title>Airhotels</title>
+                        <sort_order>4</sort_order>
+                        <action>adminhtml/system_config/edit/section/airhotels</action>
+                    </manage_configuration>
+                </children>
+            </airhotels>
+        </menu>
+        <acl>
+            <resources>
+                <all>
+                    <title>Allow Everything</title>
+                </all>
+				<!-- <admin>
+				
+					<children>
+						<Apptha_Airhotels>
+							<title>Airhotels </title>
+							<sort_order>100</sort_order>
+						</Apptha_Airhotels>
+					</children>
+				</admin>  -->
+            </resources>
+        </acl>
+        <layout>
+            <updates>
+                <airhotels>
+                    <file>airhotels.xml</file>
+                </airhotels>
+            </updates>
+        </layout>
+    </adminhtml>   
+    <global>
+        <fieldsets>
+            <sales_convert_quote_address>
+                <fee_amount>
+                    <to_order>*</to_order>
+                </fee_amount>
+                <base_fee_amount>
+                    <to_order>*</to_order>
+                </base_fee_amount>
+            </sales_convert_quote_address>
+        </fieldsets>
+
+    <!-- adding service fee in totals -->
+        <sales>
+            <quote>
+                <totals>
+                    <fee>
+                        <class>airhotels/sales_quote_address_total_fee</class>
+                    </fee>
+                </totals>
+            </quote>
+            <order_invoice>
+                <totals>
+                    <fee>
+                        <class>airhotels/sales_order_total_invoice_fee</class>
+                    </fee>
+                </totals>
+            </order_invoice>	
+        </sales>
+    <!-- adding service fee in totals -->
+
+        <catalog>
+            <product>
+                <type>
+                    <property translate="label" module="airhotels">
+                        <label>Property Registration</label>
+                        <model>airhotels/product_type_property</model>
+                        <is_qty>1</is_qty>
+                        <composite>0</composite>
+                        <index_priority>40</index_priority>
+                        <price_model>airhotels/product_type_price</price_model>
+                         
+                    </property>
+                </type>
+
+            </product>
+            <rewrite>
+                <product_type_property>Apptha_Airhotels_Model_Product_Type_Property</product_type_property>
+            </rewrite>
+        </catalog>
+        <routers>
+            <catalog>
+                <rewrite>
+                    <product>
+                        <to>airhotels/index</to>
+                        <override_actions>true</override_actions>
+                        <actions>
+                            <view>
+                                <to>airhotels/index/view</to>
+                            </view>
+                        </actions>
+                    </product>
+                </rewrite>
+            </catalog>
+        </routers>
+        <routers>
+            <cms>
+                <rewrite>
+                    <index>
+                        <to>airhotels/index</to>
+                        <override_actions>true</override_actions>
+                    </index>
+                </rewrite>
+            </cms>
+        </routers>
+        <rewrite>
+            <apptha_airhotels_checkout_cart_add>
+                <from><![CDATA[#^/checkout/cart/#]]>
+                </from>
+                <to>/airhotels/checkout_cart/</to>
+            </apptha_airhotels_checkout_cart_add>
+        </rewrite>
+        
+        <models>
+            <sales>
+                <rewrite>
+                    <order>Apptha_Airhotels_Model_Order</order>
+                </rewrite>
+            </sales> 
+            <airhotels>
+                <class>Apptha_Airhotels_Model</class>
+                <resourceModel>airhotels_mysql4</resourceModel>
+            </airhotels>
+            <airhotels_mysql4>
+                <class>Apptha_Airhotels_Model_Mysql4</class>
+                <entities>
+                    <airhotels>
+                        <table>airhotels_booking</table>
+                    </airhotels>
+                    
+                </entities>
+            </airhotels_mysql4>
+            <sales>
+                <rewrite>
+                    <quote_address_total_subtotal>Apptha_Airhotels_Model_Quote_Address_Total_Subtotal</quote_address_total_subtotal>
+                </rewrite>
+            </sales> 
+        </models>
+        
+        <template>
+            <email>
+                <airhotels_order_reminder_reminder_template translate="label" module="airhotels">
+                    <label>airhotel order</label>
+                    <file>airhotels/hoster_reminder.html</file>
+                    <type>html</type>
+                </airhotels_order_reminder_reminder_template>
+                <airhotels_order_reminder_orderstatus_template translate="label" module="airhotels">
+                    <label>airhotel order status</label>
+                    <file>airhotels/orderstatus.html</file>
+                    <type>html</type> 
+                </airhotels_order_reminder_orderstatus_template>
+                <airhotels_refund_email_refund_template translate="label" module="airhotels">
+                    <label>refund to customer</label>
+                    <file>airhotels/refund.html</file>
+                    <type>html</type> 
+                </airhotels_refund_email_refund_template >
+            </email>
+        </template>
+        
+        
+        <resources>
+            <airhotels_setup>
+                <setup>
+                    <module>Apptha_Airhotels</module>
+                    <class>Mage_Catalog_Model_Resource_Eav_Mysql4_Setup</class>
+                </setup>
+                <connection>
+                    <use>core_setup</use>
+                </connection>
+            </airhotels_setup>
+            <airhotels_write>
+                <connection>
+                    <use>core_write</use>
+                </connection>
+            </airhotels_write>
+            <airhotels_read>
+                <connection>
+                    <use>core_read</use>
+                </connection>
+            </airhotels_read>
+        </resources>
+        <blocks>
+            <customer>
+                <rewrite>
+                    <account_navigation>Apptha_Airhotels_Block_Account_Navigation</account_navigation>
+                </rewrite>
+            </customer>
+        
+            <checkout>
+                <rewrite>
+                    <cart_item_renderer>Apptha_Airhotels_Block_Checkout_Cart_Item_Renderer</cart_item_renderer>
+                </rewrite>
+            </checkout>
+            <sales>
+                <rewrite>
+                    <order_items_renderer_default>Apptha_Airhotels_Block_Checkout_Cart_Item_Renderer</order_items_renderer_default>
+                </rewrite>
+            </sales>
+            <airhotels>
+                <class>Apptha_Airhotels_Block</class>
+            </airhotels>
+           <adminhtml>
+              <rewrite>
+                    <sales_order_totals>Apptha_Airhotels_Block_Adminhtml_Sales_Order_Totals</sales_order_totals>
+                    <sales_order_invoice_totals>Apptha_Airhotels_Block_Adminhtml_Sales_Order_Invoice_Totals</sales_order_invoice_totals>
+                    <sales_order_creditmemo_totals>Apptha_Airhotels_Block_Adminhtml_Sales_Order_Creditmemo_Totals</sales_order_creditmemo_totals>
+                </rewrite>
+            </adminhtml>
+        </blocks>
+        <helpers>
+            <airhotels>
+                <class>Apptha_Airhotels_Helper</class>
+            </airhotels>
+        </helpers>
+        <events>
+            <catalog_product_save_before>
+                <observers>
+                    <airhotels>
+                        <type>singleton</type>
+                        <class>Apptha_Airhotels_Model_Observer</class>
+                        <method>catalog_product_save_before</method>
+                    </airhotels>
+                </observers>
+            </catalog_product_save_before>
+            <paypal_prepare_line_items>
+
+                <observers>
+
+                    <airhotels>
+
+                        <class>Apptha_Airhotels_Model_Sales_Quote_Address_Total_Fee</class>
+
+                        <method>updatePaypalTotal</method>
+
+                    </airhotels>
+
+                </observers>
+
+            </paypal_prepare_line_items>
+            <checkout_type_onepage_save_order_after>
+                <observers>
+                    <airhotels>
+                        <type>singleton</type>
+                        <class>Apptha_Airhotels_Model_Observer</class>
+                        <method>booking</method>
+                    </airhotels>
+                </observers>
+            </checkout_type_onepage_save_order_after>
+        
+        
+     <!--<sales_order_save_after>
+				<observers>
+					<airhotels>
+						<type>singleton</type>
+						<class>Apptha_Airhotels_Model_Observer</class>
+						<method>booking_update</method>
+					</airhotels>
+				</observers>
+			</sales_order_save_after>-->
+        </events>
+    </global>
+</config>

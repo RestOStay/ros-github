@@ -1,0 +1,79 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magentocommerce.com for more information.
+ *
+ * @category    design
+ * @package     base_default
+ * @copyright   Copyright (c) 2011 Magento Inc. (http://www.magentocommerce.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+?>
+<?php
+/**
+ * Customer login form template
+ *
+ * @see app/design/frontend/base/default/template/customer/form/login.phtml
+ */
+/** @var $this Mage_Customer_Block_Form_Login */
+?>
+<?php echo $this->getMessagesBlock()->getGroupedHtml() ?>
+<div class="new-account-login">
+    <div class="fb-login-section">
+      <h1 ><?php echo $this->__('Log In to Restostay') ?></h1>
+        <p class="best-places"><?php echo $this->__('Find the best places to stay recommended by your friends.') ?></p>
+        <div class="fb-button-container-centered">
+            <a class="fb-button" href="#" title="Facebook Connect" rel="facebook-connect" id="fb-auth">
+	<span class="fb-button-left"></span>
+	<span class="fb-button-center"><strong><?php echo $this->__('Log in') ?></strong> <?php echo $this->__('with') ?> <strong> <?php echo $this->__('Facebook') ?></strong></span>
+	<span class="fb-button-right"></span>
+</a>
+        </div>
+        <h3 class="or-separator signpainter"><?php echo $this->__('or') ?></h3>
+							</div>
+
+    <form action="<?php echo $this->getPostActionUrl() ?>" id="login-form" class="signin-form" method="post"  >
+    						<div class="textInput">
+								<input type="text" name="login[username]"  value="<?php echo $this->__('Email Address') ;?>"  onfocus="if (this.value == '<?php echo $this->__('Email Address') ;?>') {this.value = '';this.style.color ='#8E8E8E';}" onblur="if (this.value == '') {this.style.color ='#8E8E8E';this.value = '<?php echo $this->__('Email Address') ;?>';}"id="email" class="input-text required-entry validate-email" title="<?php echo $this->__('Email Address') ?>" />
+							</div>
+							<div class="textInput" id="inputPassword">
+								 <input type="password" name="login[password]" class="input-text required-entry validate-password" 
+                                                                        placeholder="<?php echo $this->__('Password')?>"
+                                                                        id="pass" title="<?php echo $this->__('Password') ?>" />
+							</div>
+        <div class="formActions">
+        <div class="extra-actions">
+            <a href="<?php echo $this->getForgotPasswordUrl() ?>"><?php echo $this->__('Forgot password?') ?></a>
+            <a href="<?php echo Mage::getBaseUrl(); ?>customer/account/create"><?php echo $this->__('Need an account?') ?></a>
+        </div>
+            <input type="submit" class="buttonglossy" title="<?php echo $this->__('Log In') ?>" name="send" id="send2" value="<?php echo $this->__('Log In') ?>">
+        <div class="clear"></div>
+        </div>
+        <div class="clear"></div>
+							
+</form>
+     <script type="text/javascript">
+    //<![CDATA[
+        //$.noConflict();
+        var dataForm = new VarienForm('login-form', true);
+
+    //]]>
+    </script>
+</div>
+
+   

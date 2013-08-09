@@ -1,0 +1,74 @@
+<?php 
+/**
+ * Modified facebook connect OAuth2.0
+ * @author		Sathish kumar(sathishkumar@contus.in)
+ * @company		Contus Support Interactive
+ * @date		01/09/2011
+ */
+?>
+
+<!-- BEGIN Facebook Connect -->
+<div id="fb-root"></div>
+
+<script type="text/javascript">
+
+window.fbAsyncInit = function() {
+  FB.init({ appId: <?php echo json_encode($this->getApiKey()) ?>, 
+	    status: true, 
+	    cookie: true,
+	    xfbml: true,
+	    oauth: true});
+ FB.Canvas.setSize({ width: 640, height:300 });
+//FB.Canvas.setAutoGrow(false);
+ function updateButton(response) {
+    var button = document.getElementById('fb-auth');
+   
+    if (response.authResponse == 'null') {
+      //user is already logged in and connected
+      var userInfo = document.getElementById('user-info');
+     FB.api('/me', function(response) {
+        
+      
+      });
+     
+      button.onclick = function() {
+        FB.logout(function(response) {
+          var userInfo = document.getElementById('user-info');
+          userInfo.innerHTML="";
+	});
+      };
+    } else {
+      //user is not connected to your app or logged out
+      //button.innerHTML = 'Login';
+      button.onclick = function() {
+        FB.login(function(response) {
+if(response.status=='connected') setLocation('<?php echo $this->getConnectUrl() ?>');
+	  if (response.authResponse) {
+            FB.api('/me', function(response) {
+	      var userInfo = document.getElementById('user-info');
+
+	    
+	    });	 
+           
+          } else {
+            //user cancelled login or did not grant authorization
+          }
+         }, {scope:'email, user_birthday'});  	
+      }
+    }
+  }
+
+  // run once with current status and whenever the status changes
+  FB.getLoginStatus(updateButton);
+  //FB.Event.subscribe('auth.statusChange', updateButton);	
+};
+	
+(function() {
+  var e = document.createElement('script'); e.async = true;
+  e.src = document.location.protocol 
+    + '//connect.facebook.net/en_US/all.js';
+  document.getElementById('fb-root').appendChild(e);
+}());
+
+</script>
+<!-- END Facebook Connect -->

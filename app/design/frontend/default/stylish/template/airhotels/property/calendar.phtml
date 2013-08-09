@@ -1,0 +1,186 @@
+
+<style>
+.normal{cursor:pointer;}
+.sel,.startsel,.endsel{
+        background-color:red;
+    }
+</style>
+<div class="my-account">
+<div class="page-title">
+    <h1 ><?php echo $this->__('Calendar') ?></h1>
+</div>
+
+<!--Block the calendar Light Box start-->
+<div id="light" class="white_content"> 
+
+    
+    <div class="search_date" >
+        <div class="checkinDate1"><?php echo $this->__('From'); ?></div>
+        <input type="text" placeholder="<?php echo $this->__('dd-mm-yy'); ?>" autocomplete="off" id="inDate"  name="from" style="color: black;"/>
+    </div>
+    <div class="search_date">                   
+        <div class="checkinDate1"><?php echo $this->__('To'); ?></div>
+        <div><input type="text" placeholder="<?php echo $this->__('dd-mm-yy'); ?>" autocomplete="off"  id="inTo"  name="to" style="color: black;"/></div>
+    </div>
+    <div class="search_date"> 
+        <label for="availability" class="required left lable_inner"><?php echo $this->__('Availability') ?></label>
+        <select id="bookavail" name="bookavail"  class="select input-text input-text_pro" style="color: black; margin: 0;">
+            <option value="1"><?php echo $this->__('Available')?></option>
+            <option value="2"><?php echo $this->__('Booked')?></option>
+            <option value="3"><?php echo $this->__('Not Available')?></option>
+        </select>  
+    </div>
+    <div class="search_date"> 
+        <label for="pernight" class="required left lable_inner"><?php echo $this->__('Per Night') ?></label>
+        <input type="text" name="pernight" autocomplete="off" id="pernight" style="color: black;"/>
+    </div>
+    <input type="hidden" name="pid" id="pid" value="<?php echo $this->getRequest()->getParam('id'); ?>" />
+    
+    <div style="clear: left;float: left;">
+  
+    <div style="margin: 10px 0px 0px 13px; float: left;">
+        <input type="submit" class="button-glossy blue btn_grid" onclick="return postData();" value="<?php echo $this->__("Submit") ?>"/>
+    </div>
+            
+            
+        <a href = "javascript:void(0)" onclick = "closePoP(0)" class="close_link">Close</a>
+      </div>
+     
+</div>
+
+<div id="fade" class="black_overlay"></div>
+<!--Block the calendar Light Box end-->
+<?php
+$productId = $this->getRequest()->getParam('id'); //Get the product id
+if (!isset($_GET["date"])) {
+    if (!isset($_GET["x"])) {
+        $x = date("n");
+    } else {
+        $x = $_GET["x"];
+    }
+    if ($x == "")
+        $x = date("n");
+    $year = date("Y");
+    $date = strtotime("$year/$x/1");
+    $day = date("D", $date);
+    $m = date("F", $date);
+}
+?>
+<div id="calendarWrapper" style="float:left">
+
+</div>
+<div class="clear"></div>
+    </div>
+<script type="text/javascript">
+    var url = "<?php echo Mage::getBaseUrl() . 'airhotels/property/calendarview/?date=' . $x . '__' . $year . '&ajax=&productid=' . $productId ?>";
+    var flag = 0;
+    window.onload = function() { 
+        
+        ajaxLoadCalendar(url); 
+    }
+    function ajaxLoadCalendar(url){
+        
+        
+        jQuery.ajax({
+            url: url,
+            type: "GET",
+            success: function(data) {
+                
+                jQuery("#calendarWrapper").html(data);
+                jQuery("#light").hide();
+                jQuery('td.normal').click(function(){ 
+                    
+                    var valeDate = jQuery(this).attr('id');
+                    var temp ;
+                    //jQuery(".normal").removeClass("sel");
+                    
+                    jQuery(this).addClass("sel");
+                    
+                    if(flag == 0){
+                        jQuery(this).addClass("startsel");
+                        temp = valeDate.split("_");
+                        jQuery("#inDate").val(temp[1]);                    
+                        flag = 1;
+                    } else{
+                        jQuery(".normal").removeClass("endsel");
+                        jQuery(this).addClass("endsel");
+                        temp = valeDate.split("_");
+                        jQuery('#inTo').val(temp[1]);
+                        jQuery("#light").show();
+                        jQuery("#fade").show();
+                        flag = 0;
+                    }
+                })
+            }
+            
+        })
+    }
+    
+    jQuery(function() {
+        jQuery(".normal").live("mouseover", function(){
+            if(jQuery(this).attr("class") != "startsel"){
+                if(jQuery(".startsel").length >0 ){
+                    var classes = jQuery(this).attr("class").split(" ");
+                    var startclass = jQuery(".startsel").attr("class").split(" ");
+                    jQuery(".normal").not(".startsel").removeClass("sel");
+                    for(var i= parseInt(startclass[2]); i <= parseInt(classes[2]) ;i++  ){
+                        jQuery("."+i).addClass("sel");
+                    }
+                    jQuery(this).addClass("sel");
+                }
+            }
+            if(jQuery(".startsel").length>0 && jQuery(".endsel").length >0 ){
+                var startselectDate = jQuery(".startsel").attr("class").split(" ");
+                var endselectDate = jQuery(".endsel").attr("class").split(" ");
+                for(var i= parseInt(startselectDate[2]); i <= parseInt(endselectDate[2]) ;i++  ){
+                    jQuery("."+i).addClass("sel");
+                }
+            }
+            
+        });
+         
+        jQuery(".blockcal").live("mouseout", function(){
+            if(jQuery(".startsel").length > 0 && jQuery(".endsel").length > 0 ){
+                var startselectDate = jQuery(".startsel").attr("class").split(" ");
+                var endselectDate = jQuery(".endsel").attr("class").split(" ");
+                
+                for(var i= 1; i <= 31 ;i++  ){
+                   jQuery("."+i).removeClass("sel");
+                }
+                for(var i= parseInt(startselectDate[2]); i <= parseInt(endselectDate[2]) ;i++  ){
+                    jQuery("."+i).addClass("sel");
+                }     
+            }
+        });
+    });
+    function closePoP(a){
+        jQuery("#light").hide();
+        jQuery("#fade").hide() ;
+        jQuery("#monthid").val(" ");
+        jQuery("#yearid").val(" ");
+        flag = 0;
+    }
+    function postData(){
+        var checkin = jQuery("#inDate").val();
+        var checkout = jQuery("#inTo").val();
+        var bookavail = jQuery("#bookavail").val();
+        var productId = jQuery("#pid").val();
+        var price = jQuery("#pernight").val();
+        var date = jQuery("#currentMonth").val() +"__"+jQuery("#currentYear").val();
+        var req = jQuery.noConflict();
+        var posturl = "<?php echo Mage::helper('airhotels')->getblockurl() ?>";
+        req.ajax({
+            type: 'POST',
+            url: posturl,
+            data: {check_in:checkin,check_out:checkout,book_avail:bookavail,productid:productId,price_per:price,date:date},
+            success: function(data){
+        jQuery("#light").hide();
+        jQuery("#fade").hide() ;
+        jQuery("#monthid").val(" ");
+        jQuery("#yearid").val(" ");
+        ajaxLoadCalendar(url); 
+           flag = 0;
+            }
+        });
+    }
+</script>

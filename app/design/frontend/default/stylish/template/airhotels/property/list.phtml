@@ -1,0 +1,341 @@
+<link href='http://fonts.googleapis.com/css?family=Belgrano' rel='stylesheet' type='text/css'/>
+<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?libraries=places&sensor=false"></script>
+<script type="text/javascript">
+    function initialize() {
+        var mapOptions = {
+            //center: new google.maps.LatLng(-33.8688, 151.2195),
+            zoom: 13,
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+        var map = new google.maps.Map(document.getElementById('map_canvas'),
+        mapOptions);
+
+        var input = document.getElementById('searchTextField');
+        var autocomplete = new google.maps.places.Autocomplete(input);
+
+        autocomplete.bindTo('bounds', map);
+        // Autocomplete.
+        function setupClickListener(id, types) {
+            var radioButton = document.getElementById(id);
+            google.maps.event.addDomListener(radioButton, 'click', function() {
+                autocomplete.setTypes(types);
+            });
+        }
+
+    }
+    google.maps.event.addDomListener(window, 'load', initialize);
+</script>
+<style type="text/css">
+   
+    
+</style>
+
+<?php
+$count = 1;
+$threeDiv = 1;
+$model = Mage::getModel('catalog/product');
+$baseurl = Mage::getBaseUrl('skin');
+
+
+$_productCollection = Mage::getModel('airhotels/property')->getpropertycollection()
+                ->addAttributeToFilter('status', array('eq' => 1))
+                ->setPageSize(10)->setOrder('created_at', 'desc')->addAttributeToSelect('*');
+$currencySymbol = Mage::app()->getLocale()->currency(Mage::app()->getStore()->getCurrentCurrencyCode())->getSymbol();
+if(count($_productCollection)!= 0){
+
+?>
+<ul>
+<?php
+foreach($_productCollection as $product){   
+    
+$customerData = Mage::getModel('airhotels/airhotels')->getCustomerPictureById($product->getUserid());
+$customer = Mage::getModel('customer/customer')->load($product->getUserid());
+ if($threeDiv <= 3){              
+?>
+    
+    <?php
+                                $popularpdct=$this->helper('catalog/image')->init($product, 'image')
+                                ->constrainOnly(TRUE)
+                                ->keepAspectRatio(TRUE)
+                                ->keepFrame(FALSE)
+                                ->resize(263,null)
+                            ?>
+    <li class="home-small-dealbox<?php echo $threeDiv ?>">
+<div id="popular-wishlist" class="clearfix">
+    <div class="row-wishlists-list clearfix">
+            <div class="wishlists-list-item space_list">
+                <a href="<?php echo $this->helper('wishlist')->getAddUrl($product) ?>" class="wish_list_button link-cart" title="Save this listing to review later"  > <span class="icon"></span> </a>
+                <a href="<?php echo Mage::getBaseUrl() . $product->getUrlPath(); ?>" class="matte-media-box" >
+                    <img alt="" src="<?php if ($product->getImage() != 'no_selection') {
+                                    echo $popularpdct;
+                                    } else {
+                                    echo $product->getImageUrl();
+                               }?>" 
+                         width ="250" height="149" title="<?php echo substr($product->getName(), 0, 25); ?>"/>
+                </a>
+               
+                <div class="info_card clearfix">
+                    
+                    <div class="floatleft">
+                        <a href="#" class="matte-media-box-small">
+                            <?php if ($customerData[0]["imagename"]): ?>   
+                                <img src="<?php echo Mage::getBaseUrl('media') . "catalog/customer/thumbs/" . $customerData[0]["imagename"] ?>" height="38" alt="" title=""/>
+                            <?php else: ?> 
+                                <img src="<?php echo $this->getSkinUrl('images/no_user.jpg'); ?>" height="38" width="40"  alt="" title=""/> <?php endif; ?>
+                        </a>
+                    </div>
+                    <div class="span1">
+                        <h4><a href="<?php echo Mage::getBaseUrl() . $product->getUrlPath(); ?>" style="text-decoration: none;"><?php echo substr($product->getName(), 0, 20); ?></a></h4>
+                         <a style="text-decoration: none;" href="<?php echo Mage::helper('airhotels')->getprofilepage().'id/'.$product->getUserid();?>" >
+                        <p><?php echo $customer->getName(); ?></p>
+                         </a>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+</div>
+    </li>
+<?php 
+if($threeDiv == 3 ){
+    echo  '<div class="clear"></div>';
+    $twoDiv = 1;
+}
+$threeDiv = $threeDiv + 1;
+}else { ?>
+
+<?php if($twoDiv <= 2){?>
+<li class="home-medium-dealbox<?php echo $twoDiv ?>">
+<div id="popular_2up_listings_view">
+    <div class="row2-wishlists-list clearfix">
+        <div class="wishlists2-list-item twospace_list">
+             <?php
+                                $homemedium=$this->helper('catalog/image')->init($product, 'image')
+                                ->constrainOnly(TRUE)
+                                ->keepAspectRatio(TRUE)
+                                ->keepFrame(FALSE)
+                                ->resize(460,null)
+                            ?>
+            <a href="<?php echo $this->helper('wishlist')->getAddUrl($product) ?>" class="wish_list_button link-cart" title="Save this listing to review later"  > <span class="icon"></span> </a>
+<!--            <a href="<?php echo $this->helper('wishlist')->getAddUrl($product) ?>" class="link-cart" ><?php echo $this->__('Add to Wishlist') ?></a>-->
+            <a href="<?php echo Mage::getBaseUrl() . $product->getUrlPath(); ?>" class="matte2-media-box">
+                <img alt="" src="<?php if ($product->getImage() != 'no_selection') {
+                                    echo $homemedium;
+                                    } else {
+                                    echo $product->getImageUrl();
+                               }?>" 
+                         width ="460" height="255" title="<?php echo substr($product->getName(), 0, 25); ?>"/>         
+                <div class="feed_item_view">
+                    <div class="floatleft">
+                        <h4><?php echo substr($product->getName(), 0, 25); ?></h4>
+                        <span><?php echo $product->getState().','. $product->getCountry(); ?></span>
+                    </div>
+                    <div class="popular_price">
+                        <h5 class="price-tag-price">
+                         <?php
+                         echo $currencySymbol . round(Mage::helper('directory')->currencyConvert($product['Price'], Mage::app()->getStore()->getBaseCurrencyCode(), Mage::app()->getStore()->getCurrentCurrencyCode()), 0);?>
+                        </h5>
+                        <span class="price-tag-price-pernight"><?php echo $this->__('Per Night'); ?></span>
+                    </div>
+                </div>
+            </a>
+        </div>
+</div>
+    </div>
+</li>
+<?php
+   if($twoDiv == 2){
+       echo '<div class="clear"></div>';
+       $threeDiv = 1;
+   }
+  $twoDiv = $twoDiv + 1;
+  
+            }
+        }?>
+     
+     
+   <?php 
+    if($count == 10){
+       break;
+   }
+   
+   $count = $count+1;
+  
+   }
+} else {
+    echo '<div class="emty_grid" style="height: 221px;">' . $this->__('No Records!') . '</div>';
+}
+    ?>
+</ul>
+<div class="clear"></div>
+<div id="roomshomepage">
+    <div id="room" class="clearfix">
+        <div id="left_columnhomepage">
+            <div id="main_content" class="box">
+                <div class="tabhomepage">
+                    
+                    <ul id="main_content_sub_navhomepage" class="rooms_sub_navhomepage clearfix">
+                        <li id="menuwhatnew" class="main_link selected">
+                            <a href="#whatnew" onclick="showTabs('whatsnew','menuwhatnew')"><?php echo $this->__('What\'s New'); ?></a>
+                        </li>
+                        <li id="menuRated" class="main_link">
+                            <a href="#mostrated" onclick="showTabs('rated_div','menuRated')"><?php echo $this->__('Most Rated'); ?></a>
+                        </li>
+                        <li id="menuPopular" class="main_link">
+                            <a href="#mostrated" onclick="showTabs('popular_div','menuPopular')"><?php echo $this->__('Most Popular'); ?></a>
+                        </li>
+                            
+<!--                        <li id="content_flag">
+                            
+                        </li>-->
+                    </ul>
+                    <div id="whatsnew" class="main_content" style="display: block; ">
+                        <ul id="homepage_badges" class="rounded tab-section" style="display: block;<?php if(count($_productCollection)== 0 ) echo "text-align: center;" ?> ">
+                            <?php
+                           if(count($_productCollection)!= 0 ){
+                            $count = 1;
+                            foreach ($_productCollection as $_product):
+                                if ($count <= 4):
+                                    ?>
+                         
+                            <?php
+                                $mainimage=$this->helper('catalog/image')->init($_product, 'image')
+                                ->constrainOnly(TRUE)
+                                ->keepAspectRatio(TRUE)
+                                ->keepFrame(FALSE)
+                                ->resize(200,null)
+                            ?>
+                            
+                                    <li class="rounded" <?php if($count == 4) { echo 'style=" margin-right:0;" ' ;}?>>
+                                        <a class="ss_name" href="<?php echo Mage::getBaseUrl() . $_product->getUrlPath(); ?>">
+                                            <img src="<?php
+                            if ($_product->getImage() != 'no_selection') {
+                                echo $mainimage;
+                            } else { 
+                                echo $_product->getImageUrl();
+                            }
+                                    ?>" width="195" height="130" title="<?php echo substr($_product->getName(), 0, 25); ?>">
+                                        </a>
+                                        <div class="box-shadow">
+                                             <a href="<?php echo Mage::getBaseUrl() . $_product->getUrlPath(); ?>" style="text-decoration: none;">
+                                            <?php echo substr($_product->getName(), 0, 30); ?>
+                                             </a>
+                                        </div>
+                                    </li>
+                                    <?php
+                                endif;
+                                $count++;
+                            endforeach;
+                           }else{
+                               echo $this->__('No Records!');
+
+                           }
+                            ?>
+                        </ul>
+                    </div>
+                    <!-- most rated -->
+                    <?php $rateCollection = Mage::getModel('airhotels/property')->getRatedProperty();?>
+                    <div id="rated_div" class="main_content" style="display: none;">
+                        <ul id="rated_badges" class="rounded tab-section" style="display: block; <?php if(count($rateCollection)== 0 ) echo "text-align: center;" ?>">
+                            <?php
+                            
+                             if(count($_productCollection)!= 0 ){
+                              $countRate = 1;
+
+                            foreach ($rateCollection as $rateProduct) {
+                                ?>
+                             <?php
+                                $rateimage=$this->helper('catalog/image')->init($rateProduct, 'image')
+                                ->constrainOnly(TRUE)
+                                ->keepAspectRatio(TRUE)
+                                ->keepFrame(FALSE)
+                                ->resize(200,null)
+                            ?>
+                                <li class="rounded" <?php if($countRate == 4) { echo 'style=" margin-right:0;" ' ;}?>>
+                                    <a class="ss_name" href="<?php echo Mage::getBaseUrl() . $rateProduct->getUrlPath(); ?>">
+                                        <img alt="" src="<?php
+                            if ($rateProduct->getImage() != 'no_selection') {
+                                echo Mage::getBaseUrl('media') . 'catalog/product/' . $rateProduct->getImage();
+                            } else {
+                                echo $rateProduct->getImageUrl();
+                            }
+                                ?>" width="195" height="130" title="<?php echo substr($rateProduct->getName(), 0, 25); ?>">
+                                    </a>
+                                    <div class="box-shadow">
+                                         <a href="<?php echo Mage::getBaseUrl() . $rateProduct->getUrlPath(); ?>" style="text-decoration: none;">
+                                        <?php echo substr($rateProduct->getName(), 0, 30); ?>
+                                         </a>
+                                    </div>
+                                </li>
+                            <?php 
+                              $countRate++;
+                                }
+                             }else{
+                               echo $this->__('No Records!');
+
+                           }
+                            ?>
+                        </ul>
+                    </div>
+                    <!-- most rated ends -->
+                    <!-- most popular -->
+                     <?php
+                    $rateCollection = Mage::getModel('airhotels/property')->getPopularProperty();
+                    ?>
+                    <div id="popular_div" class="main_content" style="display: none;">
+                        <ul id="popular_badges" class="rounded tab-section" style="display: block; <?php if(count($rateCollection)== 0 ) echo "text-align: center;" ?>">
+                            <?php
+                         if(count($rateCollection)!= 0 ){
+                             
+                           $countPopular = 1;
+                            for ($s = 0; $s < count($rateCollection); $s++) {
+                                $popularCollection = $model->load($rateCollection[$s]["entity_id"]);
+                                //if ($popularCollection->getImage() != "no_selection" && trim($popularCollection->getImage()) != ""):
+                                ?>
+                                <li class="rounded" <?php if($countPopular == 4) { echo 'style=" margin-right:0;" ' ;}?>>
+                                    <a class="ss_name" href="<?php echo Mage::getBaseUrl() . $popularCollection->getUrlPath(); ?>">
+                                        <img alt="" src="<?php
+                            if ($popularCollection->getImage() != "no_selection") {
+                                echo Mage::getBaseUrl('media') . 'catalog/product/' . $popularCollection->getImage();
+                            } else {
+                                echo $popularCollection->getImageUrl();
+                            }
+                                ?>" width="195" height="130" title="<?php echo substr($popularCollection->getName(), 0, 25); ?>">
+                                    </a>
+                                    <div class="box-shadow">
+                                        <a href="<?php echo Mage::getBaseUrl() . $popularCollection->getUrlPath(); ?>" style="text-decoration: none;">
+                                        <?php echo substr($popularCollection->getName(), 0, 30); ?>
+                                        </a>
+                                    </div>
+                                </li>
+                                <?php
+                               $countPopular++;
+                             }
+                             }else{
+                               echo $this->__('No Records!');
+
+                           }
+                            ?>
+                        </ul>
+                    </div>
+                    <!-- most popular -->
+                        
+                        
+                </div>
+                    
+                    
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var $slide = jQuery.noConflict();
+    function showTabs(id,menuName){
+        $slide(".main_content").hide();
+        $slide(".main_link").removeClass("selected");
+        $slide("#"+menuName).addClass("selected");
+        $slide("#"+id).show();
+    }
+</script>
+

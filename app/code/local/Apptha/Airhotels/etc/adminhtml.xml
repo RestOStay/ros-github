@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @ Author     : Apptha team
+ * @package     : Apptha_Airhotels
+ * @copyright   : Copyright (c) 2011 (www.apptha.com)
+ * @license     : http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+-->
+<config>
+	<acl>
+		<resources>
+			<all>
+				<title>Allow Everything</title>
+			</all>
+			<admin>
+				<children>
+					<system>
+						<children>
+							<config>
+								<children>
+									<airhotels translate="title" module="airhotels">
+										<title>Airhotels</title>
+									</airhotels>
+								</children>
+							</config>
+						</children>
+					</system>
+					<airhotels>
+						<title>Airhotels</title>
+						<children>
+							<items translate="title" module="airhotels">
+								<title>Booking Information</title>
+							</items>
+							<manage_property module="airhotels">
+								<title>Manage Property</title>
+								<sort_order>1</sort_order>
+								<action>adminhtml/catalog_product/</action>
+							</manage_property>
+							<manage_review module="airhotels">
+								<title>Manage Review</title>
+								<sort_order>2</sort_order>
+								<action>adminhtml/catalog_product_review</action>
+							</manage_review>
+							<manage_rating module="airhotels">
+								<title>Manage Rating</title>
+								<sort_order>3</sort_order>
+								<action>adminhtml/rating</action>
+							</manage_rating>
+							<manage_configuration module="airhotels">
+								<title>Airhotels</title>
+								<sort_order>4</sort_order>
+								<action>adminhtml/system_config/edit/section/airhotels
+								</action>
+							</manage_configuration>
+						</children>
+					</airhotels>
+				</children>
+			</admin>
+		</resources>
+	</acl>
+</config>

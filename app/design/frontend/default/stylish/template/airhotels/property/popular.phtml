@@ -1,0 +1,110 @@
+<ul>
+    <?php
+    $count = 1;
+    $threeDiv = 1;
+    $model = Mage::getModel('catalog/product');
+    $rateCollection = Mage::getModel('airhotels/property')->getPopularProperty();
+    $currencySymbol = Mage::app()->getLocale()->currency(Mage::app()->getStore()->getCurrentCurrencyCode())->getSymbol();
+   if(count($rateCollection)!= ''){
+    foreach ($rateCollection as $key => $id) {
+        $product = $model->load($id);
+        $customerData = Mage::getModel('airhotels/airhotels')->getCustomerPictureById($product->getUserid());
+        $customer = Mage::getModel('customer/customer')->load($product->getUserid());
+        if ($threeDiv <= 3) {
+            ?>
+            <li class="home-small-dealbox<?php echo $threeDiv ?>">
+                <div id="popular-wishlist" class="clearfix">
+                    <div class="row-wishlists-list clearfix">
+                        <div class="wishlists-list-item space_list">
+                            <a href="<?php echo Mage::getBaseUrl() . $product->getUrlPath(); ?>" class="matte-media-box" >
+                                <img src="<?php if ($product->getImage() != 'no_selection') {
+                                                echo Mage::getBaseUrl('media') . 'catalog/product/' . $product->getImage();
+                                              } else {
+                                                  echo $product->getImageUrl();
+                                                  }
+                                           ?>" 
+                                     width ="250px" height="149px" title="<?php echo substr($product->getName(), 0, 25); ?>"/>
+                            </a>
+
+                            <div class="info_card clearfix">
+                                <div class="floatleft">
+                                    <a href="#" class="matte-media-box-small">
+                                        <?php if ($customerData[0]["imagename"]): ?>   
+                                            <img src="<?php echo Mage::getBaseUrl('media') . "catalog/customer/thumbs/" . $customerData[0]["imagename"] ?>" height="38" width="40" />
+        <?php else: ?> 
+                                            <img src="<?php echo $this->getSkinUrl('images/no_user.jpg'); ?>"  height="38" width="40" alt="" title=""/> <?php endif; ?>
+                                    </a>
+                                </div>
+                                <div class="span1">
+                                    <h4><a href="<?php echo Mage::getBaseUrl() . $product->getUrlPath(); ?>" style="text-decoration: none;"><?php echo substr($product->getName(), 0, 20); ?></a></h4>
+                                    <p><?php echo $customer->getName(); ?></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <?php
+            if ($threeDiv == 3) {
+                echo '<div class="clear"></div>';
+                $twoDiv = 1;
+            }
+            $threeDiv = $threeDiv + 1;
+        } else {
+            ?>
+
+        <?php if ($twoDiv <= 2) { ?>
+                <li class="home-medium-dealbox<?php echo $twoDiv ?>">
+                    <div id="popular_2up_listings_view">
+                        <div class="row2-wishlists-list clearfix">
+                            <div class="wishlists2-list-item twospace_list">
+                                <a href="<?php echo Mage::getBaseUrl() . $product->getUrlPath(); ?>" class="matte2-media-box">
+                                    <img src="<?php
+            if ($product->getImage() != 'no_selection') {
+                echo Mage::getBaseUrl('media') . 'catalog/product/' . $product->getImage();
+            } else {
+                echo $product->getImageUrl();
+            }
+            ?>" 
+                                         width ="460px" height="255px" title="<?php echo substr($product->getName(), 0, 25); ?>"/>         
+                                    <div class="feed_item_view">
+                                        <div class="floatleft">
+                                            <h4><?php echo substr($product->getName(), 0, 25); ?></h4>
+                                            <span><?php echo $product->getState() . ',' . $product->getCountry(); ?></span>
+                                        </div>
+                                        <div class="popular_price">
+                                            <h5 class="price-tag-price">
+            <?php echo $currencySymbol . round(Mage::helper('directory')->currencyConvert($product->getPrice(), Mage::app()->getStore()->getBaseCurrencyCode(), Mage::app()->getStore()->getCurrentCurrencyCode()), 0); ?>
+                                            </h5>
+                                            <span class="price-tag-price-pernight"><?php echo $this->__('Per Night'); ?></span>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <?php
+                if ($twoDiv == 2) {
+                    echo '<div class="clear"></div>';
+                    $threeDiv = 1;
+                }
+                $twoDiv = $twoDiv + 1;
+            }
+        }
+        ?>
+
+
+        <?php
+        if ($count == 10) {
+            break;
+        }
+
+        $count = $count + 1;
+    }
+   }else{
+
+      echo '<div class="emty_grid" style="height: 221px;">'. $this->__('No Records!').'</div>';
+   }
+    ?>
+</ul>
