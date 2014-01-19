@@ -61,6 +61,16 @@ class Mage_Sales_Block_Order_Email_Items_Order_Default extends Mage_Core_Block_T
 
         return $result;
     }
+	
+	public function getAlldate(){
+		//$dateArray = array();
+		$oQuote = Mage::getSingleton('checkout/session')->getQuote();
+		foreach ( $oQuote->getAllItems() as $_item )
+		{
+			$orderItemId[] = $_item->getId();
+		}
+		return $orderItemId;
+	}
 
     public function getValueHtml($value)
     {
@@ -77,6 +87,44 @@ class Mage_Sales_Block_Order_Email_Items_Order_Default extends Mage_Core_Block_T
             return $item->getProductOptionByCode('simple_sku');
         else
             return $item->getSku();
+    }
+	
+	public function getmyproductOptions($item)
+    {
+       echo $productOptionid = $item->getItemId();
+	   $connection = Mage::getSingleton('core/resource')->getConnection('core_read');
+	   $sql = "Select * from sales_flat_order_item where item_id=$productOptionid";
+	   $rows = $connection->fetchRow($sql);
+	   $productOption = unserialize($rows['product_options']);	
+	   echo '<pre>';
+	   print_r($productOption);
+	   die;
+	   $to = str_replace("@",".",$productOption['info_buyRequest']['todate']);
+	   $from = str_replace("@",".",$productOption['info_buyRequest']['fromdate']);
+	   $to = date('Y-m-d', strtotime(str_replace('.', '/', $to)));
+	   $from = date('Y-m-d', strtotime(str_replace('.', '/', $from)));
+	   /*$to = date("Y-m-d", strtotime($to) );
+	   $to = date('Y-m-d', strtotime($productOption['info_buyRequest']['todate']));
+	   $from = date("Y-m-d", strtotime($from) );
+	   $from = date('Y-m-d', strtotime($productOption['info_buyRequest']['todate']));*/
+	   
+	   $date1 = new DateTime($from);
+	   $date2 = new Datetime($to);
+	   $interval = $date1->diff($date2);
+	   $diff = $interval->format('%R%d Night');
+	   
+	  /* $date1 = new DateTime($productOption['info_buyRequest']['todate']);
+	   $date2 = new DateTime($productOption['info_buyRequest']['fromdate']);
+	   $diff = $date2->diff($date1)->format("%a");*/
+	   
+	   $dataArray[] =  str_replace("@","-",$productOption['info_buyRequest']['fromdate']);
+	   $dataArray[] =  str_replace("@","-",$productOption['info_buyRequest']['todate']);
+	   $dataArray[] =  $diff;//$productOption['info_buyRequest']['accomodate'];
+	   $dataArray[] =  $productOption['info_buyRequest']['rooms'];
+	   $dataArray[] =  $productOption['info_buyRequest']['accomodate'];
+	   $dataArray[] =  $productOption['info_buyRequest']['child'];
+	   return $dataArray;
+		
     }
 
     /**

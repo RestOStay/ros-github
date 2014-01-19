@@ -52,8 +52,10 @@ class Apptha_Airhotels_Block_Property_Yourlist extends Mage_Catalog_Block_Produc
         $amenityval = $this->getRequest()->getParam('amenityval');
         $pageno = $this->getRequest()->getParam('pageno');
         $upperLimitPrice = $this->getRequest()->getParam('upperLimitPrice');
+		$Order = $this->getRequest()->getParam('order');
+		$Review = $this->getRequest()->getParam('review'); 
 
-        $data = array("address"=>$address,"checkin"=>$checkin,"checkout"=>$checkout,"searchguest"=>$searchguest,"amount"=>$amount,"pageno"=>$pageno,"roomtypeval"=>$roomtypeVal,"amenityVal"=>$amenityval,"upperLimitPrice"=>$upperLimitPrice);
+        $data = array("address"=>$address,"checkin"=>$checkin,"checkout"=>$checkout,"searchguest"=>$searchguest,"amount"=>$amount,"pageno"=>$pageno,"roomtypeval"=>$roomtypeVal,"amenityVal"=>$amenityval,"upperLimitPrice"=>$upperLimitPrice,"order"=>$Order,"review"=>$Review);
         
         if($data["checkin"] == "mm/dd/yyyy"){
             $data["checkin"] ="";
@@ -64,9 +66,11 @@ class Apptha_Airhotels_Block_Property_Yourlist extends Mage_Catalog_Block_Produc
         if(trim($data["address"]) == "e.g. Berlin, Germany"){
             $data["address"] ="";
         }
-        
+$_SESSION['search_record'] = $data;
+
+
         $collection = Mage::getModel('airhotels/airhotels')->advanceSearch($data) ; 
-        
+      
         return $collection;
     }
     

@@ -330,6 +330,15 @@
 					</airhotels>
 				</observers>
 			</sales_order_save_after>-->
+		<sales_order_invoice_save_after>
+				<observers>
+					<airhotels_pay>
+						<type>singleton</type>
+						<class>Apptha_Airhotels_Model_Observer</class>
+						<method>block_cal</method>
+					</airhotels_pay>
+				</observers>
+		</sales_order_invoice_save_after>
         </events>
     </global>
 </config>

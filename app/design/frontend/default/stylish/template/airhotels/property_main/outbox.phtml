@@ -1,0 +1,104 @@
+<div class="my-account clearfix">
+<div class="page-title">
+    <h1 class="arrowbubble"><b class="icon_grid sentmail_id"></b> <?php echo $this->__('Sent Email'); ?></h1>
+</div>
+<?php
+/* 
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+$model = Mage::getModel('airhotels/airhotels');
+$outboxDetails = $model->getOutboxDetails();
+
+
+if(count($outboxDetails)){
+    ?>
+    <form name="mailform" action="" method="post">
+	    <div id="inboxSpace">
+               <div class="buttonbox" onclick="confirmDelete()"  ><?php echo $this->__('Delete'); ?></div>
+	        <table class="inboxTable" >
+	            <?php for($i=0;$i<count($outboxDetails);$i++ ){ ?>
+	            <tr style="cursor: pointer" class="read" >
+	                <td><input type="checkbox" style="margin-left: 5px" name="messageid[]" value="<?php echo $outboxDetails[$i]["message_id"]; ?>"/></td>
+	                <td onclick="openMessage(1,'<?php echo $outboxDetails[$i]["message_id"]; ?>')">
+	                    <?php echo $this->__('To'); ?> : <?php  $customer = Mage::getModel('customer/customer')->load($outboxDetails[$i]["receiver_id"]); echo ucfirst($customer->getName()); ?>
+	                </td>
+	                <td onclick="openMessage(1,'<?php echo $outboxDetails[$i]["message_id"]; ?>')">
+	                    <?php echo (strlen($outboxDetails[$i]["message"])>30)? substr($outboxDetails[$i]["message"],0,30) : $outboxDetails[$i]["message"]."..";   ?>
+	                </td>
+	                <td onclick="openMessage(1,'<?php echo $outboxDetails[$i]["message_id"]; ?>')">                   
+	                    <?php echo date("d/m/Y",strtotime ($outboxDetails[$i]["created_date"]));  ?>
+	                </td>
+	            </tr>
+	            <?php  } ?>
+	        </table>
+	    </div>
+    </form>
+    <div id="mailSpace" style="display: none">
+        
+    </div>
+        <?php
+}
+else{
+    ?>
+    <h1 class="no_mails">
+    <?php echo $this->__('No mails sent'); ?>
+    </h1>
+    <?php
+}
+?>
+    </div>
+<script type="text/javascript">
+        function openMessage(flag,messageId){
+            if(flag==1){
+                document.getElementById("inboxSpace").style.display = "none";
+                document.getElementById("mailSpace").style.display = "block";
+                getMessageDetails(messageId);
+            }
+            else{
+                document.getElementById("inboxSpace").style.display = "block";
+                document.getElementById("mailSpace").style.display = "none";
+            }
+        }
+        function getMessageDetails(messageId){
+            var xmlhttp = getHttp();
+            document.getElementById("mailSpace").innerHTML="<div style='margin:50px 0px 50px 0px; text-align:center;' ><img  src='<?php echo $this->getSkinUrl('images/loading1.gif') ?>' /></div>";
+            xmlhttp.onreadystatechange=function()
+            {
+                if (xmlhttp.readyState==4 && xmlhttp.status==200)
+                {
+                    document.getElementById("mailSpace").innerHTML=xmlhttp.responseText;
+                }
+            }
+            var url = "<?php echo Mage::getBaseUrl() . 'airhotels/property/showmessage/' ?>";
+            url=url+"id/"+messageId+"/show/out";
+            xmlhttp.open("GET",url,true);
+            xmlhttp.send();
+        }
+        function getHttp(){
+            var xmlhttp;
+            if (window.XMLHttpRequest)
+            {// code for IE7+, Firefox, Chrome, Opera, Safari
+                xmlhttp=new XMLHttpRequest();
+            }
+            else
+            {// code for IE6, IE5
+                xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+            }
+            return xmlhttp;
+        }
+        function confirmDelete(){
+            
+            //if(document.getElementById('checkoutbox').checked == true){
+            if(jQuery("input:checked").length != ""){
+            if(confirm("<?php echo $this->__('Are you sure want to delete'); ?>")){
+            	document.mailform.submit();
+                return true;
+            }
+            }
+            else{
+                confirm("<?php echo $this->__('Please select the checkbox to delete'); ?>"); 
+                return false;
+            }
+        }
+</script>

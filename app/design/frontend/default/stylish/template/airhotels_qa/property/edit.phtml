@@ -1,0 +1,517 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magentocommerce.com for more information.
+ *
+ * @category   design_blank
+ * @package    Mage
+ * @copyright  Copyright (c) 2008 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+
+?>
+<?php 
+$accommodatesAttr = Mage::getModel('eav/config')->getAttribute('catalog_product', Mage::helper('airhotels')->getaccomodatesType());
+$acc_default = $accommodatesAttr->getDefaultValue();
+$roomsAttr = Mage::getModel('eav/config')->getAttribute('catalog_product', Mage::helper('airhotels')->getrooms());
+$roomAvail = $roomsAttr->getDefaultValue();
+$entity_id= $this->getRequest()->getParam('id');
+$model = Mage::getModel('catalog/product');
+$_product = $model->load($entity_id);
+		$title = $_product->getName();
+		$price= $_product->getPrice(); 
+		$description =$_product->getDescription();
+		$highlight = $_product->getShortDescription();
+		$propertytype=$_product->getPropertytype();
+		$amenity = $_product->getAmenity();
+		$bedroom = $_product->getTotalrooms();
+		$bedtype = $_product->getBedtype();
+		$privacy = $_product->getPrivacy();
+		$city = $_product->getCity();
+		$state = $_product->getState();
+		$phoneno = $_product->getPhoneno();
+	        $getcountry = $_product->getcountry(); 
+		$address = $_product->getPropertyadd();
+		$map = $_product->getMaplocation();
+		$accomodate = $_product->getAccomodates();
+		$pets = $_product->getPets();
+		$cancelpolicy =$_product->getCancelpolicy();
+                $metaTitle = $_product->getMetaTitle();
+                $metaKeyword = $_product->getMetaKeyword();
+                $metaDescription = $_product->getMetaDescription();
+
+$getamenity= explode(',' , $_product->getAmenity()); 
+$propertytypeId = Mage::helper('airhotels')->getpropertytype();
+$amenityId =  Mage::helper('airhotels')->getamenity();
+$cancelpolicyId = Mage::helper('airhotels')->getcancelpolicy();
+$petsId = Mage::helper('airhotels')->getpets(); 
+$propertytypeAttribute = Mage::getModel('eav/config')->getAttribute('catalog_product', $propertytypeId);
+$amenityAttribute = Mage::getModel('eav/config')->getAttribute('catalog_product', $amenityId);
+
+$cancelpolicyAttribute = Mage::getModel('eav/config')->getAttribute('catalog_product', $cancelpolicyId);
+$petsAttribute = Mage::getModel('eav/config')->getAttribute('catalog_product', $petsId);
+$bedtypeId = Mage::helper('airhotels')->getbedtype();
+$bedtypeAttribute = Mage::getModel('eav/config')->getAttribute('catalog_product', $bedtypeId);
+
+$privacyId= Mage::helper('airhotels')->getprivacy();
+$privacyAttribute = Mage::getModel('eav/config')->getAttribute('catalog_product', $privacyId);
+$currencyCountry = Mage::app()->getLocale()->currency(Mage::app()->getStore()->getBaseCurrencyCode())->getName();
+$currencySymbol = Mage::app()->getLocale()->currency(Mage::app()->getStore()->getBaseCurrencyCode())->getShortName();
+$PropertyType = array();
+$select ='';
+foreach ($propertytypeAttribute->getSource()->getAllOptions() as $option) {
+    $value = $option['value'];
+
+    if($value !='') {
+    	
+        $PropertyType[$value] = $option['label'];
+         if(($option['value'] == $propertytype))
+        {
+        	$select .= "<option selected value='".$option['value']."'>". $option['label']."</option>";
+        }
+        else 
+        {
+        $select .= "<option value='".$option['value']."'>". $option['label']."</option>";
+        }
+    }
+}
+foreach ($cancelpolicyAttribute->getSource()->getAllOptions() as $cancelpolicy_option) {
+    $cancelpolicy_value = $cancelpolicy_option['value'];
+
+    if($cancelpolicy_value !='') {
+    if(($cancelpolicy_option['value'] == $cancelpolicy))
+        {
+        	 $cancelpolicy_select .= "<option selected  value='".$cancelpolicy_option['value']."'>". $cancelpolicy_option['label']."</option>";
+        }
+       else{
+        $cancelpolicy_select .= "<option value='".$cancelpolicy_option['value']."'>". $cancelpolicy_option['label']."</option>";
+       }
+    }
+}
+$countryList = Mage::getResourceModel('directory/country_collection')
+                    ->loadData()
+                    ->toOptionArray(false);
+ foreach ($countryList as $country) {
+     $value = $country['value']; 
+    
+    if($value !='') {
+    	if(($country['label'] == $getcountry))
+        {
+        	 $countryselect .= "<option selected value='".$country['label']."'>". $country['label']."</option>";
+        	
+        }
+        else{
+        $countryselect .= "<option value='".$country['label']."'>". $country['label']."</option>";
+        }
+    }
+}
+
+foreach ($petsAttribute->getSource()->getAllOptions() as $pets_option) {
+    $pets_value = $pets_option['value'];
+
+    if($pets_value !='') {
+    if(($pets_option['value'] == $pets))
+        {
+        	 $pets_select .= "<option selected  value='".$pets_option['value']."'>". $pets_option['label']."</option>";
+        }
+       else{
+        $pets_select .= "<option value='".$pets_option['value']."'>". $pets_option['label']."</option>";
+       }
+    }
+}
+foreach ($bedtypeAttribute->getSource()->getAllOptions() as $bedtype_option) {
+    $bedtype_value = $bedtype_option['value'];
+
+    if($bedtype_value !='') {
+    	 if(($bedtype_option['value'] == $bedtype))
+        {
+        	 $bedtype_select .= "<option selected  value='".$bedtype_option['value']."'>". $bedtype_option['label']."</option>";
+        }
+       else{
+       
+        $bedtype_select .= "<option value='".$bedtype_option['value']."'>". $bedtype_option['label']."</option>";
+       }
+    }
+}
+foreach ($privacyAttribute->getSource()->getAllOptions() as $privacy_option) {
+    $privacy_value = $privacy_option['value'];
+
+    if($privacy_value !='') {
+         if(($privacy_option['value'] == $privacy))
+        {
+        	 $privacy_select .= "<option selected  value='".$privacy_option['value']."'>". $privacy_option['label']."</option>";
+        }
+        else 
+        {
+        $privacy_select .= "<option value='".$privacy_option['value']."'>". $privacy_option['label']."</option>";
+        }
+    }
+}
+
+
+
+
+?>
+<div id="messages_product_view"><?php echo $this->getMessagesBlock()->getGroupedHtml() ?></div>
+<div  class="my-account">
+<div class="page-title">
+    <h1 ><?php echo $this->__('Edit Your Space') ?></h1>
+</div>
+    <div class="action_grid">
+
+        <strong class="action_button">
+            <a class="icon_list calender" target="_blank" title="Calender"  onClick="location.href='<?php echo Mage::getBaseUrl() . "airhotels/property/blockcalendar/"; ?>id/<?php echo $_product->getId(); ?>'"><?php echo $this->__('Calender') ?></a>
+        </strong>
+        <strong class="action_button">
+            <a class="icon_list gallery_grid" target="_blank" title="Gallery"  onClick="location.href='<?php echo Mage::helper('airhotels')->getimageurl(); ?>id/<?php echo $_product->getId(); ?>'" ><?php echo $this->__('Gallery') ?></a>
+        </strong>
+        <strong class="action_button" style="margin-right: 0;">
+            <a class="icon_list review_grid" target="_blank" title="Reviews"  onClick="location.href='<?php echo Mage::getBaseUrl() . "airhotels/property/review/"; ?>id/<?php echo $_product->getId(); ?>'"><?php echo $this->__('Reviews') ?></a>
+        </strong>
+        <div class="clear"></div>
+    </div>
+
+     <div class="clear"></div>
+ <form action="<?php echo Mage::getBaseUrl().'airhotels/property/update/' ?>" id="propertyupdate" name="propertyupdate" method="post" enctype="multipart/form-data">
+   <!-- <p class="contactquery"><?php echo $this->__('Wanna get your business featured? Use this form to contact us. Our representative will get back to you.') ?></p>  -->
+    <div class="fieldset" style="float:left;">
+    <h2 class="legend"><?php echo $this->__('About Your Place'); ?></h2>
+    <ul id="list_type_inner">
+        <h1><?php echo $this->__('Listing Type limit'); ?></h1>
+        <li>
+             <div class="field">
+                 <div class="selectproperty">
+                <label for="proptype" class="required left lable_inner"> <?php echo $this->__('Property Type') ?> <em>*</em></label>
+                <div class="floatleft"> <select id="proptype" name="proptype"  class="select select input-text required-entry input-text_pro">
+                                
+                                <?php echo $select; ?>               </select>
+                    </div>
+                        </div>
+                        </div>
+            <div class="field">
+                <div class="selectprivacy">
+                <label for="privacy" class="required left lable_inner"> <?php echo $this->__('Room Type') ?> <em>*</em></label>
+                            <div class="floatleft"> <select id="privacy" name="privacy"  class="select select input-text required-entry input-text_room">
+                                <?php echo $privacy_select; ?>
+                            </select></div>
+                <div class="clear"></div>
+                        </div>
+                         
+                    <input name="id" id="id" title="<?php echo $this->__('id') ?>" value="<?php echo $entity_id;?>"  type="hidden"/>
+                    
+                    
+                
+                        </div>
+            </li>
+            <h1><?php $this->__('Description') ?></h1>
+            <li class="fields">
+                <div class="field">
+                     <div class="input-box_inner">
+                    <label for="name" class="required left lable_inner"> <?php echo $this->__('Title') ?> <em>*</em></label>
+                    <div class="floatleft">
+                        <input name="name" id="name"   title="<?php echo $this->__('Name') ?>" value="<?php echo $title; ?>" class="input-text required-entry input-text_inner" type="text"   onkeyup=limiter() maxlength="35"/>
+                    </div>
+<!--                        <input type=text name=limit size=4 readonly value="35">-->
+                    </div>
+                    <div class="input-box_inner">
+                    <label for="desc" class="required left lable_inner"><?php echo $this->__('Description') ?> <em>*</em></label>
+                    <div class="floatleft"> 
+                    <textarea name="desc" id="desc" title="<?php echo $this->__('Description') ?>" class="required-entry input-text input-text_descri" cols="5" rows="5"><?php echo $description; ?></textarea>
+                    </div>
+                </div>
+                    <div class="input-box">
+                    <label for="sdesc" class="required left lable_inner"><?php echo $this->__('House rules') ?> <em>*</em></label>
+                    <div class="floatleft">
+                    <textarea name="sdesc" id="sdesc" title="<?php echo $this->__('House rules') ?>" class="required-entry input-text input-text_high" cols="5" rows="5"><?php echo $highlight; ?></textarea>
+                    </div>
+                </div>
+                </div>
+                <div class="clear"></div>
+            </li>
+             <h1><?php echo $this->__('Amenities'); ?></h1>
+               <li>             
+                <?php 
+                $totalAmenity = count($amenityAttribute->getSource()->getAllOptions());
+                  $x = 1;
+                
+                  foreach ($amenityAttribute->getSource()->getAllOptions() as $amenity) {
+                  	
+                        $value = $amenity['value'];
+                        $checkAmenity = $getamenity[$i];
+
+                         if($x == 1)
+                            echo "<ul id='amenities_panel'> ";
+    
+    
+                        if($value !='') {
+                            $PropertyType[$value] = $amenity['label'];
+                              ?>
+                    <li class="checkbox lable_inner checkbox_inner">
+                            <?php if(in_array($amenity['value'],$getamenity)){ ?>
+                             <input type="checkbox" name="amenity[<?php $i?>]" id="amenity[<?php $i?>]" value="<?php echo $amenity['value']; ?>"  checked="checked" > <?php echo $amenity['label']; ?>
+                            <?php
+                            } else {
+                            ?>
+                          <input type="checkbox" name="amenity[<?php $i?>]" id="amenity[<?php $i?>]" value="<?php echo $amenity['value']; ?>" /> <?php echo $amenity['label']; ?>
+                         <?php }?>
+                    </li>
+                         <?php }
+                      if($x % 6 == 0)
+                        echo " </ul><ul><li>'>";
+
+                      if($x==$totalAmenity) echo "</li> </ul>";
+                        $x++;
+                  }?>
+                 
+
+            </li>
+            <h1><?php echo $this->__('Details'); ?></h1>
+              <li>
+                  <div class="field">
+                      <div class="selectaccomodate">
+                    <label for="accomodate" class="required left lable_inner"> <?php echo $this->__('Accommodates') ?> <em>*</em></label>
+                    <div class="floatleft">
+                    <select id="accomodate" name="accomodate"  class="select select input-text required-entry input-text_acc">
+                                
+                                <?php for($i=1; $i<= $acc_default; $i++){ ?>
+                                <option
+                                     <?php if($accomodate==$i) echo " selected= 'selected' "; ?>
+
+                                    value="<?php echo $i;?>"><?php echo $i;?></option>    <?php }?>
+
+                                         </select>
+                    <span class="info_span"><?php echo $this->__('This refers number of guest allowed in your place'); ?></span>
+                    </div>
+                        </div>
+
+                </div>
+               <div class="field">
+                   <div class="selectroom">
+                    <label for="room" class="required left lable_inner"> <?php echo $this->__('Bed rooms') ?> <em>*</em></label>
+                    <div class="floatleft">
+                     <select id="room" name="room"  class="select select input-text required-entry input-text_bed">
+                                
+                                <?php for($i=1; $i<= $roomAvail; $i++){ ?>   <option
+                                     <?php if($bedroom == $i) echo " selected= 'selected' "; ?>
+
+                                    value="<?php echo $i;?>"><?php echo $i;?></option>    <?php }?>   </select>
+                       <span class="info_span"><?php echo $this->__('Select the number of bedrooms excluding living rooms.'); ?></span>
+                    </div>
+                        </div>
+
+                </div>
+                      <div class="field">
+                    <div class="selectbedtype">
+                <label for="pets" class="required lable_inner left"> <?php echo $this->__('Bed type') ?> <em>*</em></label>
+                <div class="floatleft">
+                  <select id="bedtype" name="bedtype"  class="select select input-text required-entry input-text_bedtype">
+                                <option value=""><?php echo $this->__('Select Bed type') ;?></option>
+                                <?php echo $bedtype_select; ?>               </select>
+                </div>
+                                
+                        </div>
+                        </div>
+
+                <div class="field">
+                    <div class="selectpets">
+                <label for="pets" class="required lable_inner left"> <?php echo $this->__('Pets on Premises') ?> <em>*</em></label>
+                <div class="floatleft">
+                  <select id="pets" name="pets"  class="select select input-text required-entry input-text_pets">
+                               
+                                <?php echo $pets_select; ?>               </select>
+                         <span class="info_span"> <?php echo $this->__('Let the guest knows whether the room is pet-friendly or not.') ?></span>
+                        </div></div>
+                        </div>
+                  <div class="input-box input-box_inner">
+                  <label for="price" class="required lable_inner left"> <?php echo $this->__('Price/Night') ?> <em>*</em></label>
+                
+                  <div class="floatleft">
+                    <input name="price" id="price" onblur="return validatePrice(this.value)" title="<?php echo $this->__('Price') ?>" value="<?php echo $price; ?>" class="input-text required-entry input-text_price " type="text"/>
+                     <span class="info_span"> <?php echo  $currencySymbol .'('. $this->__('Enter price in ') . $currencyCountry . ')'; ?></span></div>
+                    <div id="priceErr" style="color:red;margin-left: 165px"></div>
+                </div>
+                  <div class="input-box input-box_inner">
+                  <label for="address" class="required lable_inner left"> <?php echo $this->__('Addresss') ?> <em>*</em></label>
+                  <div class="floatleft">
+                    <textarea name="address" id="address" title="<?php echo $this->__('Address') ?>" class="required-entry input-text input-text_address" cols="5" rows="5"><?php echo $address; ?></textarea>
+                  </div>
+                </div>
+                   <div class="input-box input-box_inner">
+                  <label for="city" class="required lable_inner left"> <?php echo $this->__('City') ?> <em>*</em></label>
+               
+                  <div class="floatleft">
+                    <input name="city" id="city" title="<?php echo $this->__('City') ?>" value="<?php echo $city; ?>" class="input-text required-entry input-text_city" type="text"/>
+                  </div>
+                </div>
+                  <div class="input-box input-box_inner">
+                  <label for="state" class="required lable_inner left"> <?php echo $this->__('State / Province / Region') ?> <em>*</em></label>
+                     <div class="floatleft">
+                    <input name="state" id="state" title="<?php echo $this->__('State / Province / Region') ?>" value="<?php echo $state; ?>" class="input-text required-entry input-text_state" type="text"/>
+                     </div>
+                </div>
+
+                <div class="field">
+                    <div class="selectpropcountry">
+                <label for="propcountry" class="required lable_inner left"><?php echo $this->__('Country') ?> <em>*</em> </label>
+                
+                <div class="floatleft">
+                  <select id="propcountry" name="propcountry"  class="select select input-text required-entry input-text_country">
+                                <option value=""><?php echo $this->__('Select your Country') ;?></option>
+                                <?php echo $countryselect; ?>               </select>
+                </div>
+                        </div>
+                        </div>
+						
+						 <div class="input-box input-box_inner">
+                  <label for="state" class="required lable_inner left"> <?php echo $this->__('Phone no') ?> <em>*</em></label>
+                     <div class="floatleft">
+                    <input onblur="return validatePhone(this.value)" name="phoneno" id="phoneno" title="<?php echo $this->__('phoneno') ?>" value="<?php echo $phoneno; ?>" class="input-text required-entry input-text_state" type="text"/>
+                     </div>
+					 <div id="phoneErr" style="color:red;margin-left: 165px"></div>
+                </div>
+						
+						
+                  <div class="input-box input-box_inner">
+                   <label for="map" class="required lable_inner left"> <?php echo $this->__('Map Location') ?> <em>*</em></label>
+                   
+                   <div class="floatleft">
+                    <textarea name="map" id="map" title="<?php echo $this->__('Map Location') ?>" class="required-entry input-text_map" cols="5" rows="5"><?php echo $map; ?></textarea>
+                    <span class="info_span"><a href="http://maps.google.com/help/maps/getmaps/plot-one.html" target="_blank">        <?php echo $this->__('Paste Iframe code for Google map'); ?></a></span>
+                   </div>
+                </div>
+                   <div class="field">
+                       <div class="selectcancelpolicy">
+                <label for="cancelpolicy" class="required lable_inner left"> <?php echo $this->__('Cancellation Policy') ?> <em>*</em></label>
+                  
+                <div class="floatleft">
+                <select id="cancelpolicy" name="cancelpolicy"  class="select select input-text required-entry input-text_policy">
+                                <option value=""><?php echo $this->__('Select Cancellation Policy') ;?></option>
+                                <?php echo $cancelpolicy_select; ?>               </select>
+                </div>
+
+                        </div>
+                        </div>
+
+
+            </li>
+             <li class="listheading"><h1><?php echo $this->__('Meta Information'); ?></h1></li>
+            <li class="field">
+                <div class="field">
+                     <div class="input-box_inner">
+                    <label for="name" class="required left lable_inner"><em></em><?php echo $this->__('Meta Title') ?></label>
+                    
+                    
+                        <input name="meta_title" id="meta_title"   title="<?php echo $this->__('Meta Title') ?>" value="<?php echo $metaTitle; ?>" class="input-text input-text_inner" type="text"   onkeyup=limiter() maxlength="35"/>
+<!--                        <input type=text name=limit size=4 readonly value="35">-->
+                    </div>
+                     <div class="input-box_inner">
+                    <label for="desc" class="required left lable_inner"><em></em><?php echo $this->__('Meta Keywords') ?></label>
+               
+                 <textarea name="meta_keyword" id="meta_keyword" title="<?php echo $this->__('Meta Keywords') ?>" class="input-text input-text_descri" cols="5" rows="5">
+                 <?php echo $metaKeyword; ?>
+                 </textarea>
+                </div>
+                    <div class="input-box">
+                    <label for="sdesc" class="required left lable_inner"><em></em><?php echo $this->__('Meta Description') ?></label>
+                
+                    <textarea name="meta_description" id="meta_description" title="<?php echo $this->__('Meta Description') ?>" class="input-text input-text_high" cols="5" rows="5">
+                    <?php echo $metaDescription; ?>
+                    </textarea>
+                </div>
+                </div>
+               
+            </li>
+            <div class="buttons-set">
+        <p class="required ">* <?php echo $this->__('Required Fields') ?></p>
+         <button type="submit" title="<?php echo $this->__('Update') ?>" class="button"><span><span><?php echo $this->__('Update your property') ?></span></span></button>
+    </div>
+        </ul>
+        </div>
+
+</form>
+    <div style="clear: both;"></div>
+</div>
+
+
+<script type="text/javascript">
+    //<![CDATA[
+    var Propertyform = new VarienForm('propertyupdate', true);
+    //]]>
+</script>
+
+<!-- Counter Script  -->
+<script type="text/javascript">
+
+var count = "35";   
+function limiter(){
+		
+var tex = document.propertyform.name.value;
+var len = tex.length;
+
+if(len > count){
+        tex = tex.substring(0,count);
+        document.propertyform.comment.value =tex;
+        return false;
+}
+
+document.propertyform.limit.value = count-len;
+
+}
+function trim(stringToTrim) {
+	return stringToTrim.replace(/^\s+|\s+$/g,"");
+}
+function validatePrice(pValue){
+	pValue = trim(pValue);
+    document.getElementById("priceErr").innerHTML = "";
+    if(isNaN(pValue) ){
+        document.getElementById("priceErr").innerHTML = "<?php echo $this->__('Please enter valid number'); ?>";
+        document.getElementById("price").value = "";
+        document.getElementById("price").focus();
+        return false;
+    }
+    
+    //if(pValue.length<2){
+        if(parseInt(pValue)== 0){
+            document.getElementById("priceErr").innerHTML = "<?php echo $this->__('Enter the price value above 0') ?>";
+            document.getElementById("price").focus();
+            return false;
+          }
+    //}
+
+}
+
+
+function validatePhone(pValue){
+    document.getElementById("phoneErr").innerHTML = "";
+    pValue = trim(pValue);
+    if(isNaN(pValue) ){
+        document.getElementById("phoneErr").innerHTML = "<?php echo $this->__('Please enter valid number'); ?>";
+        document.getElementById("price").value = "";
+        document.getElementById("price").focus();
+        return false;
+    }
+
+		
+        if(parseInt(pValue.length)!= 10){
+            document.getElementById("phoneErr").innerHTML = "<?php echo $this->__('Enter the phone value 10 digit') ?>";
+            document.getElementById("price").focus();
+            return false;
+          }
+
+}
+</script>

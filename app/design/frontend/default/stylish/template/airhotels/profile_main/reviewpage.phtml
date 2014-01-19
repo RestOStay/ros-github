@@ -1,0 +1,75 @@
+<?php
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+?>
+<?php
+
+$reviews = Mage::getModel('airhotels/property')->getreview();
+
+?>
+<div id="profile_right" class="clearfix">
+<div class="social_connections_and_reviews">
+      <div class="panel reviews">
+        <div class="header_grid1 arrowbubble">
+          <b class="profile_edit_id icon_grid"></b>
+          <h3>Reviews</h3>
+          <span class="count"><?php echo count($reviews);?></span>
+        </div>
+        <div class="body_grid1">
+          <div class="reviews_section as_host">
+           
+            <ul class="reviews-list">
+
+   <?php
+if (count($reviews)) {
+    for ($i = 0; $i < count($reviews); $i++) {
+
+        $customerData = Mage::getModel('airhotels/airhotels')->getCustomerPictureById($reviews[$i]["customer_id"]);
+        ?>
+<li class="reviews-list-item clearfix">
+      <div class="profile_pic">
+        <div class="_pm_container small">
+  <div class="_pm_shadow r"></div>
+  <div class="_pm_shadow l"></div>
+  <div class="_pm">
+    <div class="_pm_inner clearfix">
+      <div class="_pm_shadow_inner r"></div>
+      <div class="_pm_shadow_inner l"></div>
+      <div class="_pm_shadow_inner t"></div>
+      <div class="_pm_shadow_inner b"></div>
+          <?php if ($customerData[0]["imagename"]): ?>
+                            <img src="<?php echo Mage::getBaseUrl('media') . "catalog/customer/thumbs/" . $customerData[0]["imagename"] ?>" width="68px " height="68px" alt="">
+                        <?php else: ?>
+                            <img src="<?php echo $this->getSkinUrl('images/no_user.jpg') ?>" width="68px " height="68px" alt="">
+                        <?php endif; ?>
+    </div>
+  </div>
+</div>          <span class="name"><a href="/users/show/897763"><?php echo $reviews[$i]["nickname"];?></a></span>
+      </div>
+      <div class="bubble">
+        <p class="message">
+          <?php echo $reviews[$i]["detail"];?>
+        </p>
+          <span class="date"><?php echo date("F Y", strtotime($reviews[$i]["created_at"]));?></span>
+      </div>
+    </li>
+
+        <?php
+    }
+
+  } else {
+      echo $this->__("There are no reviews yet for this property. Be the first to write a review");
+   }
+    ?>
+
+            </ul>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+</div>
+

@@ -82,5 +82,89 @@ class Apptha_Airhotels_Model_Observer
         }
         return;
     }
+	public function block_cal($observer) {
+		$order = $observer->getEvent()->getInvoice()->getOrder();
+		
+		$orderId = $order->getRealOrderId();
+		/////////////////////get booking details from airhotels_booking/////////////////////
+		$read= Mage::getSingleton('core/resource')->getConnection('core_read');
+		$value=$read->query("Select * from airhotels_booking where order_id =".$orderId);
+		$rows = $value->fetchAll();
+		
+		for($i=0;$i<count($rows);$i++)
+			{
+				$fromdate = $rows[$i]['fromdate'];
+				$todate = $rows[$i]['todate'];
+				$productId= $rows[$i]['entity_id'];
+				$accomodates = 2;
+				$price = $rows[$i]['subtotal'];
+				$fromD = explode("-",$fromdate);
+				$fromY = $fromD[0];
+				$fromM = $fromD[1];
+				$toD = explode("-",$todate);
+				$toY = $toD[0];
+				$toM = $toD[1];
+				
+				if($fromY == $toY)
+					{
+					$year = $toY;
+					
+					}
+					else
+					{
+					$year = $fromY.','.$toY;
+					}
+				if($fromM == $toM)
+					{
+					$month = $fromM;
+					}
+					else
+					{
+					$month = $fromM.','.$toM;
+					}
+	    $daterange = $this->getAllDatesBetweenTwoDates($fromdate,$todate);
+		
+		for($j=0;$j<count($daterange);$j++)
+			{
+				$date = explode('-',$daterange[$j]);
+				if($j == 0)
+					{
+				$dates =  $date[2];
+					}
+				else
+					{
+						$dates = $dates.','.$date[2];
+					}
+			}
+		
+		 
+		 $read->query("Insert into airhotels_calendar (product_id,book_avail,month,year,blockfrom,price)
+       	 values ($productId,$accomodates,$month,$year,'".$dates."',$price)");
+			}
+		
+		/////////////////////get booking details from airhotels_booking/////////////////////
+		
+		
+		
+	}
+	
+ public	function getAllDatesBetweenTwoDates($strDateFrom,$strDateTo)
+{
+     $aryRange=array();
+
+     $iDateFrom=mktime(1,0,0,substr($strDateFrom,5,2),     substr($strDateFrom,8,2),substr($strDateFrom,0,4));
+     $iDateTo=mktime(1,0,0,substr($strDateTo,5,2),     substr($strDateTo,8,2),substr($strDateTo,0,4));
+
+     if ($iDateTo>=$iDateFrom)
+     {
+         array_push($aryRange,date('Y-m-d',$iDateFrom)); // first entry
+         while ($iDateFrom<$iDateTo)
+         {
+             $iDateFrom+=86400; // add 24 hours
+             array_push($aryRange,date('Y-m-d',$iDateFrom));
+         }
+     }
+     return $aryRange;
+}
 }
 ?>

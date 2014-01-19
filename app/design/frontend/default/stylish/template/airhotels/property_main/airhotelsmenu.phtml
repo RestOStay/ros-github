@@ -1,0 +1,18 @@
+<?php 
+$page=$_SERVER['REQUEST_URI'];
+$page=explode('/',$page);
+$pageUrl=$page;
+
+?>
+
+<div id="popular_wishlist" class="wishlists-navbar navbar-black navbar navbar-top" >
+    <div class="navbar-inner">
+        <div class="navbar_container">
+            <ul class="nav">
+                <li><a class="popular <?php if(in_array('popular',$pageUrl)){echo 'selected';} ?>" href="<?php echo Mage::helper('airhotels')->getpopularpage(); ?>"><i></i><?php echo $this->__('Popular')?></a></li>
+                <li><a class="my <?php if(in_array('wishlist',$pageUrl)){echo 'selected1';} ?>" href="<?php echo Mage::helper('airhotels')->getwishlistpage(); ?>"><i></i><?php echo $this->__('My Wish Lists')?></a></li>
+            </ul>
+
+        </div>
+    </div>
+</div>

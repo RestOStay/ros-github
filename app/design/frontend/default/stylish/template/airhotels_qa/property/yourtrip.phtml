@@ -1,0 +1,174 @@
+<?php
+/**
+ * @ Author     : Apptha team
+ * @package     : Apptha_airhotels
+ * @copyright   : Copyright (c) 2011 (www.apptha.com)
+ * @license     : http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @Date        : August 2012
+ */
+?>
+<?php
+/**
+ * Host Property list page 
+ * 
+ *  @see Apptha_airhotels_Block_Property_Yourlist
+ */
+?>
+<?php 
+$format = Mage::app()->getLocale()->getDateFormat(Mage_Core_Model_Locale::FORMAT_TYPE_MEDIUM);
+
+?>
+
+<div id="rooms">
+    <div id="room" class="clearfix">
+        <div id="left_column">
+            <div id="main_content" class="box">
+                <div class="middle">
+                    <ul id="main_content_sub_nav" class="rooms_sub_nav clearfix">
+                        <li  onclick="select_tab(&#39;main&#39;, &#39;current_div&#39;, jQuery(this)); initPhotoGallery();" class="main_link selected">
+                            <a href="#"><?php echo $this->__('Current Trip') ?></a></li>
+                        <li onclick="select_tab(&#39;main&#39;, &#39;upcoming_div&#39;, jQuery(this)); load_map_wrapper(&#39;load_google_map&#39;);" class="main_link">
+                            <a href="#"><?php echo $this->__('Upcoming Trip') ?></a></li>
+                        <li onclick="select_tab(&#39;main&#39;, &#39;previous_div&#39;, jQuery(this)); load_initial_month();" class="main_link">
+                            <a href="#"><?php echo $this->__('Previous Trip') ?></a></li>
+                        <li id="content_flag">
+
+                        </li>
+                    </ul>
+
+                    <div  id="current_div" class="main_content" style="display: block; ">
+                        <?php $current_value = Mage::getModel('airhotels/property')->currentTrip();
+                        ?><div style="clear:both;"></div>
+                        <table cellspacing="2" cellpadding="2" id="booking_property">
+                            <tr>
+                                <th width="10%"><?php echo $this->__('S.No'); ?></th>
+                                <th width="40%"><?php echo $this->__('Property Name'); ?></th>
+                                <th width="20%"><?php echo $this->__('From Date'); ?></th>
+                                <th width="15%"><?php echo $this->__('To Date'); ?></th>
+                            </tr>
+                            <?php
+                            $m = 1;
+                            for ($i = 0; $i < count($current_value[0]); $i++) {
+                                $propertyCollection = Mage::getModel('airhotels/property')->getpropertycollection()
+                                        ->addFieldToFilter(array(
+                                            array('attribute' => 'entity_id', 'eq' => $current_value[0][$i])));
+
+                                foreach ($propertyCollection as $property) {
+                                    $dateArr = explode("-", $current_value[2][$i]);
+                                    $todate = date('Y-m-d', mktime(0, 0, 0, $dateArr[1], $dateArr[2] + 1, $dateArr[0]));
+                                    ?>
+                                    <p>
+                                        <?php
+                                        echo '<tr>';
+                                        echo '<td>' . $m . '</td>';
+                                        echo '<td>' . $property->getName() . '</td>';
+                                        echo '<td>' . Mage::app()->getLocale()->date($current_value[1][$i])->toString($format). '</td>';
+                                        echo '<td>' . Mage::app()->getLocale()->date($todate)->toString($format). '</td>';
+                                        echo '</tr>';
+                                        $m++;
+                                        ?>
+                                    </p>
+                                <?php } ?> <?php } ?>
+
+                        </table>
+                    </div>
+                    <div id="upcoming_div" class="main_content" style="display: none; ">
+                        <?php
+                        $upcoming_value = Mage::getModel('airhotels/property')->upcomingTrip();
+                        ?><div style="clear:both;"></div>
+                        <table cellspacing="2" cellpadding="2" id="booking_property">
+                            <tr>
+                                <th width="10%"><?php echo $this->__('S.No') ?></th>
+                                <th width="40%"><?php echo $this->__('Property Name') ?></th>
+                                <th width="20%"><?php echo $this->__('From Date') ?></th>
+                                <th width="15%"><?php echo $this->__('To Date') ?></th>
+                            </tr>
+<?php
+$n = 1;
+for ($j = 0; $j < count($upcoming_value[0]); $j++) {
+    $propertyCollection1 = Mage::getModel('airhotels/property')->getpropertycollection()
+            ->addFieldToFilter(array(
+                array('attribute' => 'entity_id', 'eq' => $upcoming_value[0][$j])));
+
+    foreach ($propertyCollection1 as $property_up) {
+        $dateArrUp = explode("-", $upcoming_value[2][$j]);
+        $todateUp = date('Y-m-d', mktime(0, 0, 0, $dateArrUp[1], $dateArrUp[2] + 1, $dateArrUp[0]));
+        ?>
+                                    <p>
+                                    <?php
+                                    echo '<tr>';
+                                    echo '<td>' . $n . '</td>';
+                                    echo '<td>' . $property_up->getName() . '</td>';
+                                    echo '<td>' . Mage::app()->getLocale()->date($upcoming_value[1][$j])->toString($format). '</td>';
+                                    echo '<td>' . Mage::app()->getLocale()->date($todateUp)->toString($format). '</td>';
+                                    echo '</tr>';
+                                    $n++;
+                                    ?>
+                                    </p>
+                                    <?php
+                                    }
+                                }
+                                ?>
+
+                        </table>
+
+
+
+                    </div>
+                    <div id="previous_div" class="main_content" style="display: none; ">
+<?php
+$prev_value = Mage::getModel('airhotels/property')->previousTrip();
+// print_r($productId_pre);
+?><div style="clear:both;"></div>
+                        <table cellpsacing="2" cellpadding="2" id="booking_property">
+                            <tr>
+                                <th width="10%"><?php echo $this->__('S.No') ?></th>
+                                <th width="40%"><?php echo $this->__('Property Name') ?></th>
+                                <th width="20%"><?php echo $this->__('From Date') ?></th>
+                                <th width="15%"><?php echo $this->__('To Date') ?></th>
+                            </tr>
+<?php
+$p = 1;
+for ($k = 0; $k < count($prev_value[0]); $k++) {
+    $propertyCollection2 = Mage::getModel('airhotels/property')->getpropertycollection()
+            ->addFieldToFilter(array(
+                array('attribute' => 'entity_id', 'eq' => $prev_value[0][$k])));
+
+    foreach ($propertyCollection2 as $property_pre) {
+        $dateArrPerv = explode("-", $prev_value[2][$k]);
+        $todatePrev = date('Y-m-d', mktime(0, 0, 0, $dateArrPerv[1], $dateArrPerv[2] + 1, $dateArrPerv[0]));
+        ?>
+                                    <p>
+                                    <?php
+                                    echo '<tr>';
+                                    echo '<td>' . $p . '</td>';
+                                    echo '<td>' . $property_pre->getName() . '</td>';
+                                    echo '<td>' . Mage::app()->getLocale()->date($prev_value[1][$k])->toString($format). '</td>';
+                                    echo '<td>' . Mage::app()->getLocale()->date($todatePrev)->toString($format). '</td>';
+                                    echo '</tr>';
+                                    $p++;
+                                    ?>
+                                    </p>
+                                <?php } ?>  <?php }
+                            ?>
+                        </table>
+                    </div>
+                    <div class="clear"></div>
+                </div>
+
+
+            </div>
+        </div>
+
+    </div>
+</div>
+<script type="text/javascript">
+    var $slide1 = jQuery.noConflict();
+
+    function showTabs1(id,menuName){
+        $slide1(".main_content").hide();
+        $slide1(".main_link").removeClass("selected");
+        $slide1("#"+menuName).addClass("selected");
+        $slide1("#"+id).show();
+    }
+</script>

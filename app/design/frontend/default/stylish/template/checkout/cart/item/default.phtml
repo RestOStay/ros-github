@@ -28,10 +28,12 @@
 
 $_item = $this->getItem();
 $isVisibleProduct = $_item->getProduct()->isVisibleInSiteVisibility();
+
 $canApplyMsrp = Mage::helper('catalog')->canApplyMsrp($_item->getProduct(), Mage_Catalog_Model_Product_Attribute_Source_Msrp_Type::TYPE_BEFORE_ORDER_CONFIRM);
+
 ?>
 <tr>
-    <td><?php if ($this->hasProductUrl()):?><a href="<?php echo $this->getProductUrl() ?>" title="<?php echo $this->htmlEscape($this->getProductName()) ?>" class="product-image"><?php endif;?><img src="<?php echo $this->getProductThumbnail()->resize(75); ?>" width="75" height="75" alt="<?php echo $this->htmlEscape($this->getProductName()) ?>" /><?php if ($this->hasProductUrl()):?></a><?php endif;?></td>
+    <td><?php if ($this->hasProductUrl()):?><a href="<?php echo $this->getProductUrl() ?>" title="<?php echo $this->htmlEscape($this->getProductName()) ?>" class="product-image"><?php endif;?><img src="<?php echo $this->getProductThumbnail()->resize(75); ?>" width="75" height="75" alt="<?php echo $this->htmlEscape($this->getProductName()) ?>" /><?php if ($this->hasProductUrl()):?></a><?php endif;?></td> 
     <td>
         <h2 class="product-name">
         <?php if ($this->hasProductUrl()):?>
@@ -41,12 +43,20 @@ $canApplyMsrp = Mage::helper('catalog')->canApplyMsrp($_item->getProduct(), Mage
             <?php echo $this->htmlEscape($this->getProductName()) ?>
         <?php endif; ?>
         </h2>
-        <?php if ($_options = $this->getOptionList()):?>
+      <?php
+    
+	  
+	  ?>
+        <?php if ($_options = $this->getOptionList()): 
+		//echo get_class($this);
+		//echo "<pre>";print_r($_options);
+		?>
         <dl class="item-options">
-            <?php foreach ($_options as $_option) : ?>
+            <?php  foreach ($_options as $_option) : ?>
             <?php $_formatedOptionValue = $this->getFormatedOptionValue($_option) ?>
-            <dt><?php echo $this->htmlEscape($_option['label']) ?></dt>
-            <dd<?php if (isset($_formatedOptionValue['full_view'])): ?> class="truncated"<?php endif; ?>><?php echo $_formatedOptionValue['value'] ?>
+           <!-- <dt><?php echo $this->htmlEscape($_option['label']) ?></dt>-->
+          <?php /*?>  <dd<?php if (isset($_formatedOptionValue['full_view'])): ?> class="truncated"<?php endif; ?>><?php echo $_formatedOptionValue['value'] ?>
+            
                 <?php if (isset($_formatedOptionValue['full_view'])): ?>
                 <div class="truncated_full_value">
                     <dl class="item-options">
@@ -54,9 +64,20 @@ $canApplyMsrp = Mage::helper('catalog')->canApplyMsrp($_item->getProduct(), Mage
                         <dd><?php echo $_formatedOptionValue['full_view'] ?></dd>
                     </dl>
                 </div>
+                
                 <?php endif; ?>
-            </dd>
-            <?php endforeach; ?>
+                
+            </dd> <?php */?>
+            <?php $array[] =  $_formatedOptionValue['value']; ?>
+            <!-- <td> <?php //echo $_formatedOptionValue['value'] ?></td> -->
+            <!-- <span class="nobr"  style="padding-right: 20px; "><?php echo $_formatedOptionValue['value'] ?></span> -->
+           
+            <?php endforeach; $adult = $array['0'];?>
+             <td><?php echo $array[1];?></td>
+            <td><?php echo $array[2];?></td>
+            <td><?php echo $array[0];?></td>
+            <td><?php echo $array[4];?></td>
+            <td><?php echo $array[3];?></td>
         </dl>
         <?php endif;?>
         <?php if ($messages = $this->getMessages()): ?>

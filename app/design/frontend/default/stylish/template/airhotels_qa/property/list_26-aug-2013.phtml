@@ -1,0 +1,241 @@
+<link href='http://fonts.googleapis.com/css?family=Belgrano' rel='stylesheet' type='text/css'/>
+<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?libraries=places&sensor=false"></script>
+<script type="text/javascript">
+    function initialize() {
+        var mapOptions = {
+            //center: new google.maps.LatLng(-33.8688, 151.2195),
+            zoom: 13,
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+        var map = new google.maps.Map(document.getElementById('map_canvas'),
+        mapOptions);
+
+        var input = document.getElementById('searchTextField');
+        var autocomplete = new google.maps.places.Autocomplete(input);
+
+        autocomplete.bindTo('bounds', map);
+        // Autocomplete.
+        function setupClickListener(id, types) {
+            var radioButton = document.getElementById(id);
+            google.maps.event.addDomListener(radioButton, 'click', function() {
+                autocomplete.setTypes(types);
+            });
+        }
+
+    }
+    google.maps.event.addDomListener(window, 'load', initialize);
+</script>
+
+<?php
+$count = 1;
+$threeDiv = 1;
+$model = Mage::getModel('catalog/product');
+$baseurl = Mage::getBaseUrl('skin');
+
+
+$_productCollection = Mage::getModel('airhotels/property')->getpropertycollection()
+                ->addAttributeToFilter('status', array('eq' => 1))
+                ->setPageSize(10)->setOrder('created_at', 'desc')->addAttributeToSelect('*');
+$currencySymbol = Mage::app()->getLocale()->currency(Mage::app()->getStore()->getCurrentCurrencyCode())->getSymbol();
+//if(count($_productCollection)!= 0){
+
+?>
+<script type="text/javascript" src="<?php echo $this->getSkinUrl('jcarousel/jquery.jcarousel.min.js')?>"></script>
+<link rel="stylesheet" type="text/css" href="<?php echo $this->getSkinUrl('jcarousel/skin.css')?>" />
+<script type="text/javascript">
+function mycarousel_initCallback(carousel)
+{
+    // Disable autoscrolling if the user clicks the prev or next button.
+    carousel.buttonNext.bind('click', function() {
+        carousel.startAuto(0);
+    });
+
+    carousel.buttonPrev.bind('click', function() {
+        carousel.startAuto(0);
+    });
+
+    // Pause autoscrolling if the user moves with the cursor over the clip.
+    carousel.clip.hover(function() {
+        carousel.stopAuto();
+    }, function() {
+        carousel.startAuto();
+    });
+};
+
+jQuery(document).ready(function() {	
+	jQuery('#menuwhatnew').jcarousel();
+});
+
+</script>
+<div class="clear"></div>
+<div id="roomshomepage">
+    <div id="room" class="clearfix">
+        <div id="left_columnhomepage">
+            <div id="main_content" class="box">
+                <div class="tabhomepage">
+                    
+                    <ul id="main_content_sub_navhomepage" class="rooms_sub_navhomepage clearfix ">
+                        <li id="menuwhatnew" class="main_link selected">
+                            <a href="#whatnew" onclick="showTabs('whatsnew','menuwhatnew')"><?php echo $this->__('What\'s New'); ?></a>
+                        </li>
+                        <li id="menuRated" class="main_link">
+                            <a href="#mostrated" onclick="showTabs('rated_div','menuRated')"><?php echo $this->__('Most Rated'); ?></a>
+                        </li>
+                        <li id="menuPopular" class="main_link">
+                            <a href="#mostrated" onclick="showTabs('popular_div','menuPopular')"><?php echo $this->__('Most Popular'); ?></a>
+                        </li>
+                            
+<!--                        <li id="content_flag">
+                            
+                        </li>-->
+                    </ul>
+                    <div id="whatsnew" class="main_content" style="display: block; ">
+                        <ul id="homepage_badges" class="first-and-second-carousel jcarousel-skin-tango rounded tab-section" style="display: block;<?php if(count($_productCollection)== 0 ) echo "text-align: center;" ?> ">
+                            <?php
+                           if(count($_productCollection)!= 0 ){
+                            $count = 1;
+                            foreach ($_productCollection as $_product):
+                                if ($count <= 5):
+                                    ?>
+                         
+                            <?php
+                                $mainimage=$this->helper('catalog/image')->init($_product, 'image')
+                                ->constrainOnly(TRUE)
+                                ->keepAspectRatio(TRUE)
+                                ->keepFrame(FALSE)
+                                ->resize(200,null)
+                            ?>
+                            
+                                    <li class="rounded" <?php if($count == 4) { echo 'style=" margin-right:0;" ' ;}?>>
+                                        <a class="ss_name" href="<?php echo Mage::getBaseUrl() . $_product->getUrlPath(); ?>">
+                                            <img src="<?php
+                            if ($_product->getImage() != 'no_selection') {
+                                echo $mainimage;
+                            } else { 
+                                echo $_product->getImageUrl();
+                            }
+                                    ?>" width="195" height="130" title="<?php echo substr($_product->getName(), 0, 25); ?>">
+                                        </a>
+                                        <div class="box-shadow">
+                                             <a href="<?php echo Mage::getBaseUrl() . $_product->getUrlPath(); ?>" style="text-decoration: none;">
+                                            <?php echo substr($_product->getName(), 0, 30); ?>
+                                             </a>
+                                        </div>
+                                    </li>
+                                    <?php
+                                endif;
+                                $count++;
+                            endforeach;
+                           }else{
+                               echo $this->__('No Records!');
+
+                           }
+                            ?>
+                        </ul>
+                    </div>
+                    <!-- most rated -->
+                    <?php $rateCollection = Mage::getModel('airhotels/property')->getRatedProperty();?>
+                    <div id="rated_div" class="main_content" style="display: none;">
+                        <ul id="rated_badges" class="first-and-second-carousel jcarousel-skin-tango rounded tab-section" style="display: block; <?php if(count($rateCollection)== 0 ) echo "text-align: center;" ?>">
+                            <?php
+                            
+                             if(count($_productCollection)!= 0 ){
+                              $countRate = 1;
+
+                            foreach ($rateCollection as $rateProduct) {
+                                ?>
+                             <?php
+                                $rateimage=$this->helper('catalog/image')->init($rateProduct, 'image')
+                                ->constrainOnly(TRUE)
+                                ->keepAspectRatio(TRUE)
+                                ->keepFrame(FALSE)
+                                ->resize(200,null)
+                            ?>
+                                <li class="rounded" <?php if($countRate == 4) { echo 'style=" margin-right:0;" ' ;}?>>
+                                    <a class="ss_name" href="<?php echo Mage::getBaseUrl() . $rateProduct->getUrlPath(); ?>">
+                                        <img alt="" src="<?php
+                            if ($rateProduct->getImage() != 'no_selection') {
+                                echo Mage::getBaseUrl('media') . 'catalog/product/' . $rateProduct->getImage();
+                            } else {
+                                echo $rateProduct->getImageUrl();
+                            }
+                                ?>" width="195" height="130" title="<?php echo substr($rateProduct->getName(), 0, 25); ?>">
+                                    </a>
+                                    <div class="box-shadow">
+                                         <a href="<?php echo Mage::getBaseUrl() . $rateProduct->getUrlPath(); ?>" style="text-decoration: none;">
+                                        <?php echo substr($rateProduct->getName(), 0, 30); ?>
+                                         </a>
+                                    </div>
+                                </li>
+                            <?php 
+                              $countRate++;
+                                }
+                             }else{
+                               echo $this->__('No Records!');
+
+                           }
+                            ?>
+                        </ul>
+                    </div>
+                    <!-- most rated ends -->
+                    <!-- most popular -->
+                     <?php
+                    $rateCollection = Mage::getModel('airhotels/property')->getPopularProperty();
+                    ?>
+                    <div id="popular_div" class="main_content" style="display: none;">
+                        <ul id="popular_badges" class="first-and-second-carousel jcarousel-skin-tango rounded tab-section" style="display: block; <?php if(count($rateCollection)== 0 ) echo "text-align: center;" ?>">
+                            <?php
+                         if(count($rateCollection)!= 0 ){
+                             
+                           $countPopular = 1;
+                            for ($s = 0; $s < count($rateCollection); $s++) {
+                                $popularCollection = $model->load($rateCollection[$s]["entity_id"]);
+                                //if ($popularCollection->getImage() != "no_selection" && trim($popularCollection->getImage()) != ""):
+                                ?>
+                                <li class="rounded" <?php if($countPopular == 4) { echo 'style=" margin-right:0;" ' ;}?>>
+                                    <a class="ss_name" href="<?php echo Mage::getBaseUrl() . $popularCollection->getUrlPath(); ?>">
+                                        <img alt="" src="<?php
+                            if ($popularCollection->getImage() != "no_selection") {
+                                echo Mage::getBaseUrl('media') . 'catalog/product/' . $popularCollection->getImage();
+                            } else {
+                                echo $popularCollection->getImageUrl();
+                            }
+                                ?>" width="195" height="130" title="<?php echo substr($popularCollection->getName(), 0, 25); ?>">
+                                    </a>
+                                    <div class="box-shadow">
+                                        <a href="<?php echo Mage::getBaseUrl() . $popularCollection->getUrlPath(); ?>" style="text-decoration: none;">
+                                        <?php echo substr($popularCollection->getName(), 0, 30); ?>
+                                        </a>
+                                    </div>
+                                </li>
+                                <?php
+                               $countPopular++;
+                             }
+                             }else{
+                               echo $this->__('No Records!');
+
+                           }
+                            ?>
+                        </ul>
+                    </div>
+                    <!-- most popular -->
+                        
+                        
+                </div>
+                    
+                    
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var $slide = jQuery.noConflict();
+    function showTabs(id,menuName){
+        $slide(".main_content").hide();
+        $slide(".main_link").removeClass("selected");
+        $slide("#"+menuName).addClass("selected");
+        $slide("#"+id).show();
+    }
+</script>
+

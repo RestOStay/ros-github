@@ -1,0 +1,98 @@
+<?php
+$pid = $this->getRequest()->getParam('id');
+
+$show = $this->getRequest()->getParam('show');
+
+$model = Mage::getModel('airhotels/airhotels');
+$inboxDetails = $model->markAsRead($pid);
+if($show=="in")
+    $inboxDetails = $model->getinboxMessageDetails($pid);
+else
+    $inboxDetails = $model->getsendMessageDetails($pid);
+
+$replyMessage = $model->getReplyMessages($pid);
+?>
+<div class="innerpage_btn left" style="line-height: 26px;margin-left: 10px; " onclick="openMessage(0)" ><?php echo $this->__('Back to Inbox'); ?></div>
+<?php
+if(count($inboxDetails)){
+    ?>
+    <table class="inboxTable left" >
+            <tr style="cursor: pointer" >
+                <td >
+                    
+                    <h1 style="float: left;color:#EF087F;font-family: 'abel';font-size: 20px;">
+                        <?php if($show=="in"){
+                            $customer = Mage::getModel('customer/customer')->load($inboxDetails[0]["sender_id"]);
+                        echo $this->__('From').':';
+                          echo ucfirst($customer->getName());
+                         }else {
+                             $customer = Mage::getModel('customer/customer')->load($inboxDetails[0]["receiver_id"]);
+                        echo $this->__('To').':';
+                      echo ucfirst($customer->getName());
+
+                         }?>
+                    </h1>
+                    <div style="float: right;width: 71px">
+                         <?php echo date("d/m/Y",strtotime ($inboxDetails[0]["created_date"]));  ?>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="msg_box">
+                    <p style="font-family: 'abel';font-size: 18px;color:#2671B9;"><?php echo $this->__('Message');  ?>:</p>
+                    <p><?php echo nl2br($inboxDetails[0]["message"]); ?></p>
+                    <p><?php echo $this->__('No of Guests :').$inboxDetails[0]["guest"]; ?></p>
+                    <p><?php echo $this->__('Check In:').date("d/m/Y",strtotime ($inboxDetails[0]["checkin"])); ?></p>
+                    <p><?php echo $this->__('Check Out:').date("d/m/Y",strtotime ($inboxDetails[0]["checkout"])); ?></p>
+                    <p><?php echo $this->__('Timezone to call:').$inboxDetails[0]["timezone"]; ?></p>
+                    <p><?php echo $this->__('Telephone Number:').$inboxDetails[0]["mobileNo"]; ?></p>
+                    <?php if(count($replyMessage)==0 ): ?>
+                    <p class="innerpage_btn right" style="padding-top: 5px;height: 22px;margin-left: 10px;"  onclick="document.getElementById('ReplyMail').style.display='block';" ><?php echo $this->__('Reply'); ?></p>
+                    <?php endif; ?>
+                </td>
+            </tr>
+    </table>
+    <?php
+}
+
+if(count($replyMessage)){
+    for($i=0;$i<count($replyMessage);$i++){
+         ?>
+     <table class="inboxTable left" >
+                <tr style="cursor: pointer" >
+                    <td>
+                        <h1 style="float: left;color:#EF087F;font-family: 'abel';font-size: 20px;">
+                          <?php echo $this->__('Reply'); ?> :
+                        </h1>
+                        <div style="float: right;width: 71px">
+                             <?php echo date("d/m/Y",strtotime ($replyMessage[$i]["created_date"]));  ?>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="border: 1px dashed #666 !important;padding: 10px 20px;">
+                        <p style="font-family: 'abel';font-size: 18px;color:#2671B9;"><?php echo $this->__('Message');  ?>:</p>
+                        <p><?php echo $replyMessage[$i]["message"];  ?></p>
+                        <?php if($i ==count($replyMessage)-1): ?>
+                        <p class="innerpage_btn right" style="padding-top: 5px;height: 22px;margin-left: 10px;"  onclick="document.getElementById('ReplyMail').style.display='block';" ><?php echo $this->__('Reply'); ?></p>
+                        <?php endif; ?>
+                    </td>
+                </tr>
+        </table>
+        <?php
+    }
+}
+?>
+
+ <div class="clear"></div>
+
+<div id="ReplyMail" class="left" style="margin-left: 10px;display: none;padding: 10px 19px;margin: 11px; border: 1px dashed #666 !important;">
+        <form action="<?php echo Mage::getBaseUrl() . '/airhotels/property/reply/' ?>" name="reply" method="post">
+            <h1 style="float: left;color:#EF087F;font-family: 'abel';font-size: 20px;margin-right: 10px"><?php echo $this->__("Reply"); ?></h1>
+            <textarea cols="5" rows="5" id="replyMessage" style="width:625px" name="message"></textarea>
+            <input type="hidden" id="messageid" name="message_id" value="<?php echo $inboxDetails[0]["message_id"] ?>" />
+            <input type="hidden" id="customer_id" name="customer_id" value="<?php echo $inboxDetails[0]["sender_id"] ?>" />
+        <div class="clear"></div>
+        <div class="innerpage_btn right" style="padding-top: 5px;height: 22px;margin-left: 10px; margin-top: 10px;" onclick="validateReply()" ><?php echo $this->__('Send Reply'); ?></div>
+        </form>
+</div>

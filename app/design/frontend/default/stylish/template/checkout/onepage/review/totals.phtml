@@ -39,7 +39,16 @@
             <small><?php echo $this->helper('sales')->__('Your credit card will be charged for') ?></small>
         </td>
         <td class="a-right">
-            <small><?php echo $this->displayBaseGrandtotal() ?></small>
+            <small>
+			<?php $symbol = Mage::app()->getLocale()->currency(Mage::app()->getStore()->getCurrentCurrencyCode())->getSymbol();
+			//echo Mage::helper('checkout')->getQuote()->getGrandTotal();
+			if($symbol=="Rs"){ 
+				echo str_replace("$","Rs",$this->displayBaseGrandtotal());
+			}else{ 
+				echo $this->displayBaseGrandtotal(); 
+			}
+			?>
+			</small>
         </td>
     </tr>
     <?php endif?>

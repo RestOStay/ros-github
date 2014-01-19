@@ -115,16 +115,13 @@ padding: 10px;}
 	white-space: nowrap;
 	text-align: left;
 }
-#searchTextField::-webkit-input-placeholder{color: #393C3D;}
+#searchTextField::-webkit-input-placeholder{color:#424040;}
  /* google autosuggestion ends */
     
-    #searchTextField{font-size:18px;color:#393C3D !important;margin-left: 0; margin-right: 0;background: white;border: 1px solid #dbdbdb; border-radius: 3px;   -moz-border-radius: 3px;   -webkit-border-radius: 3px;-o-box-shadow: inset 1px 1px 5px rgba(0,0,0,0.4);
--moz-box-shadow: inset 1px 1px 5px rgba(0,0,0,0.4);
--webkit-box-shadow: inset 1px 1px 5px rgba(0, 0, 0, 0.4);
-box-shadow: inset 1px 1px 5px rgba(0, 0, 0, 0.4);border: 1px solid #D2D2D2;line-height: 20px;}
+    #searchTextField{font-size:16px;border-radius: 3px 3px 3px 3px;padding: 9px 9px 7px 11px;color:#424040;}
     
 .searchmainpage_1 #searchTextField{
-    margin-top: 19px; padding: 3px 8px;
+    margin-top:20px; 
 -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075),0 0 0 black;
 box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075),0 0 0 black;
 -webkit-transition: border linear 0.2s,box-shadow linear 0.2s;
@@ -134,10 +131,36 @@ box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075),0 0 0 black;
 transition: border linear 0.2s,box-shadow linear 0.2s;}
     
     
-    
-.button-glossy{background: url(../images/searchmain_btn.png) no-repeat;border: none;height: 35px;width: 86px;margin-left: -10px;cursor: pointer;}
-.search_date{float: left;margin: 0 7px 0 5px;}
-#search_options .search_date:first-child{margin: 0 3px 0 8px;}
+
+	
+.button-glossy{background-color: #9C1E1E;
+    border: 1px solid #942911;
+    border-radius: 5px 5px 5px 5px;
+    box-shadow: 0 1px 0 0 #CF866C inset;
+    color: #FFFFFF;
+    display: inline-block;
+    font-family: arial;
+    font-size: 13px;
+    font-weight: normal;
+    height: auto !important;
+    margin-left: 1px !important;
+    padding: 10px 22px;
+    text-decoration: none;
+    text-shadow: 0 1px 0 #854629;
+    width: auto !important; cursor:pointer;}
+		
+	.button-glossy:hover {
+        
+        background-color:#bc3315;
+    }
+    .button-glossy:active {
+        position:relative;
+        top:1px;
+    }	
+		
+		
+.search_date{float: left;margin: 0 0px 0 8px;}
+#search_options .search_date:first-child{margin: 0 3px 0 4px;}
 .search_date input{border:none;width:100px;border-radius: 4px;-moz-border-radius: 4px;-webkit-border-radius: 4px;float:left;padding: 6px;-moz-box-shadow:inset 0 1px 10px #dbdbdb;-webkit-box-shadow: inset 0 1px 10px #dbdbdb;box-shadow:inset 0 1px 10px #dbdbdb;border: 1px solid #D2D2D2;}
 .search_guests{float: left; background: white;-moz-border-radius: 3px;-webkit-border-radius: 3px;border-radius: 3px; }
 .search_guests select{float: left;padding: 9px 8px 7px;background: white;-moz-border-radius: 3px;-webkit-border-radius: 3px;border-radius: 3px;

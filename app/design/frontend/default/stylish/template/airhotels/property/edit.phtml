@@ -44,6 +44,7 @@ $_product = $model->load($entity_id);
 		$privacy = $_product->getPrivacy();
 		$city = $_product->getCity();
 		$state = $_product->getState();
+		$phoneno = $_product->getPhoneno();
 	        $getcountry = $_product->getcountry(); 
 		$address = $_product->getPropertyadd();
 		$map = $_product->getMaplocation();
@@ -336,12 +337,22 @@ foreach ($privacyAttribute->getSource()->getAllOptions() as $privacy_option) {
                          <span class="info_span"> <?php echo $this->__('Let the guest knows whether the room is pet-friendly or not.') ?></span>
                         </div></div>
                         </div>
+                   <div class="field input-box input-box_inner">
+                  <label for="price" class="required lable_inner left"> <?php echo $this->__('Currency type') ?> <em>*</em></label>
+                  <div class="floatleft">
+                    <select name="currency" id="currency_type" onchange="return currencyConverter(this.value);">
+                    <option value="INR">INR</option>
+                    <option value="USD">USD</option>
+                    </select>
+                  </div>
+                    <div id="priceErr" style="color:red;margin-left: 165px"></div>
+                </div>     
                   <div class="input-box input-box_inner">
                   <label for="price" class="required lable_inner left"> <?php echo $this->__('Price/Night') ?> <em>*</em></label>
                 
                   <div class="floatleft">
-                    <input name="price" id="price" onblur="return validatePrice(this.value)" title="<?php echo $this->__('Price') ?>" value="<?php echo $price; ?>" class="input-text required-entry input-text_price " type="text"/>
-                     <span class="info_span"> <?php echo  $currencySymbol .'('. $this->__('Enter price in ') . $currencyCountry . ')'; ?></span></div>
+                    <input name="price" id="price" onblur="return validatePrice(this.value)" title="<?php echo $this->__('Price') ?>" value="<?php echo round($price*Mage::app()->getStore()->getCurrentCurrencyRate(),2); ?>" class="input-text required-entry input-text_price " type="text"/>
+                     <span class="info_span" style="display:none"> <?php echo  $currencySymbol .'('. $this->__('Enter price in ') . $currencyCountry . ')'; ?></span></div>
                     <div id="priceErr" style="color:red;margin-left: 165px"></div>
                 </div>
                   <div class="input-box input-box_inner">
@@ -375,6 +386,16 @@ foreach ($privacyAttribute->getSource()->getAllOptions() as $privacy_option) {
                 </div>
                         </div>
                         </div>
+						
+						 <div class="input-box input-box_inner">
+                  <label for="state" class="required lable_inner left"> <?php echo $this->__('Phone no') ?> <em>*</em></label>
+                     <div class="floatleft">
+                    <input onblur="return validatePhone(this.value)" name="phoneno" id="phoneno" title="<?php echo $this->__('phoneno') ?>" value="<?php echo $phoneno; ?>" class="input-text required-entry input-text_state" type="text"/>
+                     </div>
+					 <div id="phoneErr" style="color:red;margin-left: 165px"></div>
+                </div>
+						
+						
                   <div class="input-box input-box_inner">
                    <label for="map" class="required lable_inner left"> <?php echo $this->__('Map Location') ?> <em>*</em></label>
                    
@@ -482,5 +503,39 @@ function validatePrice(pValue){
           }
     //}
 
+}
+
+
+function validatePhone(pValue){
+    document.getElementById("phoneErr").innerHTML = "";
+    pValue = trim(pValue);
+    if(isNaN(pValue) ){
+        document.getElementById("phoneErr").innerHTML = "<?php echo $this->__('Please enter valid number'); ?>";
+        document.getElementById("price").value = "";
+        document.getElementById("price").focus();
+        return false;
+    }
+
+		
+        if(parseInt(pValue.length)!= 10){
+            document.getElementById("phoneErr").innerHTML = "<?php echo $this->__('Enter the phone value 10 digit') ?>";
+            document.getElementById("price").focus();
+            return false;
+          }
+
+}
+
+function currencyConverter(currency){
+	var currencyrate = '<?php echo Mage::app()->getStore()->getCurrentCurrencyRate(); ?>';
+	var price = document.getElementById("price").value;
+	if(currency == 'USD'){
+		document.getElementById("price").value = parseFloat(price/currencyrate);
+	}
+	if(currency == 'INR'){
+		document.getElementById("price").value = parseFloat(price*currencyrate);
+	}
+	//alert(currencyrate); 
+	//alert(currencyrate);
+	return false;
 }
 </script>

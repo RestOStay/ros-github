@@ -17,13 +17,19 @@ class Apptha_Airhotels_Block_Checkout_Cart_Item_Renderer extends Mage_Checkout_B
 	 */
 	public function getOptionList()
 	{
+		//echo "<pre>";print_r( Mage::getSingleton('core/session')->getData());
 		$fromdate =  Mage::getSingleton('core/session')->getFromdate($fromdate);
 		$todate = Mage::getSingleton('core/session')->getTodate($todate);
 		$accomodate = Mage::getSingleton('core/session')->getAccomodate($accomodate);
+		//echo get_class(Mage::getSingleton('core/session'));die;
+		$child = Mage::getSingleton('core/session')->getChild($child);
+		$rooms = Mage::getSingleton('core/session')->getRooms($rooms);
 		return array(
 		array('label' => $this->__(''), 'value' => $accomodate),
 		array('label' => $this->__(''), 'value' => date("d-m-Y",strtotime($todate)) ),
-		array('label' => $this->__(''), 'value' => date("d-m-Y",strtotime($fromdate)) )
+		array('label' => $this->__(''), 'value' => date("d-m-Y",strtotime($fromdate)) ),
+		array('label' => $this->__(''), 'value' => $child ),
+		array('label' => $this->__(''), 'value' => $rooms )
 		);
 	}
 }

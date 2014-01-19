@@ -21,8 +21,14 @@ class Apptha_Airhotels_Checkout_CartController extends Mage_Checkout_CartControl
 	public function addAction()
 	{
 			
-		$cart = $this->_getCart();
-		$params = $this->getRequest()->getParams();
+			$cart = $this->_getCart();
+			$params = $this->getRequest()->getParams();
+			//$rooms = str_replace('@', '/', $params['rooms']);
+			$rooms = $params['rooms'];
+			//$child = str_replace('@', '/', $params['child']);
+			$child = $params['child'];
+			Mage::getSingleton('core/session')->setRooms($rooms);
+			Mage::getSingleton('core/session')->setChild($child);
                 
 		/* start
 		 * coding used for restricting user to add more than one 1 item in the cart.
@@ -45,16 +51,23 @@ class Apptha_Airhotels_Checkout_CartController extends Mage_Checkout_CartControl
 		/* end */
 
 		try {
+			
 			/*Setting cart session values*/
 			$fromdate = date("Y-m-d", strtotime(str_replace('@', '/', $params['fromdate'])));
 			$todate = date("Y-m-d", strtotime(str_replace('@', '/', $params['todate'])));
 			$serviceFee = $params['serviceFee'];
 			$accomodate = str_replace('@', '/', $params['accomodate']);
 			$prod_id = $params['accomodate'];
+			//$rooms = str_replace('@', '/', $params['rooms']);
+			$rooms = $params['rooms'];
+			//$child = str_replace('@', '/', $params['child']);
+			$child = $params['child'];
+			
 			$subtotal_amt = $params['subtotal_amt'];
-                        Mage::getSingleton('core/session')->setFromdate($fromdate);
+            Mage::getSingleton('core/session')->setFromdate($fromdate);
 			Mage::getSingleton('core/session')->setTodate($todate);
 			Mage::getSingleton('core/session')->setAccomodate($accomodate);
+			
 			Mage::getSingleton('core/session')->setProdId($prod_id);
 			Mage::getSingleton('core/session')->setSubtotal($subtotal_amt);
 			Mage::getSingleton('core/session')->setServiceFee($serviceFee);

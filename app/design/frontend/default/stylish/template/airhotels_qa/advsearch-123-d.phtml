@@ -1,0 +1,391 @@
+<?php
+$currencySymbol = Mage::app()->getLocale()->currency(Mage::app()->getStore()->getCurrentCurrencyCode())->getSymbol();
+$priceSlider = Mage::getStoreConfig('airhotels/max_min');
+
+$minValue = "";
+$maxValue = "";
+$rangeValue = "";
+$minValue = $priceSlider['min_value'];
+ 
+if ($minValue == "" || $minValue <= 0) {
+		
+			$minValue = 0;	
+	
+}
+$maxValue = $priceSlider['max_value'];
+if ($maxValue == "" || $maxValue <= 0) {
+				$maxValue = 5000;
+		
+}
+$rangeValue = $priceSlider['range_value'];
+if ($rangeValue == "" || $rangeValue <= 0) {
+	
+    //$rangeValue = $maxValue;
+	if($_GET['pricepernightval']!=""){
+		$ar = explode("-",$_GET['pricepernightval']);
+			$rangeValue = $ar[1];
+			$minrange = $ar[0];
+	}else{
+		$rangeValue = $maxValue;
+	}
+}
+?>
+<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?libraries=places&sensor=false"></script>
+<style type="text/css">
+    .pac-container{width: 360px !important; }
+    .ui-datepicker{z-index:10 !important}
+    #pricePernight{margin-top:10px;width: 200px}
+</style>
+<script type="text/javascript">
+      
+    function initialize() {
+        var mapOptions = {
+            //center: new google.maps.LatLng(-33.8688, 151.2195),
+            zoom: 13,
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+        var map = new google.maps.Map(document.getElementById('map_canvas'),
+        mapOptions);
+
+        var input = document.getElementById('searchTextField');
+        var autocomplete = new google.maps.places.Autocomplete(input);
+
+        autocomplete.bindTo('bounds', map);
+        // Autocomplete.
+        function setupClickListener(id, types) {
+            var radioButton = document.getElementById(id);
+            google.maps.event.addDomListener(radioButton, 'click', function() {
+                autocomplete.setTypes(types);
+            });
+        }
+
+    }
+    google.maps.event.addDomListener(window, 'load', initialize);
+    $jQ(document).ready(function(){
+        $jQ("#number_of_guests").val("<?php echo $this->getRequest()->getParam('number_of_guests') ?>");
+        var dates = $jQ("#fromcheckin,#tocheckin").datepicker({
+            changeMonth: true,
+            minDate: '0',
+            numberOfMonths: 1,
+            onSelect: function( selectedDate ) {
+                var option = this.id == "fromcheckin" ? "minDate" : "maxDate",
+                instance = $jQ( this ).data( "datepicker" ),
+                date = $jQ.datepicker.parseDate(
+                instance.settings.dateFormat ||
+                    $jQ.datepicker._defaults.dateFormat,
+                selectedDate, instance.settings );
+                dates.not( this ).datepicker( "option", option, date );
+                $jQ("#fromcheckin" ).datepicker("option","maxDate","");
+
+                if(this.id == "fromcheckin"){
+                    instance = $jQ( this ).data( "datepicker" )
+                    var depart = $jQ.datepicker.parseDate($jQ.datepicker._defaults.dateFormat, selectedDate);
+                    depart.setDate(depart.getDate() + 1);
+                    $jQ("#tocheckin" ).datepicker(  "option", "minDate", depart );
+
+                }
+
+            }
+        });
+        //        $jQ("#pricePernight").slider({
+        //                        value:0,
+        //			min: 0,
+        //                        max: <?php echo round(Mage::helper('directory')->currencyConvert("400", Mage::app()->getStore()->getBaseCurrencyCode(), Mage::app()->getStore()->getCurrentCurrencyCode()), 0); ?>,
+        //			step: <?php echo round(Mage::helper('directory')->currencyConvert("50", Mage::app()->getStore()->getBaseCurrencyCode(), Mage::app()->getStore()->getCurrentCurrencyCode()), 0); ?>,
+        //                        values: [ 0, <?php echo round(Mage::helper('directory')->currencyConvert("400", Mage::app()->getStore()->getBaseCurrencyCode(), Mage::app()->getStore()->getCurrentCurrencyCode()), 0); ?> ],
+        //                        slide: function( event, ui ) {
+        //                                $jQ( "#amount" ).val( "<?php echo $currencySymbol ?>" + ui.values[ 0 ] + " - <?php echo $currencySymbol; ?>" + ui.values[ 1 ] );
+        //                                $jQ( "#pricepernightval" ).val(  ui.values[ 0 ] + "-" + ui.values[ 1 ] );
+        //                                ajaxSearchResult();
+        //			}
+        //            });
+        $jQ("#pricePernight").slider({
+            value:0,
+            min:<?php echo $minValue; ?>,
+            max: <?php echo round(Mage::helper('directory')->currencyConvert($maxValue, Mage::app()->getStore()->getBaseCurrencyCode(), Mage::app()->getStore()->getCurrentCurrencyCode()), 0); ?>,
+            step: <?php echo round(Mage::helper('directory')->currencyConvert("50", Mage::app()->getStore()->getBaseCurrencyCode(), Mage::app()->getStore()->getCurrentCurrencyCode()), 0); ?>,
+            values: [<?php if($minrange!=""){echo $minrange;}else{ echo 0;}?>, <?php echo round(Mage::helper('directory')->currencyConvert($rangeValue, Mage::app()->getStore()->getBaseCurrencyCode(), Mage::app()->getStore()->getCurrentCurrencyCode()), 0); ?> ],
+            slide: function( event, ui ) {
+                if(parseInt(ui.values[0]) < parseInt(ui.values[1]) ){
+                                 
+                    $jQ( "#amount" ).val( "<?php echo $currencySymbol ?>" + ui.values[ 0 ] + " - <?php echo $currencySymbol; ?>" + ui.values[ 1 ] );
+                    $jQ( "#pricepernightval" ).val(  ui.values[ 0 ] + "-" + ui.values[ 1 ] );
+                    ajaxSearchResult();
+                }
+                else{
+                    return false;
+                }
+            }
+             			
+        });
+        $jQ( "#amount" ).val( "<?php echo $currencySymbol ?>" + $jQ( "#pricePernight" ).slider( "values", 0 ) +" - <?php echo $currencySymbol ?>" + $jQ( "#pricePernight" ).slider( "values", 1) );
+        $jQ( "#pricepernightval" ).val(  $jQ( "#pricePernight" ).slider( "values", 0 ) +"-" + $jQ( "#pricePernight" ).slider( "values", 1) );
+
+        var textBack = $jQ("#expandAmenity").html();
+        var texthide = $jQ("#amenityHide").val();
+
+        $jQ("#expandAmenity").toggle(
+        function show(){$jQ("#searchAmenity").css("height","auto");$jQ("#expandAmenity").html(texthide)},
+        function hide(){$jQ("#searchAmenity").css("height","90px");$jQ("#expandAmenity").html(textBack)}
+    );
+                 
+        $jQ("#expandFilter").toggle(function show(){
+            $jQ(".hideelements").hide();
+            $jQ("#expandFilter").html("<?php echo $this->__('Show filters') ?>")
+        },
+        function hide(){
+            $jQ(".hideelements").show();
+            $jQ("#expandFilter").html("<?php echo $this->__('Hide filters') ?>")
+        }
+    )
+
+        $jQ(":checkbox").click(function(){
+            getCheckboxVal();
+            ajaxSearchResult();
+        });
+
+    });
+    var roomtypeVal ;
+    var amenityVal ;
+      
+    function getCheckboxVal(){
+        roomtypeVal = ""
+        $jQ("[name='roomtype']:checked").each(function(){
+            roomtypeVal += $jQ(this).val() +"," ;
+        })
+        if(roomtypeVal.length)
+            roomtypeVal = roomtypeVal.substr(0,roomtypeVal.length-1);
+
+        amenityVal = "";
+        $jQ("[name='amenity']:checked").each(function(){
+            amenityVal += $jQ(this).val() +"," ;
+        })
+        if(amenityVal.length)
+            amenityVal = amenityVal.substr(0,amenityVal.length-1);
+    }
+    function ajaxSearchResult(pageno){
+        getCheckboxVal();
+        if(typeof pageno =="undefined"){
+            var pageno = 1;
+        }
+          
+        $jQ("#searchinnerpage").html("<img style='margin-left:40%' src='<?php echo Mage::getBaseUrl('skin') . 'frontend/default/stylish/images/advsearch.gif' ?>' />");
+        var searchAddress = $jQ("#searchTextField").val();
+        var checkin = $jQ("#fromcheckin").val();
+        var checkout = $jQ("#tocheckin").val();
+        var searchguest = $jQ("#number_of_guests").val();
+		
+        var amount = $jQ("#pricepernightval").val();
+		
+        var upperLimitPrice = $jQ("#upperLimitPrice").val();
+
+        var data = new Array(searchAddress,checkin,checkout,searchguest,amount);
+
+        $jQ.ajax({
+            data : data,
+            async:true,
+            type: "GET",
+            data: {searchAddress :searchAddress,checkin:checkin,checkout:checkout,searchguest:searchguest,amount:amount,roomtypeval:roomtypeVal,amenityval:amenityVal,pageno:pageno,upperLimitPrice:upperLimitPrice},
+            url: "<?php echo Mage::getBaseUrl() . 'airhotels/property/searchresult' ?>",
+            success: function(data){
+                $jQ("#searchinnerpage").html(data);
+            }
+        });
+    }
+
+</script>
+
+<?php
+$accommodatesAttr = Mage::getModel('eav/config')->getAttribute('catalog_product', Mage::helper('airhotels')->getaccomodatesType());
+$acc_default = $accommodatesAttr->getDefaultValue();
+$select = "";
+$propertytypeId = Mage::helper('airhotels')->getpropertytype();
+$propertytypeAttribute = Mage::getModel('eav/config')->getAttribute('catalog_product', $propertytypeId);
+foreach ($propertytypeAttribute->getSource()->getAllOptions() as $option) {
+    $value = $option['value'];
+
+    if ($value != '') {
+        $PropertyType[$value] = $option['label'];
+		if($_GET['roomtype']!=''){
+			if($_GET['roomtype']==$value){
+				$sel="checked='checked'";
+				$select .= "<p><input type='checkbox' ".$sel." name='roomtype' value='" . $option['value'] . "'> " . $option['label'] . "</p>";
+				
+			}else{
+				$select .= "<p><input type='checkbox' name='roomtype' value='" . $option['value'] . "'> " . $option['label'] . "</p>";
+			}
+		}else{
+        $select .= "<p><input type='checkbox' ".$sel." name='roomtype' value='" . $option['value'] . "'> " . $option['label'] . "</p>";
+		}
+    }
+}
+
+$amenityId = Mage::helper('airhotels')->getamenity();
+$amenityAttribute = Mage::getModel('eav/config')->getAttribute('catalog_product', $amenityId);
+?>
+<input type="hidden" id="upperLimitPrice" value="<?php echo round(Mage::helper('directory')->currencyConvert($maxValue, Mage::app()->getStore()->getBaseCurrencyCode(), Mage::app()->getStore()->getCurrentCurrencyCode()), 0); ?>" />
+<h2 class="search-title"><?php echo $this->__('Advanced Search'); ?></h2>
+<div class="left searchmainpage_1">
+    <div class="gradient-grey left">
+        <input class="left searchmainpage" style="margin-right: 50px;border: 1px solid #CCC;" value="<?php echo $this->getRequest()->getParam('searchTextField'); ?>"    id="searchTextField" name="searchTextField" type="text" class="searchmainpage"   placeholder="<?php echo $this->__('e.g. Berlin, Los Angeles'); ?>" onfocus="if (this.placeholder == '<?php echo $this->__('e.g. Berlin, Los Angeles'); ?>') {this.placeholder = '';this.style.color ='#8AA443';}" onblur="if (this.placeholder == '') {this.style.color ='#8AA443';this.placeholder = '<?php echo $this->__('e.g. Berlin, Los Angeles'); ?>';}">
+        <div class="check_box">
+            <div class="advance_srch_input" style="padding-top: 0px">
+                <p><?php echo $this->__('Check in'); ?></p>
+                <p><input type="text" placeholder="<?php echo $this->__('mm/dd/yyyy');?>" autocomplete="off" value="<?php echo str_replace("-","/",$this->getRequest()->getParam('from')); ?>"  id="fromcheckin" name="fromcheckin"  /></p>
+            </div>
+
+            <div class="advance_srch_input" style="padding-top: 0px">
+                <p><?php echo $this->__('Check out'); ?></p>
+                <p><input type="text" placeholder="<?php echo $this->__('mm/dd/yyyy');?>" autocomplete="off" value="<?php echo str_replace("-","/",$this->getRequest()->getParam('to')); ?>" id="tocheckin" name="to" /></p>
+            </div>
+
+            <div class="advance_srch_input" style="padding-top: 0px">
+                <p><?php echo $this->__('Guests'); ?></p>
+                <select id="number_of_guests" name="number_of_guests">
+                    <option value="0" selected="selected"><?php echo $this->__('All') ?></option>
+                    <?php for ($i = 1; $i <= $acc_default; $i++) { ?>
+                                                            <option value="<?php echo $i; ?>"><?php echo $i; ?></option>
+                   <?php } ?>
+
+                </select>
+            </div>
+            
+            
+             <input type="button" onclick="ajaxSearchResult()" class="button-glossy blue"  value="<?php echo $this->__('Search'); ?>" onclick="return validateSearch()">
+<!--        <input type="button" onclick="ajaxSearchResult()" class="button-glossy " style="margin: 5px 0;height: 33px;width: 165px;float: right;" value="<?php echo $this->__('Search'); ?>" onclick="return validateSearch()">-->
+            
+            
+            
+            </div>
+            
+            
+            
+       
+
+
+    </div>
+     <style type="text/css">
+      #google_map {width: 350px; height: 300px;margin-top:50px;margin-left:auto;margin-right:auto; border:1px solid #ccc;}
+    </style>
+    <script type="text/javascript"
+     src="http://maps.googleapis.com/maps/api/js?sensor=true&libraries=places">
+    </script>
+    <script type="text/javascript">
+      var mapCenter = new google.maps.LatLng(27.630007,75.091553); //Google map Coordinates
+      var map
+	  var propertyName = "WELCOME TO SATKAR HOTEL";
+      function initialize() //function initializes Google map
+      {
+		document.getElementById("google_map").style.display="block";
+        var googleMapOptions =
+        {
+            center: mapCenter, // map center
+            zoom: 15, //zoom level, 0 = earth view to higher value
+            panControl: true, //enable pan Control
+            zoomControl: true, //enable zoom control
+            zoomControlOptions: {
+                style: google.maps.ZoomControlStyle.SMALL //zoom control size
+             },
+            scaleControl: true, // enable scale control
+            mapTypeId: google.maps.MapTypeId.ROADMAP // google map type
+        };
+        map = new google.maps.Map(document.getElementById("google_map"), googleMapOptions);
+      }
+
+        function addMyMarker() { //function that will add markers on button click
+            var marker = new google.maps.Marker({
+                position:mapCenter,
+                map: map,
+                  draggable:true,
+                  animation: google.maps.Animation.DROP,
+                title:"This a new marker!",
+              icon: "http://maps.google.com/mapfiles/ms/micons/blue.png"
+            });
+        }
+    </script>
+    <div class="advance_srch">
+        <div class="left" style="width:100%;font-weight:bold" >
+            <div class="left"><?php echo $this->__('Filter') ?></div>
+            <div class="left" id="expandFilter"><?php echo $this->__('Hide filters') ?></div>
+           	
+            <div class="list-map-area">
+             <div style="float:left;padding:2px;"><button onclick="ajaxSearchResult()">Show list</button></div>
+            <div style="float:left;padding:2px;"><button onclick="initialize()"><a href="#maps">Map View</a></button></div>
+            </div>
+            
+            <div>
+            
+            <div id="google_map" style="display:none;"></div>
+            </div>
+        </div>
+       
+        <div class="left hideelements" style="width:100%;font-weight:bold">
+            <strong style="font-size:16px;">
+<?php echo $this->__('Price per night') ?>
+            </strong>
+            <div>
+                <div id="pricePernight"  ></div>
+                <span style="width: auto;">
+                	
+                    <input type="hidden" value="" id="pricepernightval" />
+                    <input type="text" id="amount" style="color:#f6931f; font-weight:bold;border:0;width: 100px;margin-right: 105px;background-color: inherit" readonly  />
+                </span>
+            </div>
+        </div>
+        <div class="left hideelements" style="width:100%;font-weight:bold">
+            <strong style="font-size:16px;">  <?php echo $this->__('Property type') ?></strong>
+<?php echo $select; ?>
+        </div>
+        <div  class="left hideelements amenities-part" style="width:100%;font-weight:bold;">
+            <strong style="font-size:16px;">
+<?php
+echo $this->__('Amenities');
+$totalAmenity = count($amenityAttribute->getSource()->getAllOptions(true, true));
+?>
+            </strong>
+            <?php if ($totalAmenity > 6): ?>
+                <div id="expandAmenity"  style="cursor: pointer" ><?php echo $this->__('More') . ".." ?></div>
+            <?php endif; ?>
+
+            <ul id="searchAmenity" style="overflow: hidden;" >
+                <?php
+                $x = 0;
+                foreach ($amenityAttribute->getSource()->getAllOptions() as $amenity) {
+                    $value = $amenity['value'];
+                    if ($value != '') {
+                        $PropertyType[$value] = $amenity['label'];
+						if($_GET['amenity']!=""){
+						if($_GET['amenity']==$value){
+					?>
+                    <li><input  type="checkbox" checked="checked" name="amenity"  value="<?php echo $amenity['value']; ?>" /> <?php echo $amenity['label']; ?></li>
+                    <?php		
+						}else{
+					?>
+                    <li><input  type="checkbox" name="amenity"  value="<?php echo $amenity['value']; ?>" /> <?php echo $amenity['label']; ?></li>
+                    <?php	
+						}
+					}else{
+                        ?>
+                        <li><input  type="checkbox" name="amenity"  value="<?php echo $amenity['value']; ?>" /> <?php echo $amenity['label']; ?></li>
+                        <?php
+					}
+                    }
+                }
+                ?>
+            </ul>
+            <input type="hidden" value="<?php echo $this->__('Hide'); ?>" id="amenityHide" />
+
+        </div>
+    </div>
+</div>
+<div id="searchinnerpage" style="margin-top: 10px;min-height:150px">
+
+</div>
+<div id="map_canvas"></div>
+
+<script type="text/javascript">
+    $jQ(document).ready(function(){
+        ajaxSearchResult();
+    });
+</script>
+

@@ -10,7 +10,7 @@
 class Apptha_Airhotels_Model_Property extends Mage_Core_Model_Abstract {
     /* Get Property Collection */
 
-    public function getpropertycollection() {
+    public function getpropertycollection() { 
         $PropertyCollection = Mage::getModel('catalog/product')->getCollection()
                 ->addAttributeToFilter('type_id', array('eq' => 'property'))
                 ->addAttributeToSelect('image')

@@ -34,6 +34,18 @@ class Apptha_Airhotels_PropertyController extends Mage_Core_Controller_Front_Act
         $sku = rand(1, $random);
         $websiteId = Mage::app()->getWebsite()->getId(); //Website Id
         $store_id = Mage::app()->getStore()->getId(); //store Id
+		
+		// my currency conversion code here //
+		if($post['currency'] == 'INR'){
+			$currencyrate = Mage::app()->getStore()->getCurrentCurrencyRate(); 
+			$price = round(($post['price']/$currencyrate),2);
+			$post['price'] = $price;
+		}
+		/*echo '<pre>';
+		print_r($post);
+		
+		die;*/
+		
         if ($post) {
 
             $product = Mage::getModel('catalog/product');
@@ -55,6 +67,7 @@ class Apptha_Airhotels_PropertyController extends Mage_Core_Controller_Front_Act
                     ->setState($post['state'])//property state name
                     ->setCity($post['city'])// property city name
                     ->setCountry($post['propcountry'])//country
+					->setPhoneno($post['phoneno'])//country
                     ->setCancelpolicy($post['cancelpolicy'])//regarding to cancelation policy
                     ->setPets($post['pets'])//regaring to pets allowed or not allowed
                     ->setBedtype($post['bedtype'])//bedtype
@@ -179,12 +192,25 @@ class Apptha_Airhotels_PropertyController extends Mage_Core_Controller_Front_Act
      *
      * @return My listing page
      */
-    public function updateAction() {
+    public function updateAction() { 
         $post = $this->getRequest()->getPost();
+		//echo "<pre>";print_r($post);die;
         $this->loadLayout();
         $this->_initLayoutMessages('catalog/session');
         $this->getLayout()->getBlock('head')->setTitle($this->__('Airhotels'));
         $this->renderLayout();
+		
+		// my currency conversion code here //
+		if($post['currency'] == 'INR'){
+			$currencyrate = Mage::app()->getStore()->getCurrentCurrencyRate(); 
+			$price = round(($post['price']/$currencyrate),2);
+			$post['price'] = $price;
+		}
+		/*echo '<pre>';
+		print_r($post);
+		
+		die;*/
+		
         $result = Mage::getModel('airhotels/airhotels')->updateproperty($post);
         if ($result == 1) {
             Mage::getSingleton('core/session')->addSuccess($this->__('Your place updated successfully'));
@@ -251,12 +277,11 @@ class Apptha_Airhotels_PropertyController extends Mage_Core_Controller_Front_Act
     }
 
     public function calenderAction() {
+	
         $productId = $_REQUEST["productid"]; //To
         $dateSplit = explode("__", $_REQUEST["date"]);
         $blockedArray = Mage::getModel('airhotels/airhotels')->getBlockdate($productId, $_REQUEST["date"]);
-
-
-        /**
+		/**
          * Assign availiable, blocked and not availiable date
          */
         $avail = $this->getDaysAction(count($blockedArray[0]),$blockedArray[0]);
@@ -264,6 +289,9 @@ class Apptha_Airhotels_PropertyController extends Mage_Core_Controller_Front_Act
         // start new concept for booked date
         $blockedArrayCust = Mage::getModel('airhotels/airhotels')->getBlockdateBook($productId,$_GET["date"]);
         $blocked=array_merge($blockedArr, $blockedArrayCust);
+		/*echo '<pre>';
+		echo $blocked;
+		exit;*/
         // end new concept for booked date
 
         $not_avail = $this->getDaysAction(count($blockedArray[2]),$blockedArray[2]);
@@ -769,12 +797,17 @@ class Apptha_Airhotels_PropertyController extends Mage_Core_Controller_Front_Act
            Mage::app()->getFrontController()->getResponse()->setRedirect($url);
        }
 
-       public function advsearchAction() {
+       public function advsearchAction() { 
+           $this->loadLayout();
+           $this->renderLayout();
+       }
+	   
+	   public function ajaxmapAction() {
            $this->loadLayout();
            $this->renderLayout();
        }
 
-       public function searchresultAction() {
+       public function searchresultAction() { 
            $this->loadLayout();
            $this->renderLayout();
        }
@@ -837,7 +870,7 @@ class Apptha_Airhotels_PropertyController extends Mage_Core_Controller_Front_Act
                 $insert = "($productId,$bookAvail,$month,$year,'$fDate',$pricePer,now())";
                 $write->query("INSERT INTO $blockCalendartable (product_id,book_avail,month,year,blockfrom,price,created) VALUES $insert");
             }
-            $write->query("Delete from $blockCalendartable WHERE product_id = $productId AND month = '" . $month . "' AND year = '" . $year . "' AND blockfrom = ''");
+            //$write->query("Delete from $blockCalendartable WHERE product_id = $productId AND month = '" . $month . "' AND year = '" . $year . "' AND blockfrom = ''");
         //end formate for price
         
         $this->calendarviewAction();
@@ -913,6 +946,13 @@ class Apptha_Airhotels_PropertyController extends Mage_Core_Controller_Front_Act
     
             return $avail;
  }
+ 
+ public function mapshowAction()
+	{
+	
+	$this->loadLayout();
+           $this->renderLayout();
+	}
 
  }
    

@@ -43,6 +43,7 @@ class Apptha_Airhotels_Model_Airhotels extends Mage_Core_Model_Abstract {
                     ->setCity($post['city'])
                     ->setState($post['state'])
                     ->setCountry($post['propcountry'])
+					->setPhoneno($post['phoneno'])
                     ->setMaplocation($post['map'])
                     ->setMetaTitle($post['meta_title'])//Meta title
                     ->setMetaKeyword($post['meta_keyword'])//Meta keywords
@@ -273,9 +274,9 @@ class Apptha_Airhotels_Model_Airhotels extends Mage_Core_Model_Abstract {
 
             echo "<p class='subtotal'>Subtotal
                     </p>
-                    <h2 class='bigTotal'>" . $currencySymbol . $subtotal . "</h2> <input type='hidden' id='subtotal_days' value = '$days'> <input type='hidden' id='subtotal_amt' value = '$subtotal'>";
-            echo '<p class="subtotal" style="color:#2C7ED1;font-size:10px;padding-bottom:10px;">(* Exclude processing fee ' . $currencySymbol . $serviceFee . ")
-                        <input type='hidden' id='serviceFee' name='serviceFee' value='" . $serviceFee . "' />
+                    <h2 class='bigTotal'>" . $currencySymbol . round($subtotal) . "</h2> <input type='hidden' id='subtotal_days' value = '$days'> <input type='hidden' id='subtotal_amt' value = '$subtotal'>";
+            echo '<p class="subtotal" style="color:#2C7ED1;font-size:10px;padding-bottom:10px;">(* Exclude processing fee ' . $currencySymbol . round($serviceFee). ")
+                        <input type='hidden' id='serviceFee' name='serviceFee' value='" . round($serviceFee). "' />
                         </p>
 
                     <div class='clear'></div>
@@ -627,20 +628,65 @@ class Apptha_Airhotels_Model_Airhotels extends Mage_Core_Model_Abstract {
         return $result[0];
     }
 
+	function sortReview($productid){
+		$productId = $productid;
+		$reviews = Mage::getModel('review/review')
+		->getResourceCollection()
+		->addStoreFilter(Mage::app()->getStore()->getId()) 
+		->addEntityFilter('product', $productId)
+		->addStatusFilter(Mage_Review_Model_Review::STATUS_APPROVED)
+		->setDateOrder()
+		->addRateVotes();
+		/**
+		* Getting average of ratings/reviews
+		*/
+		$avg = 0;
+		$ratings = array();
+		echo count($reviews)."_".$productid."<br>";
+		$rearray[]= count($reviews);
+		if (count($reviews) > 0) { 
+		foreach ($reviews->getItems() as $review) {
+		foreach( $review->getRatingVotes() as $vote ) {
+		$ratings[] = $vote->getPercent();
+		}
+		}
+		echo $avg = array_sum($ratings)/count($ratings);
+		}
+		return $rearray;
+	}
+
     /**
      * function to search property
      */
+	 
+	
+	 
     public function advanceSearch($data) {
-
+		
         $state = "";
         $city = "";
         $country = "";
         $address = explode(",", $data["address"]);
+		
         $amount = explode("-", $data["amount"]);
-        $upperLimit = $data["upperLimitPrice"];
-        $minval = $amount[0];
+		$minval = $amount[0];
         $maxval = $amount[1];
-
+		
+        $upperLimit = $data["upperLimitPrice"];
+		
+        
+		$order = $data['order'];
+		if($order==""){
+			$order=='asc';
+		}
+		$review = $data['review'];
+		//if($review!=""){
+			//$reviews = Mage::getModel('review/review')->getResourceCollection();
+                                                
+				//$reviews = $reviews->getData();
+				//echo "<pre>";print_r($reviews);die;
+		//}
+		
         if ($data["checkin"] != "") {
             $fromdate = date("Y-m-d", strtotime($data["checkin"]));
         }
@@ -655,20 +701,18 @@ class Apptha_Airhotels_Model_Airhotels extends Mage_Core_Model_Abstract {
         $copycollection = Mage::getModel('catalog/product')->getCollection()->addAttributeToSelect('*')
                 ->addFieldToFilter(array(array('attribute' => 'status', 'eq' => '1')));
 
-        $collection->addFieldToFilter('price', array('gteq' => $minval));
+    
 
-        $collection->setOrder('price', 'asc');
+        
+		
+		
+		/*if($review=="review"){
+			foreach($collection as $collectionval){
+				//echo "<pre>";print_r($collectionval->getData());die;
+				$a = $this->sortReview($collectionval->getId());
+			} echo "<pre>";print_r($a); die;
+		}*/
 
-//        if ($maxval < $upperLimit) {
-            $collection->addFieldToFilter('price', array('lteq' => $maxval));
-        //}
-
-        $copycollection->addFieldToFilter('price', array('gteq' => $minval));
-
-
-//        if ($maxval < $upperLimit) {
-            $copycollection->addFieldToFilter('price', array('lteq' => $maxval));
-       // }
         if (count($address) == 3) {
             $collection->addFieldToFilter(array(array('attribute' => 'city', 'in' => $address),
                 array('attribute' => 'state', 'in' => $address)
@@ -703,10 +747,11 @@ class Apptha_Airhotels_Model_Airhotels extends Mage_Core_Model_Abstract {
         }
         if (trim($data["roomtypeval"]) != "") {
             $data["roomtypeval"] = explode(",", $data["roomtypeval"]);
-            if (count($data["roomtypeval"]) > 0) {
+            if (count($data["roomtypeval"]) > 0) {  
                 $collection->addFieldToFilter('propertytype', array('in' => array($data["roomtypeval"])));
                 $copycollection->addFieldToFilter('propertytype', array('in' => array($data["roomtypeval"])));
             }
+			
         }
 /*if (trim($data["amenityVal"]) != "") {
             if (count($data["amenityVal"]) > 0) {
@@ -762,8 +807,26 @@ class Apptha_Airhotels_Model_Airhotels extends Mage_Core_Model_Abstract {
         if (count($productFilter))
             $collection->addFieldToFilter('entity_id', array('nin' => $productFilter));
 
+		$baseCurrencyCode = Mage::app()->getStore()->getBaseCurrencyCode();
+  		//change currency
+  		$currentCurrencyCode = Mage::app()->getStore()->getCurrentCurrencyCode();
+		if($currentCurrencyCode == 'INR'){
+			$priceOne = Mage::app()->getStore()->getCurrentCurrencyRate();
+			$minval = round($minval/$priceOne);
+			$maxval = round($maxval/$priceOne);
+			//echo $minval = Mage::helper('directory')->currencyConvert($minval, 'INR', 'USD');
+			//$minval = Mage::helper('directory')->currencyConvert($minval, 'INR', 'USD');
+// if you want it rounded:
+			//echo $converted_final_price = Mage::app()->getStore()->roundPrice($minval);die;
+			 //echo $minval = Mage::helper('directory')->currencyConvert($minval, $currentCurrencyCode, "USD");die;
+		}
+		
+		$collection->addFieldToFilter('price', array('gteq' => $minval));
+		$collection->addFieldToFilter('price', array('lteq' => $maxval));
+		$collection->setOrder('price', $order);
         $collection->setPage($data["pageno"], 10);
-
+		//echo "<pre>";print_r($collection->getData());die;
+		//echo "<pre>";print_r($collection);die;
         return $collection;
     }
 
@@ -907,8 +970,8 @@ class Apptha_Airhotels_Model_Airhotels extends Mage_Core_Model_Abstract {
         }
         $date_range = $read->select()
                 ->from(array('ct' => $blockCalendartable), array('ct.book_avail', 'ct.month', 'ct.blockfrom', 'ct.price'))
-                ->where('ct.month in (?)', $x)
-                ->where('ct.year in (?)', $year)
+                ->where('ct.month in (?)', $x[0])
+                ->where('ct.year in (?)', $year[0])
                 ->where('ct.product_id =?', $productid);
         $range = $read->fetchAll($date_range);
         $count = count($range);

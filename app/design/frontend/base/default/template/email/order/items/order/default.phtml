@@ -25,9 +25,15 @@
  */
 ?>
 <?php $_item = $this->getItem() ?>
+<?php $DatesArr = $this->getmyproductOptions($_item);
+?>
 <?php $_order = $this->getItem()->getOrder() ?>
+ <?php
+    $_product = Mage::getSingleton('catalog/product')->load($_item->getProductId());
+    $myAttribute = $_product->getPropertyadd();
+?> 
 <tr>
-    <td align="left" valign="top" style="font-size:11px; padding:3px 9px; border-bottom:1px dotted #CCCCCC;">
+    <?php /*?> <td align="left" valign="top" style="font-size:11px; padding:3px 9px; border-bottom:1px dotted #CCCCCC;">
         <strong style="font-size:11px;"><?php echo $this->htmlEscape($_item->getName()) ?></strong>
         <?php if ($this->getItemOptions()): ?>
         <dl style="margin:0; padding:0;">
@@ -45,8 +51,8 @@
         <?php endif; ?>
         <?php echo $this->escapeHtml($_item->getDescription()) ?>
     </td>
-    <td align="left" valign="top" style="font-size:11px; padding:3px 9px; border-bottom:1px dotted #CCCCCC;"><?php echo $this->htmlEscape($this->getSku($_item)) ?></td>
-    <td align="center" valign="top" style="font-size:11px; padding:3px 9px; border-bottom:1px dotted #CCCCCC;"><?php echo $_item->getQtyOrdered()*1 ?></td>
+    <td align="left" valign="top" style="font-size:11px; padding:3px 9px; border-bottom:1px dotted #CCCCCC;"><?php //echo $this->htmlEscape($this->getSku($_item)) ?></td>
+    <td align="center" valign="top" style="font-size:11px; padding:3px 9px; border-bottom:1px dotted #CCCCCC;"><?php //echo $_item->getQtyOrdered()*1 ?></td>
     <td align="right" valign="top" style="font-size:11px; padding:3px 9px; border-bottom:1px dotted #CCCCCC;">
         <?php if ($this->helper('tax')->displaySalesPriceExclTax($_order->getStore()) || $this->helper('tax')->displaySalesBothPrices($_order->getStore())): ?>
             <?php if ($this->helper('tax')->displaySalesBothPrices($_order->getStore())): ?>
@@ -123,6 +129,17 @@
             <?php endif; ?>
         <?php endif; ?>
     </td>
+	<?php */  ?>
+	<td align="center"><?php echo $this->htmlEscape($_item->getName()) ?><br /> <?php if($myAttribute != '') { ?>
+Address: <?php echo $myAttribute; ?>
+<?php } ?> </strong></td>
+	<td align="center"><?php echo $DatesArr[0];?></td>
+	<td align="center"><?php echo $DatesArr[1];?></td>
+	<td align="center"><?php echo $DatesArr[2];?></td>
+	<td align="center"><?php echo $DatesArr[3];?></td>
+    <td align="center"><?php echo $DatesArr[4];?> Adult, &nbsp;<?php echo $DatesArr[5];?> Children </td>
+	<td align="center"><?php echo $this->htmlEscape($_item->getPrice()) ?></strong></td>
+	
 </tr>
 <?php if ($_item->getGiftMessageId() && $_giftMessage = $this->helper('giftmessage/message')->getGiftMessage($_item->getGiftMessageId())): ?>
 <tr>

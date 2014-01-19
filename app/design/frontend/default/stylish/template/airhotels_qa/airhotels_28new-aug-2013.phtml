@@ -1,0 +1,492 @@
+<link href='http://fonts.googleapis.com/css?family=Belgrano' rel='stylesheet' type='text/css'/>
+<link href='http://fonts.googleapis.com/css?family=Droid+Sans:400,700' rel='stylesheet' type='text/css'>
+  <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?libraries=places&sensor=false"></script> 
+ <style type="text/css">
+    .pac-container{width: 360px !important; }
+    .ui-datepicker{z-index:10 !important}
+    #pricePernight{margin-top:10px;width: 200px}
+</style> 
+
+
+
+<script type="text/javascript">
+    /*function initialize() {
+        var mapOptions = {
+            //center: new google.maps.LatLng(-33.8688, 151.2195),
+            zoom: 13,
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+        var map = new google.maps.Map(document.getElementById('map_canvas'),
+        mapOptions);
+
+        var input = document.getElementById('searchTextField');
+
+        var autocomplete = new google.maps.places.Autocomplete(input);
+
+        autocomplete.bindTo('bounds', map);
+        // Autocomplete.
+        function setupClickListener(id, types) {
+            var radioButton = document.getElementById(id);
+            google.maps.event.addDomListener(radioButton, 'click', function() {
+                autocomplete.setTypes(types);
+            });
+        }
+
+    }*/
+    //google.maps.event.addDomListener(window, 'load', initialize);
+    var $s = jQuery.noConflict();
+    function validateSearch(){
+        jQuery("#searchResult").html("");
+        jQuery("#searchTextField").css("border-color","#D2D2D2");
+        window.location.href = "<?php echo Mage::getBaseUrl() . 'airhotels/property/advsearch/' ?>";
+        jQuery("#searchResult").html("Please set location");
+        return true;
+    }
+	
+	function initialize() {
+        var mapOptions = {
+            //center: new google.maps.LatLng(-33.8688, 151.2195),
+            zoom: 13,
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+        var map = new google.maps.Map(document.getElementById('map_canvas'),
+        mapOptions);
+
+        var input = document.getElementById('searchTextField');
+        var autocomplete = new google.maps.places.Autocomplete(input);
+
+        autocomplete.bindTo('bounds', map);
+        // Autocomplete.
+        function setupClickListener(id, types) {
+            var radioButton = document.getElementById(id);
+            google.maps.event.addDomListener(radioButton, 'click', function() {
+                autocomplete.setTypes(types);
+            });
+        }
+
+    }
+	
+	google.maps.event.addDomListener(window, 'load', initialize);
+
+    var $jQ = jQuery.noConflict();
+    $jQ(document).ready(function(){
+        $jQ("#number_of_guests").val("<?php echo $this->getRequest()->getParam('number_of_guests') ?>");
+        var dates = $jQ("#fromcheckin,#tocheckin").datepicker({
+            changeMonth: true,
+            minDate: '0',
+            numberOfMonths: 1,
+            onSelect: function( selectedDate ) {
+                var option = this.id == "fromcheckin" ? "minDate" : "maxDate",
+                instance = $jQ( this ).data( "datepicker" ),
+                date = $jQ.datepicker.parseDate(
+                instance.settings.dateFormat ||
+                    $jQ.datepicker._defaults.dateFormat,
+                selectedDate, instance.settings );
+                dates.not( this ).datepicker( "option", option, date );
+                $jQ("#fromcheckin" ).datepicker("option","maxDate","");
+
+                if(this.id == "fromcheckin"){
+                    instance = $jQ( this ).data( "datepicker" )
+                    var depart = $jQ.datepicker.parseDate($jQ.datepicker._defaults.dateFormat, selectedDate);
+                    depart.setDate(depart.getDate() + 1);
+                    $jQ("#tocheckin" ).datepicker(  "option", "minDate", depart );
+
+                }
+
+            }
+        });
+        
+
+    });
+    //google.maps.event.addDomListener(window, 'load', initialize);
+
+       /* var jQ = jQuery.noConflict();
+            jQ(function() {
+                    //jQ('input[placeholder]').placeholder();
+
+
+                    var dates = jQ( "#checkinDate, #checkinTo" ).datepicker({
+                            //defaultDate: "+1w",
+                            changeMonth: true,
+                            numberOfMonths: 1,
+                            minDate: '0',
+                            onSelect: function( selectedDate ) {
+                                    var option = this.id == "checkinDate" ? "minDate" : "maxDate",
+                                            instance = jQ( this ).data( "datepicker" ),
+                                            date = jQ.datepicker.parseDate(
+                                                    instance.settings.dateFormat ||
+                                                    jQ.datepicker._defaults.dateFormat,
+                                                    selectedDate, instance.settings );
+                                    dates.not( this ).datepicker( "option", option, date );
+                                    jQ("#checkinDate" ).datepicker("option","maxDate","");
+
+                                    if(this.id == "checkinDate"){
+                                            instance = jQ( this ).data( "datepicker" )
+                                            var depart = jQ.datepicker.parseDate(jQ.datepicker._defaults.dateFormat, selectedDate);
+                                            depart.setDate(depart.getDate() + 1);
+                                            jQ("#checkinTo" ).datepicker(  "option", "minDate", depart );
+                                    }
+                            }
+                    });
+            });*/
+			
+			   
+   
+
+      
+        </script>
+       
+
+<!-- add by abhishek -->
+
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.js"></script>
+<script type="text/javascript">
+jQuery(document).ready(function() {	
+	jQuery("#submit_location").click(function (){ 
+		var id = '#dialog';
+	
+		//Get the screen height and width
+		var maskHeight = jQuery(document).height();
+		var maskWidth = jQuery(window).width();
+	
+		//Set heigth and width to mask to fill up the whole screen
+		jQuery('#mask').css({'width':maskWidth,'height':maskHeight});
+		
+		//transition effect		
+		jQuery('#mask').fadeIn(1000);	
+		jQuery('#mask').fadeTo("slow",0.8);	
+	
+		//Get the window height and width
+		var winH = jQuery(window).height();
+		var winW = jQuery(window).width();
+              
+		//Set the popup window to center
+		jQuery(id).css('top',  winH/2-$(id).height()/2);
+		jQuery(id).css('left', winW/2-$(id).width()/2);
+	
+		//transition effect
+		jQuery(id).fadeIn(1000); 	
+	
+	//if close button is clicked
+	jQuery('.window .close').click(function (e) {
+		//Cancel the link behavior
+		e.preventDefault();
+		
+		jQuery('#mask').hide();
+		jQuery('.window').hide();
+	});	
+	
+	});
+	
+	//if mask is clicked
+	jQuery('#mask').click(function () {
+		jQuery(this).hide();
+		jQuery('.window').hide();
+	});		
+	
+});
+
+</script>
+
+<style type="text/css">
+body {
+font-family:verdana;
+font-size:15px;
+}
+
+a {color:#333; text-decoration:none}
+a:hover {color:#ccc; text-decoration:none}
+
+#mask {
+  position:absolute;
+  left:0;
+  top:0;
+  z-index:9000;
+  background-color:#000;
+  display:none;
+}  
+#boxes .window {
+  position:absolute;
+  left:0;
+  top:0;
+  width:440px;
+  height:200px;
+  display:none;
+  z-index:9999;
+  padding:20px;
+}
+#boxes #dialog {
+  width:100%/*375px*/; 
+  height:203px;
+  padding:10px;
+  background-color:#ffffff;
+}
+</style>
+
+
+
+<!-- end by abhishek -->
+
+<div id="examples_outer">
+    <div id="slider_container_2">
+        <div class="search-area">
+            <div class="container">
+                <div class="banner_outer">
+                    <div class="banner_transparent">
+                        <h1><?php echo $this->__('Explore great place to stay!') ?></h1>
+                        <h2><?php echo $this->__('Let it be from any part of the world, make it yours!') ?></h2>
+                    </div>
+                </div>
+
+                <form action="<?php echo Mage::getBaseUrl() . 'restostay/property/advsearch/' ?>" id="search" name="search1" method="get" enctype="multipart/form-data" class="custom">
+
+                     <input id="searchTextField1" name="searchTextField" type="text" class="searchmainpage"  placeholder="<?php echo $this->__('Where are you going') . "?"; ?>" onfocus="if (this.placeholder == '<?php echo $this->__('Where are you going') . "?"; ?>') {this.placeholder = '';this.style.color ='#E10979';}" onblur="if (this.placeholder == '') {this.style.color ='#E10979';this.placeholder = '<?php echo $this->__('Where are you going') . "?"; ?>';}"/> 
+                     <div id="search_options" class=" left" style="">
+                            <div class="search_date">
+<!--                              <div class="checkinDate"><?php echo  $this->__('Check in'); ?> </div>-->
+                              <input type="text"  id="checkinDate"  name="from"   placeholder="mm/dd/yyyy" autocomplete="off" >
+                            </div>
+                            <div class="search_date">
+<!--                                <div class="checkinDate"><?php echo  $this->__('Check out'); ?></div>-->
+                              <div><input type="text"   id="checkinTo"  name="to"  placeholder="mm/dd/yyyy" autocomplete="off"></div>
+                            </div>
+
+                            <div class="search_guests">
+<!--                              <div class="checkinDate"><?php echo  $this->__('Guests') ?></div>-->
+                                  <select id="number_of_guests" name="number_of_guests">
+                                       <option value="1" selected="selected"><?php echo $this->__('1 Guest'); ?></option>
+                                        <option value="2" >2 Guest</option>
+                                        <option value="3">3 Guests</option>
+                                        <option value="4">4 Guests</option>
+                                        <option value="5">5 Guests</option>
+                                        <option value="6">6 Guests</option>
+                                        <option value="7">7 Guests</option>
+                                        <option value="8">8 Guests</option>
+                                        <option value="9">9 Guests</option>
+                                        <option value="10">10 Guests</option>
+                                        <option value="11">11 Guests</option>
+                                        <option value="12">12 Guests</option>
+                                        <option value="13">13 Guests</option>
+                                        <option value="14">14 Guests</option>
+                                        <option value="15">15 Guests</option>
+                                        <option value="16">16+ Guests</option>
+                                  </select>
+                            </div>
+                        </div>
+                         <button style="width:50px !important;" type="button" class="large pink btn icon-only" onclick="return validateSearch();"> 
+                         <!-- <button style="width:50px !important;" type="button" class="large pink btn icon-only" id="submit_location" > -->
+                    <!-- SEARCH --></button>
+
+                    <div id="map_canvas" style="width:427px;"></div>
+                </form>
+                <button type="button" class="large pink btn icon-only" id="submit_location" style="margin:14px;padding:10px;width:176px;">Advance Search</button>
+
+            </div>
+        </div>
+    
+    
+        
+        <!-- add by abhishek -->
+        <form action="<?php echo Mage::getBaseUrl() . 'restostay/property/advsearch/' ?>" method="get" id="search">
+        <div id="boxes">
+        
+<div style="top: 199.5px; left: 551.5px; display: none;" id="dialog" class="window">
+ 
+<a href="#" class="close">Close it</a>
+<div class="gradient-grey left">
+      <!-- <input type="text" onblur="if (this.placeholder == '') {this.style.color ='#8AA443';this.placeholder = 'e.g. Berlin, Los Angeles';}" onfocus="if (this.placeholder == 'e.g. Berlin, Los Angeles') {this.placeholder = '';this.style.color ='#8AA443';}" placeholder="e.g. Berlin, Los Angeles" name="searchTextField" id="searchTextField" value="" style="margin-right: 50px; border: 1px solid rgb(204, 204, 204); color: rgb(138, 164, 67);" class="left searchmainpage" autocomplete="off"> -->
+      <input id="searchTextField" name="searchTextField" type="text" class="searchmainpage"  placeholder="<?php echo $this->__('Where are you going') . "?"; ?>" onfocus="if (this.placeholder == '<?php echo $this->__('Where are you going') . "?"; ?>') {this.placeholder = '';this.style.color ='#E10979';}" onblur="if (this.placeholder == '') {this.style.color ='#E10979';this.placeholder = '<?php echo $this->__('Where are you going') . "?"; ?>';}"/> 
+       
+        <div class="check_box">
+			<div class="advance_srch_input" style="padding-top: 0px">
+                <p><?php echo $this->__('Check in'); ?></p>
+                <p> <input type="text" placeholder="<?php echo $this->__('mm/dd/yyyy');?>" autocomplete="off" value="<?php echo str_replace("-","/",$this->getRequest()->getParam('from')); ?>"  id="fromcheckin" name="fromcheckin"  /> </p> 
+              <!-- <input type="text" id="datepicker" />  -->
+              
+            </div>
+
+            <div class="advance_srch_input" style="padding-top: 0px">
+                <p><?php echo $this->__('Check out'); ?></p>
+                <p><input type="text" placeholder="<?php echo $this->__('mm/dd/yyyy');?>" autocomplete="off" value="<?php echo str_replace("-","/",$this->getRequest()->getParam('to')); ?>" id="tocheckin" name="to" /></p>
+            </div>
+            
+            <div style="padding-top: 0px" class="advance_srch_input">
+                <p style="line-height: 13px;">Guests</p>
+                <select name="number_of_guests" id="number_of_guests">
+                   <option selected="selected" value="0">All</option>
+                   <option value="1">1</option>
+                   <option value="2">2</option>
+                   <option value="3">3</option>
+                   <option value="4">4</option>
+                   <option value="5">5</option>
+                   <option value="6">6</option>
+                   <option value="7">7</option>
+                   <option value="8">8</option>
+                   <option value="9">9</option>
+                   <option value="10">10</option>
+                   <option value="11">11</option>
+                   <option value="12">12</option>
+                   <option value="13">13</option>
+                   <option value="14">14</option>
+                   <option value="15">15</option>
+                   <option value="16">16</option>
+                   <option value="17">17</option>
+                   <option value="18">18</option>
+                   <option value="19">19</option>
+                   <option value="20">20</option>
+                   <option value="21">21</option>
+                   <option value="22">22</option>
+                   <option value="23">23</option>
+                   <option value="24">24</option>
+                   <option value="25">25</option>
+                   <option value="26">26</option>
+                   <option value="27">27</option>
+                   <option value="28">28</option>
+                   <option value="29">29</option>
+                   <option value="30">30</option>
+                </select>
+            </div></div>
+        <!-- <a href="http://www.dev.restostay.com/index.php/restostay/property/advsearch/?searchTextField=&from=&to=&number_of_guests=1"> --><input type="submit" value="" style="margin-left:58px;height: 44px;width: 165px;" class="button-glossy blue"> <!-- </a> -->
+<!--        <input type="button" onclick="ajaxSearchResult()" class="button-glossy " style="margin: 5px 0;height: 33px;width: 165px;float: right;" value="Search" onclick="return validateSearch()">-->
+    </div>
+</div>
+<!-- Mask to cover the whole screen -->
+<div style="width: 1478px; height: 602px; display: none; opacity: 0.8;" id="mask"></div>
+</div>
+</form>
+        <!-- end by abhishek -->
+        <?php
+        $model = Mage::getModel('catalog/product');
+
+        $baseurl = Mage::getBaseUrl('skin');
+        $_productCollection = Mage::getModel('airhotels/property')->getpropertycollection()
+                        ->addAttributeToFilter('status', array('eq' => 1))
+                        ->setPageSize(10)->setOrder('created_at', 'desc')->addAttributeToSelect('*');
+
+        $currencySymbol = Mage::app()->getLocale()->currency(Mage::app()->getStore()->getCurrentCurrencyCode())->getSymbol();
+        if (count($_productCollection)) {
+            ?>
+            <div id="SliderName_2" class="SliderName_2">
+                <?php
+                foreach ($_productCollection as $_product) {
+                    ?>
+
+                    <a class="ss_name" href="<?php echo Mage::getBaseUrl() . $_product->getUrlPath(); ?>">
+                        <?php if ($_product->getImage() != 'no_selection') { ?>
+                            <img src="<?php echo Mage::getBaseUrl('media') . 'catalog/product/' . $_product->getImage(); ?>"alt="Demo2 first" title="Demo2 first" style="height: auto !important;" />
+                        <?php } else { ?>
+                            <img src="<?php echo $_product->getImageUrl(); ?>"  alt="Demo2 first" title="Demo2 first"  style="height: auto !important;"/>
+                        <?php }
+                        ?> </a>
+
+                    <div class="SliderName_2Description">
+                        <div id="slider_showface">
+                            <?php $customerData = Mage::getModel('airhotels/airhotels')->getCustomerPictureById($_product->getUserid()); ?>
+                            <?php if ($customerData[0]["imagename"]): ?>
+                                <?php                                
+                                $imageResized = Mage::getBaseDir("media") . "/catalog/customer/resz_" . $customerData[0]["imagename"];
+                                $imageDirUrl  = Mage::getBaseDir("media") . "/catalog/customer/" . $customerData[0]["imagename"];
+                                if (!file_exists($imageResized) && file_exists($imageDirUrl)) :
+                                    $imageObj = new Varien_Image($imageDirUrl);
+                                    $imageObj->constrainOnly(TRUE);
+                                    $imageObj->keepAspectRatio(TRUE);
+                                    $imageObj->keepFrame(FALSE);
+                                    $imageObj->resize(72, 72);
+                                    $imageObj->save($imageResized);
+                                endif;                                
+                                $imageUrl = Mage::getBaseUrl('media') . "catalog/customer/" . $customerData[0]["imagename"];
+                                if (file_exists($imageResized)) {
+                                    $imageUrl = Mage::getBaseUrl('media') . "catalog/customer/resz_" . $customerData[0]["imagename"];
+                                }
+                                ?>
+                                <img src="<?php echo $imageUrl; ?>"
+                                     class="face_img" height="86" alt="" title=""/>
+                            <?php else: ?>
+                                <img src="<?php echo $this->getSkinUrl('images/home_no_user.jpg'); ?>" class="face_img" alt="" title=""/>
+                            <?php endif; ?>
+                            <div class="right_desc">
+                                <h3><a class="ss_name"
+                                       href="<?php echo Mage::getBaseUrl() . $_product->getUrlPath(); ?>"><?php echo $this->htmlEscape($_product->getName()); ?></a></h3>
+                                <span><?php
+                echo $this->htmlEscape($_product->getCity()) . ', ';
+                echo $this->htmlEscape($_product->getCountry());
+                            ?> </span>
+                                <span class="bottom_descs">
+                                    <?php
+                                    $reviews = Mage::getModel('review/review')->getResourceCollection();
+                                    $reviews->addStoreFilter(Mage::app()->getStore()->getId())
+                                            ->addStatusFilter(Mage_Review_Model_Review::STATUS_APPROVED)
+                                            ->addEntityFilter('product', $_product->getId())
+                                            ->setDateOrder()
+                                            ->addRateVotes();
+                                    $reviews = $reviews->getData();
+                                    ?>
+                                    &nbsp;-&nbsp;<span><?php echo $currencySymbol . ' ' . round(Mage::helper('directory')->currencyConvert($_product['Price'], Mage::app()->getStore()->getBaseCurrencyCode(), Mage::app()->getStore()->getCurrentCurrencyCode()), 0) . '/ '.$this->__('Night') ?></span>
+<!--                                    <strong class="floatright">
+                                        <?php
+                                        $rating = Mage::getModel('airhotels/airhotels')->getCustomerRatings($_product->getId());
+                                        $sum = 0;
+                                        for ($i = 0; $i < count($rating); $i++) {
+                                            $sum +=$rating[$i]["percent"];
+                                        }
+                                        $avgRating = $sum / count($rating);
+
+                                        if ($avgRating > 1 && $avgRating <= 20) {
+                                            Apptha_Airhotels_Block_Airhotels::showratingCode(1);
+                                        } else if ($avgRating > 21 && $avgRating <= 40) {
+                                            Apptha_Airhotels_Block_Airhotels::showratingCode(2);
+                                        } else if ($avgRating > 41 && $avgRating <= 60) {
+                                            Apptha_Airhotels_Block_Airhotels::showratingCode(3);
+                                        } else if ($avgRating > 61 && $avgRating <= 80) {
+                                            Apptha_Airhotels_Block_Airhotels::showratingCode(4);
+                                        } else if ($avgRating > 81 && $avgRating <= 100) {
+                                            Apptha_Airhotels_Block_Airhotels::showratingCode(5);
+                                        } else {
+                                            Apptha_Airhotels_Block_Airhotels::showratingCode(0);
+                                        }
+
+
+                                        echo "&nbsp;" . " (" . count($reviews);
+                                        echo " " . $this->__('Reviews)');
+                                        ?>
+
+                                    </strong>-->
+                                </span>
+                            </div>
+                            <div class="clear"></div>
+                        </div>
+                    </div>
+                    <?php
+                }
+            }
+            ?>
+        </div>
+
+        <script type="text/javascript">
+            effectsDemo2 = 'fade';
+            var myWidth;
+            if( typeof( window.innerWidth ) == 'number' ) {
+                //Non-IE
+                myWidth = window.innerWidth;
+            } else if( document.documentElement &&
+                document.documentElement.clientWidth ) {
+                //IE 6+ in 'standards compliant mode'
+                myWidth = document.documentElement.clientWidth;
+            } else if( document.body && document.body.clientWidth ) {
+                //IE 4 compatible
+                myWidth = document.body.clientWidth;
+            }
+            var demoSlider_2 = Sliderman.slider({container: 'SliderName_2', width: myWidth, height: 548, effects: effectsDemo2,
+                display: {
+                    autoplay: 5000,
+                    buttons: {hide: true, prev: {className: 'SliderNamePrev_2', label: ''}, next: {className: 'SliderNameNext_2', label: ''}},
+                    description: {hide: true,  height: 122, position: 'bottom'}
+
+                }
+            });
+        </script>
+
+
+    </div>
+
+</div>

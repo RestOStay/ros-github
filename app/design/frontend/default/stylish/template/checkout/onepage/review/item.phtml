@@ -25,18 +25,23 @@
  */
 ?>
 <?php $_item = $this->getItem()?>
+<script type="text/javascript">
+document.getElementById("aprint").style.display="block";
+</script>
+<?php //echo "<pre>";print_r($_item);?>
 <tr>
-    <td><h3 class="product-name"><?php echo $this->htmlEscape($this->getProductName()) ?></h3>
-       
+    <td>
+    	<h3 class="product-name"><?php echo $this->htmlEscape($this->getProductName()) ?></h3>
     </td>
      <?php if ($_options = $this->getOptionList()):?>
         
             <?php
             $_options = array_reverse($_options);
+			
             foreach ($_options as $_option) : ?>
             <?php $_formatedOptionValue = $this->getFormatedOptionValue($_option) ?>
             <?php // echo $this->htmlEscape($_option['label']) ?>
-            <td <?php if (isset($_formatedOptionValue['full_view'])): ?> class="truncated"<?php endif; ?>><?php echo $_formatedOptionValue['value'] ?>
+            <?php /*?><td <?php if (isset($_formatedOptionValue['full_view'])): ?> class="truncated"<?php endif; ?>><?php echo $_formatedOptionValue['value'] ?>
                 <?php if (isset($_formatedOptionValue['full_view'])): ?>
                 <div class="truncated_full_value">
                     <dl class="item-options">
@@ -45,8 +50,19 @@
                     </dl>
                 </div>
                 <?php endif; ?>
-            </td>
+\
+            </td><?php */
+				$itemArray[] = $_formatedOptionValue['value'];
+			?>
             <?php endforeach; ?>
+           <?php
+           		//echo "<pre>";print_r($itemArray);
+		   ?>
+           <td><?php echo $itemArray[2];?></td>
+           <td><?php echo $itemArray[3];?></td>
+           <td><?php echo $itemArray[4];?></td>
+           <td><?php echo $itemArray[0];?></td>
+           <td><?php echo $itemArray[1];?></td>
         
         <?php endif;?>
         <?php if ($addtInfoBlock = $this->getProductAdditionalInformationBlock()):?>

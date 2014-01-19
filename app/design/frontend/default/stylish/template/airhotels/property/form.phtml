@@ -258,11 +258,23 @@ foreach ($bedtypeAttribute->getSource()->getAllOptions() as $bedtype_option) {
                         
                         </div>
                         </div>
+                        
+                    <div class="field input-box input-box_inner">
+                  <label for="price" class="required lable_inner left"> <?php echo $this->__('Currency type') ?> <em>*</em></label>
+                  <div class="floatleft">
+                    <select name="currency">
+                    <option value="INR">INR</option>
+                    <option value="USD">USD</option>
+                    </select>
+                  </div>
+                    <div id="priceErr" style="color:red;margin-left: 165px"></div>
+                </div>
+                        
                   <div class="field input-box input-box_inner">
                   <label for="price" class="required lable_inner left"> <?php echo $this->__('Price/Night') ?> <em>*</em></label>
                   <div class="floatleft">
                     <input name="price" id="price" onblur="return validatePrice(this.value)" title="<?php echo $this->__('Price') ?>" value="" class="input-text required-entry input-text_price " type="text"/>
-                    <span> <?php echo  $currencySymbol .'('. $this->__('Enter price in ') . $currencyCountry . ')'; ?></span>
+                    <span style="display:none;"> <?php echo  $currencySymbol .'('. $this->__('Enter price in ') . $currencyCountry . ')'; ?></span>
                   </div>
                     <div id="priceErr" style="color:red;margin-left: 165px"></div>
                 </div>
@@ -295,7 +307,16 @@ foreach ($bedtypeAttribute->getSource()->getAllOptions() as $bedtype_option) {
                              </select>
                             </div>
                         </div>
-                        </div>
+                </div>
+				
+				<div class="input-box input-box_inner">
+					<label for="phoneno" class="required lable_inner left"> <?php echo $this->__('Phone no') ?> <em>*</em></label>
+					<div class="floatleft">
+						<input onblur="return validatePhone(this.value)" name="phoneno" id="phoneno" title="<?php echo $this->__('Phone no') ?>" value="" class="input-text required-entry input-text_state" type="text"/>
+					</div>
+					<div id="phoneErr" style="color:red;margin-left: 165px"></div>
+                </div>
+				
                    <div class=" field input-box input-box_inner">
                        <label for="map" class="required lable_inner left"><?php echo $this->__('Map Location') ?> <em>*</em></label>
                        
@@ -342,9 +363,12 @@ foreach ($bedtypeAttribute->getSource()->getAllOptions() as $bedtype_option) {
                 </div>
 
             </li>
+			
             <div class="buttons-set">
+			<div ><p><input style="width:28px !important;" type="checkbox" name="term" id="term" value="" onclick="return buttonDisable(this.value)" /><a href="javascript:void(0);" id="t1"><span style="color:#06F;"><?php echo $this->__('I Agree to RestoStay Terms & Conditions') ?></span></a></p></div>
+			 
         <p class="required ">* <?php echo $this->__('Required Fields'); ?></p>
-         <button type="submit" title="<?php echo $this->__('Submit your property') ?>" class="button"><?php echo $this->__('Submit your property') ?></button>
+         <button type="submit" id="butt" title="<?php echo $this->__('Submit your property') ?>" class="button" disabled="disabled"/><?php echo $this->__('Submit your property') ?></button>
     </div>
         </ul>
         </div>
@@ -357,6 +381,29 @@ foreach ($bedtypeAttribute->getSource()->getAllOptions() as $bedtype_option) {
 
     var Propertyform = new VarienForm('propertyform', true);
     //]]>
+	
+	
+	function buttonDisable(str){
+		//alert(str);
+		var check = document.getElementById("term").checked;
+		if(check==true){
+			 jQuery("#butt").attr("disabled", "");
+			
+		}else{
+			jQuery("#butt").attr("disabled", "disabled");
+		}
+		
+	/*function level1Enabled(str){
+		//alert(str);
+		var check = document.getElementById("term").checked;
+		if(check==true){
+			document.getElementById("butt").style.display="block";
+		}else{
+			document.getElementById("butt").style.display="none";
+		}*/
+	
+	
+	}
 </script>
 
 <!-- Counter Script  -->
@@ -398,4 +445,43 @@ function validatePrice(pValue){
           }
 
 }
+
+
+function validatePhone(pValue){
+    document.getElementById("phoneErr").innerHTML = "";
+    pValue = trim(pValue);
+    if(isNaN(pValue) ){
+        document.getElementById("phoneErr").innerHTML = "<?php echo $this->__('Please enter valid number'); ?>";
+        document.getElementById("price").value = "";
+        document.getElementById("price").focus();
+        return false;
+    }
+
+		
+        if(parseInt(pValue.length)!= 10){
+            document.getElementById("phoneErr").innerHTML = "<?php echo $this->__('Enter the phone value 10 digit') ?>";
+            document.getElementById("price").focus();
+            return false;
+          }
+
+}
+jQuery(document).ready(function(){
+	
+	jQuery('#t1').click(function(){
+		jQuery('#term_1').toggle();
+		
+		});
+	});
+
+function hidestuff(term_1){
+  jQuery('#term_1').hide();
+}
 </script>
+
+
+<div id="term_1">
+<a class="close" href="#"  onclick="hidestuff();">Close it</a>
+
+<a  href="<?php echo $this->getLayout()->createBlock('cms/block')->setBlockId('terms-and-conditions-restostay-block')->toHtml() ?> ">term and c</a>
+
+</div>

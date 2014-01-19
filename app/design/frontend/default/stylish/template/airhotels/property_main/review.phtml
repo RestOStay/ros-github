@@ -1,0 +1,112 @@
+<?php
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+$products = Mage::getModel('airhotels/property')->getpropertycollection()
+        ->addFieldToFilter(array(
+            array('attribute' => 'Userid', 'eq' => $cus_id)));
+?>
+<div class="my-account clearfix">
+<div id="reviews_link_text">
+    <?php
+    $productId = $this->getRequest()->get('id');
+    $model = Mage::getModel('catalog/product'); //getting product model
+    $_product = $model->load($productId);
+
+    $reviews = Mage::getModel('review/review')->getResourceCollection();
+    $reviews->addStoreFilter(Mage::app()->getStore()->getId())
+            //->addStatusFilter( Mage_Review_Model_Review::STATUS_APPROVED )
+            ->addEntityFilter('product', $_product->getId())
+            ->setDateOrder()
+            ->addRateVotes()
+            ->load();
+    $reviews = $reviews->getData();
+    ?>
+    <div class="page-title">
+        <h1><span><?php echo $this->__('Property Review (submitted on %s):', $_product->getName()); ?></span></h1>        
+    </div>
+    <div class="review_grid">
+    <span style="float: right;font-size: 12px"><?php echo $this->__('Enable/Disable') ?></span>
+<?php
+$c = 1;
+if (count($reviews)) {
+    for ($i = 0; $i < count($reviews); $i++) {
+        ?>
+            <div class="review-product left" >
+                <div class="active_hide_btn right">
+
+                    <div id="active<?php echo $c; ?>" <?php echo ($reviews[$i]["status_id"] == 1) ? "style='display:block'" : "style='display:none'"; ?>>
+                        <img title="<?php echo $this->__('Click to disable this property') ?>" src="<?php echo $this->getSkinUrl('images/active.png'); ?>" class="yourlist_imgbtn" id="active" name="enable" value="<?php echo $this->__('Disable') ?>" onClick="airhotelActivate('2','<?php echo $c; ?>','active<?php echo $c; ?>')" />
+                    </div>
+                    <div id="hide<?php echo $c; ?>" <?php echo ($reviews[$i]["status_id"] == 2) ? "style='display:block'" : "style='display:none'"; ?>>
+                        <img title="<?php echo $this->__('Click to enable this property') ?>" src="<?php echo $this->getSkinUrl('images/hide.png'); ?>"  class="yourlist_imgbtn" id="active" name="disable" value="<?php echo $this->__('Enable') ?> " onClick="airhotelActivate('1','<?php echo $c; ?>','hide<?php echo $c; ?>')" />
+                    </div>
+                    <span id="loadingSpace<?php echo $c; ?>"></span>
+                </div>
+
+                <div class="review-content " style="width:600px;float: left;">
+        <?php echo '<span style="font-weight:bold;font-size:14px;">"</span>' . nl2br($reviews[$i]["detail"]) . '<span style="font-weight:bold;font-size:14px;">"</span>'; //status_id  ?>
+
+                </div>
+                <div class="review-text" style="width:590px;float: left;">
+        <?php
+        echo $reviews[$i]["nickname"] . " , " . date("dS, F Y", strtotime($reviews[$i]["created_at"]));
+        ?>
+                </div>
+
+
+
+
+                <input type="hidden" id="productId<?php echo $c; ?>" value="<?php echo $reviews[$i]["review_id"]; ?>" />
+            </div>
+        <?php
+        $c++;
+    }
+} else {
+    echo $this->__('No reviews yet for this property');
+}
+?></div>
+</div>
+</div>
+<script type="text/javascript">
+    function airhotelActivate(pStatus,buttonId,element)
+    {
+        document.getElementById(element).style.display = "none";
+        document.getElementById("loadingSpace"+buttonId).innerHTML = "<img src='<?php echo $this->getSkinUrl('images/ajax-loader-small.gif'); ?>' />";
+
+
+        var xmlhttp = getHttp();
+        xmlhttp.onreadystatechange=function()
+        {
+            if (xmlhttp.readyState==4 && xmlhttp.status==200)
+            {
+                if(xmlhttp.responseText=="Available"){
+                    document.getElementById("active"+buttonId).style.display ="none";
+                    document.getElementById("hide"+buttonId).style.display ="block";
+                }
+                else{
+                    document.getElementById("active"+buttonId).style.display="block";
+                    document.getElementById("hide"+buttonId).style.display ="none";
+                }
+                document.getElementById("loadingSpace"+buttonId).innerHTML = "";
+                //document.getElementById("calendarWrapper").innerHTML=xmlhttp.responseText;
+            }
+        }
+        var productId = document.getElementById("productId"+buttonId).value;
+        xmlhttp.open("GET","<?php echo Mage::getBaseUrl() . 'airhotels/property/reviewstatus/' ?>"+"?status="+pStatus+"&buttonid="+buttonId+"&reviewid="+productId,true);
+        xmlhttp.send();
+    }
+    function getHttp(){
+        var xmlhttp;
+        if (window.XMLHttpRequest)
+        {// code for IE7+, Firefox, Chrome, Opera, Safari
+            xmlhttp=new XMLHttpRequest();
+        }
+        else
+        {// code for IE6, IE5
+            xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+        }
+        return xmlhttp;
+    }
+</script>

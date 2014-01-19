@@ -1,0 +1,38 @@
+<?php
+$customerid = Mage::app()->getRequest()->getParam('id');
+$currencySymbol = Mage::app()->getLocale()->currency(Mage::app()->getStore()->getCurrentCurrencyCode())->getSymbol();
+$PropertyCollection = Mage::getModel('airhotels/property')
+        ->getpropertycollection()
+        ->addAttributeToFilter('status', array('eq' => 1))
+        ->addAttributeToFilter('Userid', array('eq' => $customerid));
+?>
+
+<div id="profile_gridlist">
+    <div class="usergridlist">
+        <h1 class="arrowbubble"> <b class="profilelist_id icon_grid"></b> <?php echo $this->__('My Listing') ?></h1>
+        <?php
+        foreach ($PropertyCollection as $property) {
+            $productName = $property->getName();
+            $productUrl = $property->getProductUrl();
+
+            $productPrice = $productPrice = $currencySymbol . round(Mage::helper('directory')->currencyConvert($property['Price'], Mage::app()->getStore()->getBaseCurrencyCode(), Mage::app()->getStore()->getCurrentCurrencyCode()), 0);
+            $productImage = $this->helper('catalog/image')->init($property, 'image')->resize(150, 150);
+            ?>
+
+
+            <div class="rowList">
+                <a href="<?php echo $productUrl ;?>">
+                <img src="<?php echo $productImage; ?>" alt="<?php echo $productName; ?>" width="91" height="62" class="floatleft"/></a>
+                <div class="related_listing_desc left">
+                   <a href="<?php echo $productUrl ;?>" style="text-decoration: none;"> <strong><?php echo $productName; ?></strong></a>
+                    <span><?php echo $productPrice; ?> <?php echo $this->__('Per Night') ?></span>
+                </div>
+            </div>
+
+
+
+            <?php
+        }
+        ?>
+    </div>
+</div>

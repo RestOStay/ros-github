@@ -6,7 +6,7 @@
         <remove name="catalog.compare.sidebar"/>
         <reference name="top.menu">
             <block type="airhotels/navigation" name="airhotels.topnav" template="airhotels/navigation/top.phtml"/>
-           
+          <!-- <block type="interaktingslider/interaktingslider" name="interaktingslider"/>-->
         </reference>
  
 	 	 <action method="addCss"><script>css/gallery.css</script></action>
@@ -73,9 +73,7 @@
             <action method="addJs">
                 <script>airhotels/gallery/jquery-1.7.2.js</script>
             </action>
-            <action method="addJs">
-                <script>airhotels/calender/jquery-ui-1.8.16.custom.min.js</script>
-            </action>             
+                       
             <action method="addCss">
                 <script>css/common-data.css</script>
             </action>
@@ -105,11 +103,15 @@
             <action method="setTemplate">
                 <template>page/1column.phtml</template>
             </action>
-            <block type="airhotels/airhotels" name="airhotels" template="airhotels/airhotels.phtml"/>
+          <block type="airhotels/airhotels" name="airhotels" template="airhotels/airhotels.phtml"/>
+		 
+		 
+			
         </reference>
        
         <reference name="content">
-            
+           
+			 <block type="interaktingslider/interaktingslider" name="interaktingslider" as="interaktingslider_slider" template="interaktingslider/slider.phtml"/>
             <block type="airhotels/property_list" name="airhotels.property" template="airhotels/property/list.phtml"/>              	
            
         </reference>
@@ -955,6 +957,36 @@
             
         </reference>
     </sales_email_order_invoice_items>
-
-
+	<airhotels_property_mapshow>
+	<reference name="root">
+            <action method="setTemplate">
+                <template>page/map.phtml</template>
+            </action>
+       	
+        </reference>
+       
+		<reference name="content">
+            
+            <block type="airhotels/mapshow" name="airhotels.mapshow" template="airhotels/property/mapshow.phtml"/>
+                  	
+           
+        </reference>
+    </airhotels_property_mapshow>
+	<airhotels_property_ajaxmap>
+	<reference name="root">
+            <action method="setTemplate">
+                <template>page/map.phtml</template>
+            </action>
+       	
+        </reference>
+       
+		<reference name="content">
+            
+            <block type="airhotels/ajaxmap" name="airhotels.ajaxmap" template="airhotels/property/ajaxmap.phtml"/>
+                  	
+           
+        </reference>
+    </airhotels_property_ajaxmap>
+	
+	
 </layout> 

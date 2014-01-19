@@ -817,10 +817,10 @@ class Mage_Catalog_Model_Url
                 }
             }
 
-            $fullPath = $requestPath.$suffix;
-            if ($this->_deleteOldTargetPath($fullPath, $idPath, $storeId)) {
-                return $fullPath;
-            }
+           $fullPath = $existingRequestPath.$suffix;
+     if ($this->_deleteOldTargetPath($fullPath, $idPath, $storeId)) {
+        return $fullPath;
+      }
         }
         /**
          * Check 2 variants: $requestPath and $requestPath . '-' . $productId

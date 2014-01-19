@@ -33,7 +33,8 @@
 ?>
 <div class="cart my-account">
     <div class="page-title">
-        <h1><span style="float: left; display: block; line-height: 47px;"><?php echo $this->__('Shopping Cart') ?></span>
+        <h1><span style="float: left; display: block; line-height: 47px;">
+		<?php echo $this->__('Reservation Cart') ?></span>
         <?php if(!$this->hasError()): ?>
         <ul class="checkout-types floatright">
         <?php foreach ($this->getMethods('top_methods') as $method): ?>
@@ -77,9 +78,20 @@
                 <thead>
                     <tr>
                         <th rowspan="<?php echo $mergedCells; ?>">&nbsp;</th>
-                        <th rowspan="<?php echo $mergedCells; ?>"><span class="nobr"  style="padding-right: 20px; "><?php echo $this->__('Property Description') ?></span><span class="nobr" style=" float:right; padding-right: 20px;"><?php echo $this->__('Accomodates') ?></span>
-                        <span class="nobr"  style="padding-right: 47px; float:right;"><?php echo $this->__('Check Out') ?></span><span class="nobr"  style="padding-right: 63px; float:right;"><?php echo $this->__('Check In') ?></span>
+                        <th rowspan="<?php echo $mergedCells; ?>"><?php echo $this->__('Property Description') ?>
+                            <!--<span class="nobr"  style="padding-right: 20px; "><?php echo $this->__('Property Description') ?></span>
+                              <span class="nobr" style=" float:right; padding-right: 20px;"><?php echo $this->__('Child') ?></span>
+                              <span class="nobr" style=" float:right; padding-right: 20px;"><?php echo $this->__('Rooms') ?></span>
+                            <span class="nobr" style=" float:right; padding-right: 20px;"><?php echo $this->__('Accomodates') ?></span>
+                            
+                            <span class="nobr"  style="padding-right: 47px; float:right;"><?php echo $this->__('Check Out') ?></span>	                        <span class="nobr"  style="padding-right: 63px; float:right;"><?php echo $this->__('Check In') ?></span>-->
                         </th>
+                        <th><?php echo $this->__('Check Out') ?></th>
+                         <th><?php echo $this->__('Check In') ?></th>
+                          <th><?php echo $this->__('Adults') ?></th>
+                           <th><?php echo $this->__('Rooms') ?></th>
+                           <th><?php echo $this->__('Child') ?></th>
+                           
                        
                         
                         
@@ -98,7 +110,7 @@
                 </thead>
                
                 <tbody>
-                <?php foreach($this->getItems() as $_item): ?>
+                <?php foreach($this->getItems() as $_item):?>
                     <?php echo $this->getItemHtml($_item) ?>
                 <?php endforeach ?>
                 </tbody>

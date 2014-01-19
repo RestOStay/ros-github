@@ -1,0 +1,90 @@
+<?php
+$search_values = $this->search();
+$search_text = explode(',', $search_values[searchTextField]);
+$values = array_reverse($search_text);
+$country = $values[0]; 
+$state = $values[1];
+$city = $values[2];
+$fromdate = $search_values['from'];
+$todate = $search_values['to'];
+$guest = $search_values[number_of_guests];
+
+$SearchCollection = Mage::getModel('airhotels/search')->searchproperty($country,$state,$city,$fromdate,$todate);
+
+
+
+$baseurl = Mage::getBaseUrl('media'); 
+$currencySymbol = Mage::app()->getLocale()->currency(Mage::app()->getStore()->getCurrentCurrencyCode())->getSymbol();
+
+
+?>
+<h1 class="searchtopic"><?php echo  $this->__('Search Results') ?>:</h1>
+<h3 class="searchtopic"><?php echo  $this->__('Your search based on'); ?> '<?php echo $search_values[searchTextField]; ?>'</h3>
+<div id="searchinnerpage">
+	<?php 
+if (count($SearchCollection))
+{
+	?>
+	
+
+    <ul id="results">
+    <?php 
+       foreach ($SearchCollection as $_product)
+    {
+	
+		?>
+		<li class="search_result">
+           <a class="name" href="<?php echo Mage::getBaseUrl().$_product->getUrlPath();?>"> <img src="<?php 
+           if($_product->getImage())
+           {
+           echo $baseurl .'/catalog/product/'.$_product->getImage();
+           }
+           else 
+	    		 {
+	    		 	echo  $_product->getImageUrl();
+	    		 }
+           ?>" style="width: 272px !important; height: 182px !important" alt=""></a>
+            <div class="room_details">
+                <h2 class="room_title"><a class="name" href="<?php echo Mage::getBaseUrl().$_product->getUrlPath();?>">
+                <?php
+                            if(strlen($_product->getName()) >=26 )
+                                echo  substr($_product->getName(),0, 26)."..";
+                            else
+                                echo  $_product->getName();
+
+                ?></a></h2>
+               <p class="address">
+                <?php echo $_product->getPropertyadd();?>
+               </p>
+            </div>
+               <div class="price ">
+                   <div class="price_data">
+                       <div class="currency_with_sup">
+                          <?php echo $currencySymbol.number_format($_product[Price],2) ;?>
+                       </div>
+                   </div>
+                   <div class="price_modifier"> <?php echo  $this->__('Per night'); ?></div>
+               </div>
+               </li>
+               <?php 
+		
+}
+?>
+  </ul>
+   
+            <?php 
+	   
+}
+else 
+{?>
+	<h1 style="font-family: abel;font-size: 23px;font-weight: bold;color: #1E7EC8;text-align: center;"><?php echo $this->__('No Records') ;?></h1>
+<?php
+}	   
+
+
+?></div>
+
+           
+        
+
+

@@ -1,0 +1,133 @@
+      <div id="map" style="width: 500px; height: 500px;"></div>
+
+      <script type="text/javascript">
+      
+	  
+		
+		
+	
+	/*var locations = [
+          ['Stadtbibliothek Zanklhof', 47.06976, 15.43154, 1],
+          ['Stadtbibliothek dieMediathek', 47.06975, 15.43116, 2],
+          ['Stadtbibliothek Gösting', 47.09399, 15.40548, 3],
+          ['Stadtbibliothek Graz West', 47.06993, 15.40727, 4],
+          ['Stadtbibliothek Graz Ost', 47.06934, 15.45888, 5],
+          ['Stadtbibliothek Graz Süd', 47.04572, 15.43234, 6],
+          ['Stadtbibliothek Graz Nord', 47.08350, 15.43212, 7],
+          ['Stadtbibliothek Andritz', 47.10280, 15.42137, 8]
+        ];*/
+		
+		//alert(co);
+		
+		
+		/*var locations = [
+          ['Stadtbibliothek Zanklhof', 47.06976, 15.43154, 1],
+          ['Stadtbibliothek dieMediathek', 47.06975, 15.43116, 2],
+          ['Stadtbibliothek Gösting', 47.09399, 15.40548, 3],
+          ['Stadtbibliothek Graz West', 47.06993, 15.40727, 4],
+          ['Stadtbibliothek Graz Ost', 47.06934, 15.45888, 5],
+          ['Stadtbibliothek Graz Süd', 47.04572, 15.43234, 6],
+          ['Stadtbibliothek Graz Nord', 47.08350, 15.43212, 7],
+          ['Stadtbibliothek Andritz', 47.10280, 15.42137, 8]
+        ];*/
+var address = document.getElementById('searchTextField').value;
+var geocoder = new google.maps.Geocoder();
+
+geocoder.geocode( { 'address': address}, function(results, status) {
+  var location = results[0].geometry.location;
+  var lat = location.lat();
+  var lng = location.lng();
+ // alert(lat,lng);
+  abc(lat,lng)
+  document.getElementById("lat").value=lat;
+  document.getElementById('lng').value = lng;
+	
+
+});
+function xyz(lat,lng){
+ var arr = document.getElementById("laatiarray").value;
+//var lt =  document.getElementById('lat').value;
+//var lg =  document.getElementById('lng').value;
+var lt=lat;
+var lg=lng;
+//alert(lt+'=='+lg);
+//alert(lt+"-"+lg);
+        var map = new google.maps.Map(document.getElementById('map'), {
+          zoom: 10,
+          center: new google.maps.LatLng(lt, lg),
+          mapTypeId: google.maps.MapTypeId.ROADMAP
+        });
+		
+
+
+        
+
+        
+
+       var sp = arr.split(",");
+	   
+		for(var k=0;k<sp.length;k++){
+		var s = sp[k].split("@");
+
+         var  marker = new google.maps.Marker({
+            position: new google.maps.LatLng(s[0], s[1]),
+            map: map
+          });
+		   var mess1 = "<div class='map_content_area'><a href="+s[4]+" target='_blank'><span class='map_images'><img src="+s[3]+" border='0'/></span><span class='map_name_price'>"+s[2]+"</span>"+"<p>"+s[5]+"</p></a><span class='property-review'>";
+							  if (s[6] > 1 && s[6] <= 20) 
+							{
+                         mess1 +=  "<?php Apptha_Airhotels_Block_Airhotels::showratingCode(1);?>";
+                            } else if (s[6] > 21 && s[6] <= 40) {
+                          mess1 += "<?php Apptha_Airhotels_Block_Airhotels::showratingCode(2);?>";
+                            } else if (s[6] > 41 && s[6] <= 60) {
+                          mess1 += "<?php Apptha_Airhotels_Block_Airhotels::showratingCode(3);?>";
+                            } else if (s[6] > 61 && s[6] <= 80) {
+                          mess1 += "<?php  Apptha_Airhotels_Block_Airhotels::showratingCode(4);?>";
+                            } else if (s[6] > 81 && s[6] <= 100) {
+                          mess1 += "<?php Apptha_Airhotels_Block_Airhotels::showratingCode(5);?>";
+                            } else {
+                          mess1 += "<?php Apptha_Airhotels_Block_Airhotels::showratingCode(0);?>";
+                            }
+		    
+		    mess1 += "</span></div>";
+				var prev_infowindow =false; 			
+		 
+		 marker['infowindow'] = new google.maps.InfoWindow({
+            content: mess1
+        });
+
+    google.maps.event.addListener(marker, 'mouseover', function() {
+	 if( prev_infowindow )
+        {
+        prev_infowindow.close();
+            }
+        prev_infowindow = this['infowindow'];
+	    this['infowindow'].open(map, this);
+    });
+	 
+	
+         
+        }
+		
+	}	
+	
+	
+	
+	function addInfoWindow(marker, message) {
+            var info = message;
+
+            var infoWindow = new google.maps.InfoWindow({
+                content: message
+            });
+
+            google.maps.event.addListener(marker, 'click', function () {
+                infoWindow.open(map, marker);
+            });
+        }
+		
+		function abc(lat,lng){
+			//alert(lat);
+			xyz(lat,lng);
+			//document.getElementById("lat").value=lat;
+		}
+      </script> 

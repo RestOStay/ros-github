@@ -1,0 +1,56 @@
+
+<?php
+$wishList = Mage::getModel('airhotels/property')->getWishList();
+$towDiv = 1;
+$currencySymbol = Mage::app()->getLocale()->currency(Mage::app()->getStore()->getCurrentCurrencyCode())->getSymbol();
+if (count($wishList) != '') {
+?>
+    <ul>
+    <?php
+    foreach ($wishList as $product) {
+    if($twoDiv%2 == 0 ){
+        $divId='extra';
+       echo '<div class="clear"></div>';
+   }else{
+       $divId='normal';
+   }
+    ?>
+        <li class="home-medium-dealbox<?php echo $divId;?>">
+            <div id="popular_2up_listings_view">
+                <div class="row2-wishlists-list clearfix">
+                    <div class="wishlists2-list-item twospace_list">
+                        <a href="<?php echo Mage::getBaseUrl() . $product[url_path]; ?>" class="matte2-media-box">
+                            <img src="<?php
+        if ($product->getImage() != 'no_selection') {
+            echo Mage::getBaseUrl('media') . 'catalog/product/' . $product->getImage();
+        } else {
+            echo $product->getImageUrl();
+        }
+    ?>" 
+                             width ="460px" height="255px" title="<?php echo substr($product->getName(), 0, 25); ?>"/>
+                        <div class="feed_item_view">
+                            <div class="floatleft">
+                                <h4><?php echo substr($product->getName(), 0, 25); ?></h4>
+                                <span><?php echo $product->getState() . ',' . $product->getCountry(); ?></span>
+                            </div>
+                            <div class="popular_price">
+                                <h5 class="price-tag-price">
+<?php echo $currencySymbol . round(Mage::helper('directory')->currencyConvert($product[Price], Mage::app()->getStore()->getBaseCurrencyCode(), Mage::app()->getStore()->getCurrentCurrencyCode()), 0); ?>
+                                </h5>
+                                <span class="price-tag-price-pernight"><?php echo $this->__('Per Night'); ?></span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        </li>
+    <?php
+        $twoDiv = $twoDiv + 1;
+    }
+} else {
+    echo '<div class="emty_grid" style="height: 221px;">' . $this->__('No Wishlist!') . '</div>';
+}
+    ?>
+</ul>
