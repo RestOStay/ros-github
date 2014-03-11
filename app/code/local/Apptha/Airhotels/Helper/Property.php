@@ -11,6 +11,10 @@ class Apptha_Airhotels_Helper_Property extends Mage_Core_Helper_Url
     const XML_PATH_PRODUCT_URL_SUFFIX           = 'catalog/seo/product_url_suffix';
     const XML_PATH_PRODUCT_URL_USE_CATEGORY     = 'catalog/seo/product_use_categories';
     const XML_PATH_USE_PRODUCT_CANONICAL_TAG    = 'catalog/seo/product_canonical_tag';
+    const XML_PATH_USE_MOSTPOPULAR_CATEGORY     = 'catalog/frontend/mostpopular_category';
+    const XML_PATH_USE_BESTDEAL_CATEGORY     = 'catalog/frontend/bestdeal_category';
+    
+    
 
     /**
      * Cache for product rewrite suffix
@@ -414,5 +418,15 @@ class Apptha_Airhotels_Helper_Property extends Mage_Core_Helper_Url
 
         return $product;
     }
+    
+    
+    public function getBestDealCategory() {        
+        return (int)Mage::getStoreConfig(self::XML_PATH_USE_BESTDEAL_CATEGORY);        
+    } 
+    
+    public function getMostPopularCategory() {        
+        return (int)Mage::getStoreConfig(self::XML_PATH_USE_MOSTPOPULAR_CATEGORY);        
+    }
+     
  
 }

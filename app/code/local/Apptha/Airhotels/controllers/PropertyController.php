@@ -953,6 +953,69 @@ class Apptha_Airhotels_PropertyController extends Mage_Core_Controller_Front_Act
 	$this->loadLayout();
            $this->renderLayout();
 	}
+        
+public function ajaxBestDealAction() {
+        $bestDealcity = $this->getRequest()->getParam('city');
+        $bestDealcityArray = array_map('trim',explode(',', $bestDealcity));
+        //var_dump($bestDealcityArray);
+        $mostPopularCategory=Mage::Helper('airhotels/property')->getMostPopularCategory();
+        $categoryIds = array($mostPopularCategory);
 
- }
+        $bestDealCollection1 = Mage::getModel('catalog/product')
+                ->getCollection()
+                ->joinField('category_id', 'catalog/category_product', 'category_id', 'product_id = entity_id', null, 'left')
+                ->addAttributeToSelect('*')
+                ->addAttributeToFilter('category_id', array('in' => $categoryIds));
+
+        $bestDealCollection2 = Mage::getModel('catalog/product')
+                ->getCollection()
+                ->joinField('category_id', 'catalog/category_product', 'category_id', 'product_id = entity_id', null, 'left')
+                ->addAttributeToSelect('*')
+                ->addAttributeToFilter('category_id', array('in' => $categoryIds))
+                ->addAttributeToFilter('city', array('in' => $bestDealcityArray));
+        //print_r($bestDealCollection2->getData());
+        //print_r($bestDealCollection1->getData());
+        if (count($bestDealCollection1) != 0) {
+
+            if (count($bestDealCollection2) != 0) {
+                $bestDealCollection = $bestDealCollection2;
+            } else {
+                $bestDealCollection = $bestDealCollection1;
+            }
+
+            $countBestDeal = 1;
+            foreach ($bestDealCollection as $bestDealProduct) {
+                $_product12 = Mage::getModel('catalog/product')->load($bestDealProduct->getId());
+                $rateimage = Mage::Helper('catalog/image')->init($_product12, 'image')
+                                ->constrainOnly(TRUE)->keepAspectRatio(TRUE)->keepFrame(FALSE)->resize(200, null);
+
+                $bestDealProductUrlPath = Mage::getBaseUrl() . $bestDealProduct->getUrlPath();
+                if ($bestDealProduct->getImage() != 'no_selection') {
+                    $bestDealProductImageUrl = $rateimage;
+                } else {
+                    $bestDealProductImageUrl = $_product12->getImageUrl();
+                }
+
+                $bestDealProductName = substr($bestDealProduct->getName(), 0, 25);
+
+                $html.='<li class="rounded rated" style="margin-right:0;">';
+                $html.='<a class="ss_name" href="' . $bestDealProductUrlPath . '">';
+
+                $html.='<img alt="" src="' . $bestDealProductImageUrl . '" width="230" height="140" title="' . $bestDealProductName . '" class="captify"></a>
+                                            <div class="box-shadow">
+                                                <a href="' . $bestDealProductUrlPath . '" style="text-decoration: none;">
+                                                     ' . $bestDealProductName . '
+                                                </a>
+                                            </div>
+                                        </li>';
+
+                $countBestDeal++;
+            }
+        } else {
+            $html = $this->__('No Records!');
+        }
+        echo $html;
+    }
+
+}
    

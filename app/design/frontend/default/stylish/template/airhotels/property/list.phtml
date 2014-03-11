@@ -23,7 +23,31 @@
         }
 
     }
-    google.maps.event.addDomListener(window, 'load', initialize);
+    google.maps.event.addDomListener(window, 'load', initialize); 
+    
+    function initialize2() {
+        var mapOptions = {
+            //center: new google.maps.LatLng(-33.8688, 151.2195),
+            zoom: 13,
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+        var map = new google.maps.Map(document.getElementById('map_canvas2'),
+        mapOptions);
+
+        var input = document.getElementById('bestDealcity');
+        var autocomplete = new google.maps.places.Autocomplete(input);
+
+        autocomplete.bindTo('region', map);
+        // Autocomplete.
+        function setupClickListener(id, types) {
+            var radioButton = document.getElementById(id);
+            google.maps.event.addDomListener(radioButton, 'click', function() {
+                autocomplete.setTypes(types);
+            });
+        }
+
+    }
+    google.maps.event.addDomListener(window, 'load', initialize2);
 </script>
 
 <?php
@@ -154,28 +178,27 @@ h1, h2 {
 		});
 </script>
     <!-- End -->
-   
+  
     
-
+    
 <!-- end -->
 <div class="clear"></div>
 <div id="roomshomepage">
     <div id="room" class="clearfix">
         <div id="left_columnhomepage">
             <div id="main_content" class="box">
-                <div class="tabhomepage">
+                <div class="tabhomepage" style="position: relative; display: block;">
                     
                     <ul id="main_content_sub_navhomepage" class="rooms_sub_navhomepage clearfix ">
-                        <li id="menuwhatnew" class="main_link selected">
-                            <a href="#whatnew" onclick="showTabs('whatsnew','menuwhatnew')"><?php echo $this->__('What\'s New'); ?></a>
-                        </li>
-                        <li id="menuRated" class="main_link">
-                            <a href="#mostrated" onclick="showTabs('rated_div','menuRated')"><?php echo $this->__('Most Rated'); ?></a>
-                        </li>
-                        <li id="menuPopular" class="main_link">
+                        <li id="menuPopular" class="main_link selected">
                             <a href="#mostrated" onclick="showTabs('popular_div','menuPopular')"><?php echo $this->__('Most Popular'); ?></a>
                         </li>
-                            
+                        <li id="menuDeal" class="main_link">
+                            <a href="#bestdeal" onclick="showTabs('deal_div','menuDeal')"><?php echo $this->__('Best Deal'); ?></a>
+                        </li>
+                        <li id="menuwhatnew" class="main_link">
+                            <a href="#whatnew" onclick="showTabs('whatsnew','menuwhatnew')"><?php echo $this->__('What\'s New'); ?></a>
+                        </li>    
 <!--                        <li id="content_flag">
                             
                         </li>-->
@@ -242,111 +265,101 @@ h1, h2 {
                         <!-- <div class="next"><img id="homepage_badges1" src="images/next.jpg" alt="next" onclick="return test(count.value)"  /> </div> -->
                         
                     </div>
-                    <!-- most rated -->
-                    <?php $rateCollection = Mage::getModel('airhotels/property')->getRatedProperty();?>
-                    <div id="rated_div" class="main_content" style="display: none;">
-                    
-                   <!-- <div class="prev"><img src="images/prev.jpg" alt="prev" onclick="return mrated(leftname.value)" /></div> -->
-                    	<!-- <div class="slider" id="slider1"> -->
-                        <div id="demo5" class="scroll-img demo5">
-                     <!-- <marquee onmouseover="this.stop();" onmouseout="this.start();" loop="repeat"> -->
-                        <ul id="rated_badges" style="display: block; <?php if(count($rateCollection)== 0 ) echo "text-align: center;" ?>">
-                            <?php
-                             if(count($_productCollection)!= 0 ){
-                              $countRate = 1;
-                            foreach ($rateCollection as $rateProduct) { //echo "test";
-                            ?>
-                             <?php
-							 $productId11 = $rateProduct->getId();
-								$model = Mage::getModel('catalog/product'); //getting product model
-                            $_product12 = $model->load($productId11);
-                                $rateimage=$this->helper('catalog/image')->init($_product12, 'image')
-                                ->constrainOnly(TRUE)
-                                ->keepAspectRatio(TRUE)
-                                ->keepFrame(FALSE)
-                                ->resize(200,null)
-                            ?>
-                                <li class="rounded rated" <?php if($countRate == 4) { echo 'style=" margin-right:0;" ' ;}?>>
-                                    <a class="ss_name" href="<?php echo Mage::getBaseUrl() . $rateProduct->getUrlPath(); ?>">
-                                        <img alt="" src="<?php
-                            if ($rateProduct->getImage() != 'no_selection') {
-                                echo $rateimage;
-                            } else {
-                                echo $_product12->getImageUrl();
-                            }
-                                ?>" width="230" height="140" title="<?php echo substr($rateProduct->getName(), 0, 25); ?>" class="captify">
-                                    </a>
-                                    <div class="box-shadow">
-                                         <a href="<?php echo Mage::getBaseUrl() . $rateProduct->getUrlPath(); ?>" style="text-decoration: none;">
-                                        <?php echo substr($rateProduct->getName(), 0, 30); ?>
-                                         </a>
-                                    </div>
-                                </li>
-                            <?php 
-                              $countRate++;
-                                }
-                             }else{
-                               echo $this->__('No Records!');
-
-                           }
-                            ?>
-                        </ul>
-                        <!-- </marquee> -->
+                    <!-- best deal -->
+                    <?php $bestDealCategory=Mage::Helper('airhotels/property')->getBestDealCategory(); ?>
+                    <?php $bestDealCollection = Mage::getModel('catalog/category')->load($bestDealCategory)->getProductCollection()->addAttributeToSelect('*')->setOrder('cat_index_position', 'DESC'); ?>
+                    <div id="deal_div" class="main_content" style="display: none;">
+                        <div class="search-area" style=" left: 374px; top: 0px; padding-top: 0px; ">
+                            <img id="bestDealcityloading" style="display: none" alt="loading" src="<?php echo $this->getSkinUrl('/images/loader.gif')?>">
+                                <input id="bestDealcity" name="bestDealcity" type="text" class="searchmainpage"  placeholder="Search Best Deal In City" onfocus="if (this.placeholder == 'Search Best Deal In City') {this.placeholder = '';this.style.color ='#333333';}" onblur="if (this.placeholder == '') {this.style.color ='#333333';this.placeholder = 'Search Best Deal In City';} "style="padding: 5px"/> 
+                                <div id="search_options" class=" left" style=""></div>
+                                <button  onclick="bestDealcitySearch()" type="submit" class="large pink btn icon-only" style="width: 45px !important;padding: 0px;height: 28px;margin-left: 10px;" /> 
+                                <div id="map_canvas2" style="width:427px;"></div>
                         </div>
-                       <!-- <div class="next"><img src="images/next.jpg" alt="next" onclick="return abc(count.value);" /> </div> -->
-                      
-                    </div>
-                    <!-- most rated ends -->
-                    <!-- most popular -->
-                     <?php
-                    $rateCollection = Mage::getModel('airhotels/property')->getPopularProperty();
-                    ?>
-                    <div id="popular_div" class="main_content" style="display: none;">
-                    
-                    
-                    <!-- <div class="slider" id="slider2"> -->
-                    <div id="demo5" class="scroll-img demo5">
-                       <!-- <marquee onmouseover="this.stop();" onmouseout="this.start();" loop="repeat" width="100%" behavior="scroll"> -->
-                       
-                        <ul id="popular_badges" class="popular_badges1">
-                            <?php
-                         if(count($rateCollection)!= 0 ){
-                             
-                           $countPopular = 1;
-                            for ($s = 0; $s < count($rateCollection); $s++) {
-                                $popularCollection = $model->load($rateCollection[$s]["entity_id"]);
-                                //if ($popularCollection->getImage() != "no_selection" && trim($popularCollection->getImage()) != ""):
+                        <div id="demo5" class="scroll-img demo5">
+                            <ul id="rated_badges" style="display: block; <?php if (count($bestDealCollection) == 0) echo "text-align: center;" ?>">
+                                <?php if (count($bestDealCollection) !=0) { ?>
+                                    <?php $countBestDeal = 1; ?>
+                                    <?php foreach ($bestDealCollection as $bestDealProduct) { ?>
+                                        <?php $_product12 = Mage::getModel('catalog/product')->load($bestDealProduct->getId()); ?>
+                                        <?php $rateimage = $this->helper('catalog/image')->init($_product12, 'image')->constrainOnly(TRUE)->keepAspectRatio(TRUE)->keepFrame(FALSE)->resize(200, null); ?>
+                                        <li class="rounded rated" <?php if ($countBestDeal == 4) {
+                                    echo 'style=" margin-right:0;" ';
+                                } ?>>
+                                            <a class="ss_name" href="<?php echo Mage::getBaseUrl() . $bestDealProduct->getUrlPath(); ?>">
+                                                <img alt="" src="<?php
+                                                if ($bestDealProduct->getImage() != 'no_selection') {
+                                                    echo $rateimage;
+                                                } else {
+                                                    echo $_product12->getImageUrl();
+                                                }
+                                                ?>" width="230" height="140" title="<?php echo substr($bestDealProduct->getName(), 0, 25); ?>" class="captify">
+                                            </a>
+                                            <div class="box-shadow">
+                                                <a href="<?php echo Mage::getBaseUrl() . $bestDealProduct->getUrlPath(); ?>" style="text-decoration: none;">
+                                                    <?php echo substr($bestDealProduct->getName(), 0, 30); ?>
+                                                </a>
+                                            </div>
+                                        </li>
+                                        <?php
+                                        $countBestDeal++;
+                                    }
+                                } else {
+                                    echo $this->__('No Records!');
+                                }
                                 ?>
-                                <li class="rounded round" <?php if($countPopular == 4) { echo 'style=" margin-right:0;" ' ;}?>>
-                                    <a class="ss_name" href="<?php echo Mage::getBaseUrl() . $popularCollection->getUrlPath(); ?>">
-                                        <img alt="" src="<?php
-                            if ($popularCollection->getImage() != "no_selection") {
-                                echo Mage::getBaseUrl('media') . 'catalog/product/' . $popularCollection->getImage();
-                            } else {
-                                echo $popularCollection->getImageUrl();
-                            }
-                                ?>" width="230" height="140" title="<?php echo substr($popularCollection->getName(), 0, 25); ?>">
-                                    </a>
-                                    <div class="box-shadow">
-                                        <a href="<?php echo Mage::getBaseUrl() . $popularCollection->getUrlPath(); ?>" style="text-decoration: none;">
-                                        <?php echo substr($popularCollection->getName(), 0, 30); ?>
-                                        </a>
-                                    </div>
-                                </li>
-                                <?php
-                               $countPopular++;
-                             }
-                             }else{
-                               echo $this->__('No Records!');
+                            </ul>
+                            <!-- </marquee> -->
+                        </div>
 
-                           }
-                            ?>
-                        </ul>
-                        
-                       <!-- </marquee> -->
+                    </div>
+                    <!-- best deal ends -->
+                    <!-- most popular -->
+                    <?php $mostPopularCategory=Mage::Helper('airhotels/property')->getMostPopularCategory(); ?>
+                    <?php $mostPopularCollection = Mage::getModel('catalog/category')->load($mostPopularCategory)->getProductCollection()->addAttributeToSelect('*')->setOrder('cat_index_position', 'DESC'); ?>
+                    <div id="popular_div" class="main_content" style="display: none;">
+                         
+
+                        <!-- <div class="slider" id="slider2"> -->
+                        <div id="demo5" class="scroll-img demo5">
+                            <!-- <marquee onmouseover="this.stop();" onmouseout="this.start();" loop="repeat" width="100%" behavior="scroll"> -->
+
+                            <ul id="popular_badges" style="padding:0;" class="popular_badges1">
+                                <?php if (count($mostPopularCollection) != 0) {
+                                    $countPopular = 1; ?>
+                                    <?php foreach ($mostPopularCollection as $_mostPopularProduct) { ?>
+                                            <?php $mostPopularProduct = $model->load($_mostPopularProduct->getId()); ?>
+                                            <li class="rounded round" <?php if ($countPopular == 4) { ?>
+                                                <?php echo 'style=" margin-right:0;" '; } ?>>
+                                            <a class="ss_name" href="<?php echo Mage::getBaseUrl() . $mostPopularProduct->getUrlPath(); ?>">
+                                                <img alt="" src="<?php
+                                                if ($mostPopularProduct->getImage() != "no_selection") {
+                                                    echo Mage::getBaseUrl('media') . 'catalog/product/' . $mostPopularProduct->getImage();
+                                                } else {
+                                                    echo $mostPopularProduct->getImageUrl();
+                                                }
+                                                ?>" width="230" height="140" title="<?php echo substr($mostPopularProduct->getName(), 0, 25); ?>">
+                                            </a>
+                                            <div class="box-shadow">
+                                                <a href="<?php echo Mage::getBaseUrl() . $mostPopularProduct->getUrlPath(); ?>" style="text-decoration: none;">
+                                        <?php echo substr($mostPopularProduct->getName(), 0, 30); ?>
+                                                </a>
+                                            </div>
+                                        </li>
+                                        <?php
+                                        $countPopular++;
+                                    }
+                                } else {
+                                    echo $this->__('No Records!');
+
+                                }
+                                ?>
+                            </ul>
+
+                            <!-- </marquee> -->
                         </div>
                        <!-- <div class="next"><img onclick="return most(count.value)" src="images/next.jpg" alt="next" /> </div> -->
-                       
+
                     </div>
                     <!-- most popular -->
                         
@@ -361,6 +374,26 @@ h1, h2 {
 
 <script type="text/javascript">
     var $slide = jQuery.noConflict();
+    function bestDealcitySearch(){    
+                  var bestDealcity=document.getElementById("bestDealcity").value;  
+                    if(bestDealcity==""){
+				alert("Please enter a city name");
+				document.getElementById("bestDealcity").focus();
+				return false;
+		    }
+            jQuery("#bestDealcityloading").show();
+            jQuery.ajax({
+                url: "<?php echo $this->getUrl('airhotels/property/ajaxBestDeal'); ?>",
+                context: document.body,
+                data: {city:bestDealcity},
+                success: function(data){
+                    jQuery("#rated_badges").text=data;
+                    document.getElementById("rated_badges").innerHTML=   data;
+                    jQuery("#bestDealcityloading").hide();        
+                }
+            });    
+    }
+    
     function showTabs(id,menuName){ 
         $slide(".main_content").hide();
         $slide(".main_link").removeClass("selected");
@@ -371,15 +404,13 @@ h1, h2 {
 		document.getElementById("count").value=1;
 		
 		
-		jQuery(".popular_badges1").removeAttr('style');
-		
 		jQuery("#slider1").removeAttr('style');
 		jQuery('#slider1').attr('style', 'width: 980px !important; left: 0; overflow: hidden; position: relative; visibility: visible; z-index: 2');
 		
 		
 		jQuery('.rated').attr('style', 'width: 230px !important; height: 140px; float: left; overflow: hidden;');
     	
-		jQuery("#rated_badges").removeAttr('style');
+		//jQuery("#rated_badges").removeAttr('style');
 		
 		
 		
