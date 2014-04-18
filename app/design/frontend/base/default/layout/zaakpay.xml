@@ -1,0 +1,12 @@
+<layout version="0.1.0">
+  <zaakpay_transact_failure>
+    <remove name="left"/>
+    <reference name="root">
+      <action method="setTemplate"><template>page/2columns-right.phtml</template></action>
+    </reference>
+    <reference name="content">
+      <block type="core/template" name="zaakpay_transact_failure" template="zaakpay/failure.phtml"></block>
+    </reference>
+  </zaakpay_transact_failure>
+</layout>
+

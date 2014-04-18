@@ -1,0 +1,100 @@
+<?xml version="1.0"?>
+<config>
+  <modules>
+    <Zaakpay>
+      <!-- declare module's version information for database updates -->
+      <version>0.1.0</version>
+    </Zaakpay>
+  </modules>
+  <global>
+    <blocks>
+      <zaakpay>
+        <class>Zaakpay_Block</class>
+      </zaakpay>
+    </blocks>
+    <models>
+      <!-- model group alias to be used in Mage::getModel('newmodule/...') -->
+      <zaakpay>
+        <!-- base class name for the model group -->
+        <class>Zaakpay_Model</class>
+      </zaakpay>
+    </models>
+    <!-- declare resource setup for new module -->
+    <resources>
+      <!-- resource identifier -->
+      <zaakpay_setup>
+        <!-- specify that this resource is a setup resource and used for upgrades -->
+        <setup>
+          <!-- which module to look for install/upgrade files in -->
+          <module>Zaakpay</module>
+        </setup>
+        <!-- specify database connection for this resource -->
+        <connection>
+          <!-- do not create new connection, use predefined core setup connection -->
+          <use>core_setup</use>
+        </connection>
+      </zaakpay_setup>
+      <zaakpay_write>
+        <connection>
+          <use>core_write</use>
+        </connection>
+      </zaakpay_write>
+      <zaakpay_read>
+        <connection>
+          <use>core_read</use>
+        </connection>
+      </zaakpay_read>
+    </resources>
+  </global>
+  <adminhtml>
+    <!-- Events -->
+    <events>
+      <payment_info_block_prepare_specific_information>
+        <observers>
+          <zaakpay_payment_info_observer>
+            <type>singleton</type>
+            <class>Zaakpay_Payment_Info_Observer</class>
+            <method>check_status</method>
+          </zaakpay_payment_info_observer>
+        </observers>
+      </payment_info_block_prepare_specific_information>
+    </events>
+  </adminhtml>
+  <!-- declare default configuration values for this module -->
+  <default>
+    <!-- 'payment' configuration section (tab) -->
+    <payment>
+      <!-- 'newmodule' configuration group (fieldset) -->
+      <zaakpay>
+        <!-- by default this payment method is inactive -->
+        <active>0</active>
+        <!-- model to handle logic for this payment method -->
+        <model>Zaakpay_Model_Transact</model>
+        <!-- order status for new orders paid by this payment method -->
+        <order_status>pending</order_status>
+        <!-- default title for payment checkout page and order view page -->
+        <title>Zaakpay (Credit/Debit Card)</title>        
+        <cctypes>VI,MC</cctypes>
+        <payment_action>authorize</payment_action>
+      </zaakpay>
+    </payment>
+  </default>
+  <frontend>
+    <routers>
+      <zaakpay>
+        <use>standard</use>
+        <args>
+          <module>Zaakpay</module>
+          <frontName>zaakpay</frontName>
+        </args>
+      </zaakpay>
+    </routers>
+    <layout>
+      <updates>
+        <zaakpay>
+          <file>zaakpay.xml</file>
+        </zaakpay>
+      </updates>
+    </layout>
+  </frontend> 
+</config>
