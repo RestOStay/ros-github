@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <Uni_Opcheckout>
+            <active>true</active>
+            <codePool>community</codePool>
+            <depends>
+                <Mage_Checkout />
+            </depends>
+            <version>0.1.0</version>
+        </Uni_Opcheckout>
+    </modules>
+</config> 

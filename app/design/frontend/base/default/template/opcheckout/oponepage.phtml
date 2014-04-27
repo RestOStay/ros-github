@@ -1,0 +1,539 @@
+<script type="text/javascript">countryRegions = <?php echo $this->helper('directory')->getRegionJson() ?></script>
+<div id="opcheckout-wrapper-main" class="uni-wrapperIn my-account">
+    <div id="uni-main-loader-checkout"></div>
+    <div id="sub-loader"></div>
+    <?php $stepCounter = 1; ?>
+    <h1><?php echo $this->__(Mage::getStoreConfig('opcheckout/order/opcheckout_title')) ?></h1>
+    <p><?php echo $this->__(Mage::getStoreConfig('opcheckout/order/opcheckout_desc')) ?></p>
+    <?php if (!$this->isCustomerLoggedIn()): ?>
+        <div class="uni-borderDiv"><?php echo $this->__('If you already have an account. Click here to ') . '<a href="' . $this->getUrl('customer/account/login', array('_secure' => true)) . '" class="uni-login-link" id="opcheckout-login-link">' . $this->__('login') . '</a>.' ?></div>
+    <?php endif; ?>
+    <table width="100%" cellpadding="1" cellspacing="1">
+        <tr>
+            <td colspan="3">&nbsp;</td>
+        </tr>
+        <tr>
+            <td width="33%" rowspan="2" class="uni-main-td-first">
+                <table width="100%" border="0" cellpadding="2" cellspacing="2">
+                    <tr>
+                        <td class="step-count count<?php echo $stepCounter++; ?>"></td>
+                        <td><span class="uni-steps"><?php echo $this->__('Name And Address') ?></span></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><?php echo $this->getChildHtml('billingx') ?></td>
+                    </tr>
+                </table>
+                <table width="100%" border="0" cellpadding="2" cellspacing="2">
+                    <tr>
+                        <td width="32%" valign="top"><?php if ($this->canShip()): ?><?php echo $this->getChildHtml('shippingx') ?><?php endif; ?></td>
+                        <td valign="top">&nbsp;</td>
+                    </tr>
+                </table>
+            </td>
+            <td width="30%" rowspan="3" class="uni-main-td">
+                <table width="100%" border="0" cellspacing="1" cellpadding="1">
+                    <input id="opcheckout-canShip" type="hidden" value="<?php echo $this->canShip() ? 1 : 0; ?>"/>
+                    <?php if ($this->canShip()): ?>
+                        <tr>
+                            <td valign="top">
+                                <table width="100%" border="0" cellpadding="0" cellspacing="1">
+                                    <tr>
+                                        <td class="step-count count<?php echo $stepCounter++; ?>"></td>
+                                        <td><span class="uni-steps"><?php echo $this->__('Shipping Method') ?></span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>&nbsp;</td>
+                                        <td>
+                                            <form id="co-shipping-method-form" action="">
+                                                <div class="inner-box">
+                                                    <div class="default-box" id="checkout-shipping-method-load">
+                                                        <?php echo $this->getChildHtml('availablex') ?>
+                                                    </div>
+                                                </div>
+                                                <script type="text/javascript">
+    var shippingMethod = new ShippingMethodStep('co-shipping-method-form', "<?php echo $this->getUrl('opcheckout/onepage/saveShippingMethod', array('_secure' => true)) ?>");
+                                                </script>
+                                                <div id="onepage-checkout-shipping-method-additional-load">
+                                                    <?php echo $this->getChildHtml('additionalx') ?>
+                                                </div>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    <?php endif; ?>
+                    <tr>
+                        <td valign="top">
+                            <table width="100%" border="0" cellpadding="0" cellspacing="1">
+                                <tr>
+                                    <td class="step-count count<?php echo $stepCounter++; ?>"></td>
+                                    <td><span class="uni-steps"><?php echo $this->__('Payment Method') ?></span></td>
+                                </tr>
+                                <tr>
+                                    <td>&nbsp;</td>
+                                    <td>
+                                        <form action="" id="co-payment-form">
+                                            <div id="opcheckout-payment-method"><?php echo $this->getChildHtml('methodsx') ?></div>
+                                            <div class="tool-tip" id="payment-tool-tip" style="display:none;">
+                                                <div class="btn-close">
+                                                    <a href="#" id="payment-tool-tip-close"><img src="<?php echo $this->getSkinUrl('opcheckout/images/btn_window_close.gif') ?>" alt="<?php echo $this->__('Close') ?>" /></a>
+                                                </div>
+                                                <div class="block-content">
+                                                    <img src="<?php echo $this->getSkinUrl('images/cvv.gif') ?>" alt="<?php echo $this->__('Card Verification Number Visual Reference') ?>" />
+                                                </div>
+                                            </div>
+
+                                        </form>
+                                        <script type="text/javascript">
+                                            //<![CDATA[
+                                            var payment = new Payment('co-payment-form', '<?php echo $this->getUrl('opcheckout/onepage/savePayment', array('_secure' => true)) ?>');
+                                            payment.init();
+                                            payment.currentMethod = "<?php echo $this->getChild('methodsx')->getSelectedMethodCode() ?>";
+                                            //]]>
+                                        </script>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+                <?php if (Mage::helper('opcheckout')->isCouponDiscountEnabled()): ?>
+                    <table>
+                        <tr>
+                            <td>
+                                <?php echo $this->getChildHtml('coupanx'); ?>
+                            </td>
+                        </tr>
+                    </table>
+                <?php endif; ?>
+            </td>
+            <td width="37%" class="uni-main-td-last" rowspan="3">
+                <table width="100%" border="0" cellpadding="2" cellspacing="2">
+                    <tr>
+                        <td><img src="<?php echo $this->getSkinUrl('opcheckout/images/check.png') ?>" width="22" height="28" /></td>
+                        <td><span class="uni-steps"><?php echo $this->__('Review Your Order') ?></span></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <table border="0" class="review-main" width="100%">
+                                <tbody>
+                                    <tr>
+                                        <td id="one-step-checkout-review"><?php echo $this->getChildHtml('infox') ?></td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <?php
+                                            if (!$this->getAgreements()) {
+                                                
+                                            } else {
+                                                ?>
+                                                <form action="" id="checkout-agreements" onsubmit="return false;">
+                                                    <ol class="checkout-agreements-ol">
+                                                        <?php foreach ($this->getAgreements() as $_a): ?>
+                                                            <li>
+                                                                <div class="agreement-content"<?php echo ($_a->getContentHeight() ? ' style="height:' . $_a->getContentHeight() . '"' : '') ?>>
+                                                                    <?php if ($_a->getIsHtml()): ?>
+                                                                        <?php echo $_a->getContent() ?>
+                                                                    <?php else: ?>
+                                                                        <?php echo nl2br($this->htmlEscape($_a->getContent())) ?>
+                                                                    <?php endif; ?>
+                                                                </div>
+                                                                <p class="agree">
+                                                                    <input type="checkbox" id="agreement-<?php echo $_a->getId() ?>" name="agreement[<?php echo $_a->getId() ?>]" value="1" />&nbsp;
+                                                                    <label for="agreement-<?php echo $_a->getId() ?>"><?php echo $_a->getCheckboxText() ?></label>
+                                                                </p>
+                                                            </li>
+                                                        <?php endforeach ?>
+                                                    </ol>
+                                                </form>
+                                            <?php } ?>
+                                        </td>
+                                    </tr>        
+                                    <?php if (Mage::helper('opcheckout')->isOrderCommentEnabled()): ?>
+                                        <tr>
+                                            <td colspan="2">
+                                                <ol style=" margin-left: 0; " class="checkout-agreements-ol">
+                                                    <li>
+                                                        <?php $_MAX_CHAR = Mage::getStoreConfig('opcheckout/order/opcheckout_order_comment_length'); ?>
+                                                        <?php
+                                                        $_msg = '';
+                                                        $flag = false;
+                                                        ?>
+                                                        <?php if ($_MAX_CHAR != '' && $_MAX_CHAR != 0): ?>
+                                                            <?php $flag = true; ?>
+                                                            <?php $_msg = $this->__('Maximum Character(s):' . $_MAX_CHAR); ?>
+                                                        <?php endif; ?>
+                                                        <label for="opcheckout_order_comment"><?php echo $this->__('Your Comment for this Order. ') ?></label>
+                                                        <br/><textarea name="opcheckout-order-comment" id="opcheckout_order_comment" class="opcheckout_order_comment"></textarea>
+                                                        <?php echo $_msg ? $_msg : '' ?>
+                                                        <span id="comment_count_left"></span>
+                                                    </li>
+                                                </ol>
+                                                <script type="text/javascript">
+                                                <?php if ($flag): ?>
+                                                var MAX_CHAR = '<?php echo $_MAX_CHAR; ?>';
+                                                var msg = '<?php echo $this->__('Character Left: ') ?>';
+                                                $('comment_count_left').innerHTML = msg + MAX_CHAR;
+                                                <?php endif; ?>
+                                            $('opcheckout_order_comment').observe('keyup', function() {
+                                                <?php if ($flag): ?>
+                                                    var len = $(this).value.length;
+                                                    if (len > MAX_CHAR) {
+                                                        $(this).value = $(this).value.substring(0, MAX_CHAR);
+                                                    }
+                                                    $('comment_count_left').innerHTML = msg + (MAX_CHAR - $(this).value.length);
+                                                 <?php endif; ?>
+                                                $('hidden_opcheckout_order_comment').value = $(this).value;
+                                            });
+                                                </script>
+                                            </td>
+                                        </tr>
+                                    <?php endif; ?>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                    <?php if (Mage::helper('opcheckout')->isAllowedNewsletterSubscription()): ?>
+                        <tr>
+                            <td valign="top" colspan="2">
+                                <div class="opcheckout-newsletter-subscribe">
+                                    <input type="checkbox" name="subscribe_to_newsletter" id="subscribe_to_newsletter" value=""/>
+                                    <label for="subscribe_to_newsletter"><?php echo $this->__('Subscribe me for newsletter.') ?></label>
+                                </div>
+                            </td>
+                        </tr>
+                        <?php if (Mage::helper('opcheckout')->isNewsletterSubscriptionChecked()): ?>
+                            <script type="text/javascript">
+                                $('subscribe_to_newsletter').checked = true;
+                                $('hidden_newsletter_subscription').value = 1;
+                            </script>
+                        <?php endif; ?>
+                        <script tytype="text/javascript">
+                            $('subscribe_to_newsletter').observe('change', function() {
+                                if ($('subscribe_to_newsletter').checked == true) {
+                                    $('hidden_newsletter_subscription').value = 1;
+                                } else {
+                                    $('hidden_newsletter_subscription').value = 0;
+                                }
+                            });
+                        </script>
+                    <?php endif; ?>
+                    <?php if (Mage::getStoreConfigFlag('opcheckout/order/enable_cart_link')): ?>
+                        <tr>                     
+                            <td colspan="2">
+                                <div valign="top" class="opcheckout-newsletter-subscribe">
+                                    <?php echo $this->__('Forgot an Item?') ?> <a href="<?php echo $this->getUrl('checkout/cart') ?>"><?php echo $this->__('Edit Your Cart') ?></a>
+                                </div>
+                            </td>
+                        </tr>
+                    <?php endif; ?>                        
+                    <tr>
+                        <td valign="top" colspan="2">
+                            <table width="100%" border="0" cellpadding="1" cellspacing="1">
+                                <tr>
+                                    <td colspan="3" align="right">
+                                         
+                                    <button style="float: right;text-align: right; width: 160px!important; height: 56px!important; font-size: 21px!important; " type="button" 
+                                            title="Book it Now" 
+                                            class="button btn-proceed-checkout btn-checkout" 
+                                            onclick="checkout.save();">Place Order
+                                    </button>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td valign="top">&nbsp;</td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td align="right">&nbsp;</td>
+        </tr>
+    </table>
+</div>
+<script type="text/javascript">
+                            var billingForm = $('co-billing-form');
+                            var shippingForm = $('co-shipping-form');
+                            var shippingMethodForm = $('co-shipping-method-form');
+                            var paymentForm = $('co-payment-form');
+                            var checkoutCommentForm = $('checkout-order-comment');
+                            var agreementsForm = $('checkout-agreements');
+                            if (canShip()) {
+                                var allForms = ((agreementsForm == null || agreementsForm == undefined) ? [billingForm, shippingForm, shippingMethodForm, paymentForm] : [billingForm, shippingForm, shippingMethodForm, paymentForm, agreementsForm]);
+                            } else {
+                                var allForms = ((agreementsForm == null || agreementsForm == undefined) ? [billingForm, paymentForm] : [billingForm, paymentForm, agreementsForm]);
+                            }
+                            var checkout = new CheckoutMain(allForms);
+                            var billingStep = new Billing(billingForm, '<?php echo $this->getUrl('opcheckout/onepage/getAddress', array('_secure' => true)) ?>address/', '<?php echo $this->getUrl('opcheckout/onepage/saveBillingStep', array('_secure' => true)) ?>');
+                            var shippingStep = new ShippingStep(shippingForm, "<?php echo $this->getUrl('opcheckout/onepage/saveShippingStep', array('_secure' => true)) ?>", "<?php echo $this->getUrl('opcheckout/onepage/shippingMethod', array('_secure' => true)) ?>");
+                            var payment = new Payment(paymentForm, "<?php echo $this->getUrl('opcheckout/onepage/savePayment', array('_secure' => true)) ?>", "<?php echo $this->getUrl('opcheckout/onepage/paymentmethod', array('_secure' => true)) ?>");
+                            billing = billingStep;
+                            shipping = shippingStep;
+                            billingStep.save();
+                            var reviewStep = new ReviewStep("<?php echo $this->getUrl('opcheckout/onepage/review', array('_secure' => true)) ?>");
+                            var shippingMethodStep = new ShippingMethodStep(shippingMethodForm, "<?php echo $this->getUrl('opcheckout/onepage/saveShippingMethod', array('_secure' => true)) ?>");
+                            var reviewFinal = new ReviewFinal("<?php echo $this->getUrl('opcheckout/onepage/saveOrderCustom', array('_secure' => true)) ?>", "<?php echo $this->getUrl('opcheckout/onepage/success', array('_secure' => true)) ?>", agreementsForm);
+
+</script>
+<script type="text/javascript" language="javascript">
+ /*
+  * 
+  * @param {type} flag
+  * @returns {synchronized billing and shipping address }
+  */
+ if ($('billing:use_for_shipping_yes') && $('billing:use_for_shipping_yes').checked == true) {
+    Event.observe($('billing-address-select'),'change', function(){
+       syncShipping(true);
+    });
+    }
+    function syncWithShipping(flag) {
+        resetShippingForm(flag);
+        checkout.setShippingDifferent('uni-wrapper-shipping-div', flag);
+        shippingStep.setSameAsBilling(flag);
+        if (flag) {
+            billingStep.save();
+        }
+    }
+    function syncShipping(flag) {
+        if ($('billing:use_for_shipping_yes') && $('billing:use_for_shipping_yes').checked == true) {
+            if (($('shipping:country_id').value != $('billing:country_id').value) || $('shipping:region_id').value != $('billing:region_id').value || $('shipping:region').value != $('billing:region').value || $('shipping:city').value != $('billing:city').value || $('shipping:postcode').value != $('billing:postcode').value) {
+                $('shipping:country_id').value = $('billing:country_id').value;
+                shippingStep.setSameAsBilling(true);
+                billingStep.save();
+            } else {
+                $('shipping:country_id').value = $('billing:country_id').value;
+                shippingStep.setSameAsBilling(true);
+            }
+        } else {
+            if (flag) {
+                billingStep.save();
+            }
+        }
+    }
+    function getShippingAndTax() {
+        billingStep.save();
+    }
+    function getShippingAndTaxWithFlag(flag) {
+        if (flag) {
+            billingStep.save();
+        }
+    }
+    if ($('shipping-address-select')) {
+        $('shipping-address-select').observe('change', function() {
+            billingStep.save();
+        });
+    }
+    /*
+     * 
+     * @ reset shipping form when check box unchecked.
+     */
+    function resetShippingForm(flag) {
+        if (!flag) {
+            allNodes = $$('#uni-wrapper-shipping-div input[type=text]');
+            for (i = 0; i < allNodes.length; i++) {
+                allNodes[i].value = '';
+            }
+        }
+    }
+</script>
+<?php if (!$this->isCustomerLoggedIn()): ?>
+    <div class="account-login home-login" id="opcheckout-login-popup" style="display: none;">
+        <div id="opcheckout-login-content">
+            <div class="page-title">
+                <h2><?php echo $this->__('Login Here') ?></h2>
+                <a href="#" title="<?php echo $this->__('Close window') ?>" class="uni-popup-close">
+                    <span>
+                        <img src="<?php echo $this->getSkinUrl('opcheckout/images/btn_window_close.gif') ?>" />
+                    </span>
+                </a>
+            </div>
+            <div id="opcheckout-login-popup-contents-login">
+                <form method="post" id="opcheckout-login-form" action="">
+                    <h2 class="legend"><?php echo $this->__('Registered Customers') ?></h2>
+                    <div id="opcheckout-login-loading" style="display: none;" class="loading-ajax">&nbsp;</div>
+                    <div id="opcheckout-login-error" class="opcheckout-error" style="display: none;">&nbsp;</div>
+                    <div id="opcheckout-login-success" class="success-msg" style="display: none;">&nbsp;</div>
+                    <div id="opcheckout-login-error-current" class="opcheckout-error" style="display: none;"><?php echo $this->__('Please enter a valid username and password.'); ?></div>
+                    <div id="opcheckout-login-div" class="opcheckout-popup-fiels">
+                        <ul class="form-list">
+                            <li>
+                                <label for="email" class="required"><em>*</em><?php echo $this->__('Email Address') ?></label>
+                                <div class="input-box">
+                                    <input type="text" name="opcheckout_username" id="opcheckout_username" class="input-text required-entry validate-email" title="<?php echo $this->__('Email Address') ?>" />
+                                </div>
+                            </li>
+                            <li>
+                                <label for="pass" class="required"><em>*</em><?php echo $this->__('Password') ?></label>
+                                <div class="input-box">
+                                    <input type="password" name="opcheckout_password" class="input-text required-entry validate-password" id="opcheckout_password" title="<?php echo $this->__('Password') ?>" />
+                                </div>
+                            </li>
+                        </ul>
+                        <div class="buttons-set" align="center">
+                            <p class="required"><?php echo $this->__('* Required Fields') ?></p>
+                            <a  id="opcheckout-forgotpassword-link" class="switcher-link"><?php echo $this->__("Fogot password?") ?></a>
+                            <button type="button" class="button" title="<?php echo $this->__('Login') ?>" name="send" id="opcheckout-login-button"><span><span><?php echo $this->__('Login') ?></span></span></button>
+                        </div>
+                    </div>
+                </form>
+                <script type="text/javascript">
+                    //<![CDATA[
+                    var dataForm = new VarienForm('opcheckout-login-form', true);
+                    //]]>
+                </script>
+            </div>
+        </div>
+        <div id="opcheckout-forgotpassword-content" style="display: none;">
+            <div class="page-title">
+                <h2><?php echo $this->__('Forgot password') ?></h2>
+                <a href="#" title="<?php echo $this->__('Close window') ?>" class="uni-popup-close">
+                    <span><img src="<?php echo $this->getSkinUrl('opcheckout/images/btn_window_close.gif') ?>" /></span>
+                </a>
+            </div>
+            <div id="opcheckout-forgotpassword-contents">
+                <form method="post" id="opcheckout-forgotpassword-form">
+                    <h2 class="legend"><?php echo $this->__('Forgotten password') ?></h2>
+                    <div id="opcheckout-forgotpassword-loading" class="loading-ajax" style="display: none;">&nbsp;</div>
+                    <div id="opcheckout-forgotpassword-error" class="opcheckout-error" style="display: none;">&nbsp;</div>
+                    <div id="forgot-password-div" class="opcheckout-popup-fiels">
+                        <ul class="form-list">
+                            <li>
+                                <label for="email" class="required"><em>*</em><?php echo $this->__('Email Address') ?></label>
+                                <div class="input-box">
+                                    <input type="text" name="opcheckout_forgotpassword_email" id="opcheckout_forgotpassword_email" class="input-text" title="<?php echo $this->__('Email Address') ?>" />
+                                </div>
+                            </li>
+                        </ul>
+                        <div class="buttons-set" align="center">
+                            <p class="required"><?php echo $this->__('* Required Fields') ?></p>
+                            <a href="javascript:void(0)" id="opcheckout-gotologin-link" class="switcher-link"><?php echo $this->__("Goto login") ?></a>
+                            <button type="button" class="button" title="<?php echo $this->__('Submit') ?>" name="sendPass" id="opcheckout-sendPass-button"><span><span><?php echo $this->__('Submit') ?></span></span></button>
+                        </div>
+                    </div>
+                </form>
+                <script type="text/javascript">
+                    var buttonSendPass = $('opcheckout-sendPass-button');
+                    var easySendPass = function() {
+                        var forgot_email = $('opcheckout_forgotpassword_email');
+                        var forgotpassword_error = $('opcheckout-forgotpassword-error');
+                        var loading = $('opcheckout-forgotpassword-loading');
+                        var forgotPassDiv = $('forgot-password-div');
+                        var success = $('opcheckout-login-success');
+                        if (forgot_email.value.trim() == '') {
+                            forgotpassword_error.update('<?php echo $this->__("Please enter email address.") ?>');
+                            forgotpassword_error.show();
+                            $('opcheckout_forgotpassword_email').focus();
+                        } else {
+                            loading.hide();
+                            forgotpassword_error.hide();
+                            success.update().hide();
+                            forgotPassDiv.hide();
+                            loading.show();
+                            var form = $('opcheckout-forgotpassword-form');
+                            var url = '<?php echo $this->getUrl('opcheckout/onepage/ajaxforgotpasswordpost', array('_secure' => true)); ?>';
+                            new Ajax.Request(url, {
+                                parameters: form.serialize(true),
+                                method: 'POST',
+                                onComplete: function(transport) {
+                                    if (transport.status == 200) {
+                                        var result = transport.responseText.evalJSON();
+                                        if (!result.success) {
+                                            loading.hide();
+                                            forgotpassword_error.update(result.error);
+                                            forgotpassword_error.show();
+                                            forgotPassDiv.show();
+                                            $('opcheckout_forgotpassword_email').focus();
+                                        } else {
+                                            gotoLogin();
+                                            success.update(result.message);
+                                            success.show();
+                                            forgotPassDiv.show();
+                                        }
+                                    }
+                                }
+                            })
+                        }
+                    }
+                    buttonSendPass.observe('click', easySendPass);
+                </script>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        var login_popup;
+        Event.observe(window, 'load', function() {
+            var buttonLogin = $('opcheckout-login-button');
+            var easyLogin = function(e) {
+                var logindiv = $('opcheckout-login-div');
+                var loading = $('opcheckout-login-loading');
+                var error = $('opcheckout-login-error');
+                var errorCur = $('opcheckout-login-error-current');
+                var success = $('opcheckout-login-success');
+                if ($('opcheckout_username').value.trim() == '' || $('opcheckout_password').value == '') {
+                    logindiv.show();
+                    success.hide();
+                    error.hide();
+                    errorCur.show();
+                    loading.hide();
+                    $('opcheckout_username').focus();
+                } else {
+                    logindiv.hide();
+                    error.hide();
+                    errorCur.hide();
+                    success.hide();
+                    loading.show();
+                    var form = $('opcheckout-login-form');
+                    var url = '<?php echo $this->getUrl('opcheckout/onepage/ajaxlogin', array('_secure' => true)); ?>';
+                    new Ajax.Request(url, {
+                        parameters: form.serialize(true),
+                        method: 'POST',
+                        onComplete: function(transport) {
+                            if (transport.status == 200) {
+                                var result = transport.responseText.evalJSON();
+                                if (!result.success) {
+                                    loading.hide();
+                                    error.update(result.error);
+                                    error.show();
+                                    logindiv.show();
+                                    $('opcheckout_username').focus();
+                                } else {
+                                    window.location = window.location;
+                                }
+                            }
+                        }
+                    })
+                }
+                ;
+            }
+
+            var easykeyPress = function(event) {
+                if (event.keyCode == Event.KEY_RETURN) {
+                    event.preventDefault();
+                    easyLogin();
+                }
+            };
+
+            login_popup = new OpcheckoutDialog('opcheckout-login-popup', 'opcheckout-login-link', 'div#opcheckout-login-popup a.uni-popup-close', function() {
+                /* Callback for closing the popup */
+                Event.stopObserving(document, 'keypress', easykeyPress);
+                gotoLogin();
+            }, function() {
+                /* Callback for opening the popup */
+                Event.observe(document, 'keypress', easykeyPress);
+                /* Reset error messages and state */
+                $('opcheckout-login-error-current').hide();
+                $('opcheckout-login-error').hide();
+                $('opcheckout-login-popup-contents-login').show();
+            });
+            buttonLogin.observe('click', easyLogin);
+            togglePopupContent('opcheckout-gotologin-link', 'opcheckout-forgotpassword-link');
+        });
+    </script>
+    <div id="opcheckout_login_popup" style="display: none;">&nbsp;</div>
+<?php endif; ?>

@@ -1,0 +1,53 @@
+<?php
+$version=Mage::getVersion();
+if (in_array($version, array('1.4.0.0', '1.4.0.1'))){
+    $orderId = Mage::getSingleton('checkout/session')->getLastOrderId();
+if ($orderId) {
+    $_order = Mage::getModel('sales/order')->load($orderId);
+    $comment = $_order->getOrderComment();
+    $delivery = $_order->getShippingArrivalDate();
+    $date_format ='d/M/Y';
+    $date_format.=",g:i a";
+    $formateddate = date($date_format, strtotime($delivery));
+}
+}else{
+$_order = $this->getOrder();
+    $comment = $_order->getOrderComment();
+    $delivery = $_order->getShippingArrivalDate();
+    $date_format ='d/M/Y';
+    $date_format.=",g:i a";
+    $formateddate = date($date_format, strtotime($delivery));
+}
+    ?>
+    <?php if ($_order): ?>
+ <?php if (isset($comment) || isset($delivery)): ?>
+        <table>
+            <thead>
+                <?php if (isset($comment) && $comment !== ''): ?>
+                <th bgcolor="#EAEAEA" style="font-size:13px; padding:5px 9px 6px 9px; line-height:1em;">Order Comment:</th>
+            <?php endif; ?>
+            <?php if (isset($delivery) && $delivery !== ''): ?>
+                <th bgcolor="#EAEAEA" style="font-size:13px; padding:5px 9px 6px 9px; line-height:1em;">Delivery Date:</th>
+            <?php endif; ?>
+        </thead>
+        <tbody>
+            <tr>
+                <?php if ($comment != ''): ?>
+                <td valign="top" style="font-size:12px; padding:7px 9px 9px 9px; border-left:1px solid #EAEAEA; border-bottom:1px solid #EAEAEA; border-right:1px solid #EAEAEA;">
+                    <span>
+                        <?php echo $comment; ?>
+                    </span>
+                </td>
+                <?php endif; ?>
+                <?php if ($delivery != ''): ?>
+                    <td valign="top" style="font-size:12px; padding:7px 9px 9px 9px; border-left:1px solid #EAEAEA; border-bottom:1px solid #EAEAEA; border-right:1px solid #EAEAEA;">
+                        <span>
+                            <?php echo $formateddate; ?>
+                        </span>
+                    </td>
+                <?php endif; ?>
+            </tr>
+        </tbody>
+        </table>
+<?php endif;?>
+    <?php endif;?>

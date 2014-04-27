@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<layout version="0.1.0">
+    <checkout_onepage_index>
+        <reference name="root">
+            <action method="setTemplate" ifconfig="opcheckout/general/enabled"><template>page/1column.phtml</template></action>
+        </reference>
+        <reference name="head">
+            <action method="addItem" ifconfig="opcheckout/general/enabled"><type>skin_js</type><name>opcheckout/js/opcheckout.js</name><params/></action>
+            <action method="addCss" ifconfig="opcheckout/general/enabled"><stylesheet>opcheckout/css/opcheckout.css</stylesheet></action>
+            <block type="core/html_calendar" name="head.calendar" as="calendar" output="toHtml" template="opcheckout/onepage/delivery_date/js/calendar.phtml"/>
+            <action method="addItem"><type>js_css</type><name>calendar/calendar-win2k-1.css</name><params/><!--<if/><condition>can_load_calendar_js</condition>--></action>
+            <action method="addItem"><type>js</type><name>calendar/calendar.js</name><!--<if/><condition>can_load_calendar_js</condition>--></action>
+            <action method="addItem" ifconfig="opcheckout/general/enabled"><type>skin_js</type><name>opcheckout/js/op-calendar-setup.js</name><params/></action>
+        </reference>
+        <reference name="content">
+            <action method="setHeaderTitle" translate="title" module="checkout"><title>Opcheckout</title></action>
+            <action method="unsetChild" ifconfig="opcheckout/general/enabled"><name>checkout.onepage</name></action>
+            <block type="opcheckout/onepage" name="opcheckout.onepage">
+                <action method="setTemplate" ifconfig="opcheckout/general/enabled">
+                    <template>opcheckout/oponepage.phtml</template>
+                </action>
+                <block type="opcheckout/onepage" name="opcheckout.onepage.billing" as="billingx" template="opcheckout/onepage/billing.phtml"/>
+                <block type="opcheckout/onepage" name="opcheckout.onepage.shipping" as="shippingx" template="opcheckout/onepage/shipping.phtml"/>
+                    <block type="opcheckout/onepage_shipping_method_available" name="opcheckout.onepage.shipping_method.available" as="availablex" template="opcheckout/onepage/shipping_method/available.phtml"/>
+                    <block type="opcheckout/onepage" name="opcheckout.onepage.shipping_method.additional" as="additionalx" template="opcheckout/onepage/shipping_method/additional.phtml"/>
+                <block type="checkout/onepage_payment_methods" name="opcheckout.payment.methods" as="methodsx" template="opcheckout/onepage/payment/methods.phtml">
+                    <action method="setMethodFormTemplate"><method>purchaseorder</method><template>payment/form/purchaseorder.phtml</template></action>
+                </block>
+                    <block type="checkout/onepage_review_info" name="opcheckout.onepage.review.info" as="infox" template="opcheckout/onepage/review/info.phtml" />
+                    <block type="opcheckout/onepage" name="opcheckout.onepage.agreements" as="agreementsx" template="opcheckout/onepage/agreements.phtml"/>
+                    <block type="opcheckout/onepage/coupan" name="opcheckout.onepage.coupan" as="coupanx" template="opcheckout/onepage/coupan/coupan.phtml"/>
+            </block>
+        </reference>
+    </checkout_onepage_index>
+    <opcheckout_onepage_paymentmethod>
+        <block type="checkout/onepage_payment_methods" name="root" output="toHtml" template="opcheckout/onepage/payment/methods.phtml">
+            <action method="setMethodFormTemplate"><method>purchaseorder</method><template>payment/form/purchaseorder.phtml</template></action>
+        </block>
+    </opcheckout_onepage_paymentmethod>
+    <opcheckout_onepage_shippingmethod>
+        <block type="opcheckout/onepage_shipping_method_available" name="root" output="toHtml" template="opcheckout/onepage/shipping_method/available.phtml"/>
+    </opcheckout_onepage_shippingmethod>
+    <opcheckout_onepage_additional>
+        <block type="opcheckout/onepage" name="root" output="toHtml" template="opcheckout/onepage/shipping_method/additional.phtml">
+            <action method="setDontDisplayContainer"><param>1</param></action>
+        </block>
+    </opcheckout_onepage_additional>
+    <opcheckout_onepage_review>
+        <block type="checkout/onepage_review_info" name="root" output="toHtml" template="opcheckout/onepage/review/info.phtml">
+            <action method="addItemRender"><type>default</type><block>checkout/cart_item_renderer</block><template>opcheckout/onepage/review/item.phtml</template></action>
+            <action method="addItemRender"><type>grouped</type><block>checkout/cart_item_renderer_grouped</block><template>opcheckout/onepage/review/item.phtml</template></action>
+            <action method="addItemRender"><type>configurable</type><block>checkout/cart_item_renderer_configurable</block><template>opcheckout/onepage/review/item.phtml</template></action>
+            <block type="checkout/cart_totals" name="opcheckout.onepage.review.info.totals" as="totals" template="checkout/onepage/review/totals.phtml"/>
+        </block>
+    </opcheckout_onepage_review>
+    <opcheckout_email_comment>
+        <block type="opcheckout/email_info" name="emailcomment" template="opcheckout/onepage/email/comment.phtml">
+        </block>
+    </opcheckout_email_comment>
+</layout>

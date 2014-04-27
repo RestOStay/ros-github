@@ -1,0 +1,109 @@
+<form id="discount-coupon-form" action="" method="post" >
+    <div id="coupon-notice" style="display: none;"></div>
+    <div class="discount" style="border: 1px solid #D9DDE3; padding: 20px;">
+        <h2><?php echo $this->__('Discount Codes') ?></h2>
+        <div class="discount-form">
+            <label for="coupon_code"><?php echo $this->__('Enter your coupon code if you have one.') ?></label>
+
+            <div class="input-box">
+                <input style="width:250px; margin-top:10px; margin-bottom:5px;" class="input-text" id="coupon_code" name="coupon_code" value="<?php echo $this->htmlEscape(Mage::getSingleton('checkout/session')->getQuote()->getCouponCode()) ?>" />
+                <br/><span id="msg" style="display:none; color:red;"></span>
+            </div>
+
+            <div class="buttons-sets" style="margin-top:15px;">
+                <span class="coupon-please-wait" id="coupon-please-wait" style="display:none; line-height:19px; margin-left:5px;">
+                    <img src="<?php echo $this->getSkinUrl('images/opc-ajax-loader.gif') ?>" alt="<?php echo $this->__('Submitting coupon information...') ?>" title="<?php echo $this->__('Submitting coupon information...') ?>" class="v-middle" />
+                </span>
+                <button id="opcheckout-coupon-add" type="button" title="<?php echo $this->__('Apply Coupon') ?>" class="button addcoupon"value="<?php echo $this->__('Apply Coupon') ?>"><span><span><?php echo $this->__('Apply Coupon') ?></span></span></button>
+                <?php $class = " no-display";
+                if (strlen(Mage::getModel('checkout/session')->getQuote()->getCouponCode())): ?>
+    <?php $class = "";
+endif; ?>
+                &nbsp; <button id="opcheckout-coupon-remove" type="button" title="<?php echo $this->__('Cancel Coupon') ?>" class="button cancelcoupon<?php echo $class; ?>" value="<?php echo $this->__('Cancel Coupon') ?>"><span><span><?php echo $this->__('Cancel Coupon') ?></span></span></button>
+            </div>
+        </div>
+    </div>
+</form>
+<script type="text/javascript">
+/*
+ *@ Add Coupon DisCount Code..  
+ */
+    Event.observe(window, 'load', function() {
+        $('opcheckout-coupon-add').observe('click', function(e) {
+            var coupon = $('coupon_code').getValue();
+            var couponNotice = $('coupon-notice');
+            couponNotice.hide();
+            if (coupon == '')
+            {
+                alert('<?php echo $this->__('Please enter a valid coupon code.'); ?>');
+                return;
+            }
+            var url = '<?php echo $this->getUrl('opcheckout/onepage/coupon', array('_secure' => true)); ?>';
+            var parameters = {code: coupon};
+            new Ajax.Request(url, {
+                method: 'post',
+                parameters: parameters,
+                onSuccess: function(transport) {
+                    if (transport.status == 200) {
+                        var response = transport.responseText.evalJSON();
+                        if (response.success) {
+                            couponNotice.update(response.message);
+                            couponNotice.removeClassName('error-msg');
+                            couponNotice.addClassName('success-msg');
+                            couponNotice.show();
+                            /* Show remove button */
+                            $('opcheckout-coupon-remove').removeClassName('no-display');
+                        }
+                        else {
+                            couponNotice.update(response.message);
+                            couponNotice.removeClassName('success-msg');
+                            couponNotice.addClassName('error-msg');
+                            couponNotice.show();
+                            /* Hide remove button */
+                            $('opcheckout-coupon-remove').addClassName('no-display');
+                            ;
+                        }
+                    }
+                }
+            });
+            reviewStep.getReview();
+        });
+    });
+    /*
+    *@ Cancel Discount Coupon Code..
+     */
+    $('opcheckout-coupon-remove').observe('click', function(e) {
+        var coupon = $('coupon_code').getValue();
+        var couponNotice = $('coupon-notice');
+        couponNotice.hide();
+        var url = '<?php echo $this->getUrl('opcheckout/onepage/coupon', array('_secure' => true)); ?>';
+        var parameters = {code: coupon, remove: '1'};
+        new Ajax.Request(url, {
+            method: 'post',
+            parameters: parameters,
+            onSuccess: function(transport) {
+                if (transport.status == 200) {
+                    var response = transport.responseText.evalJSON();
+                    if (response.success) {
+                        couponNotice.update(response.message);
+                        couponNotice.removeClassName('error-msg');
+                        couponNotice.addClassName('success-msg');
+                        couponNotice.show();
+                        /* Show remove button */
+                        $('opcheckout-coupon-remove').addClassName('no-display');
+                    }
+                    else {
+
+                        couponNotice.update(response.message);
+                        couponNotice.removeClassName('success-msg');
+                        couponNotice.addClassName('error-msg');
+                        couponNotice.show();
+                        /* Hide remove button */
+                        $('opcheckout-coupon-remove').removeClassName('no-display');
+                    }
+                }
+            }
+        });
+        reviewStep.getReview();
+    });
+</script>

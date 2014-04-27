@@ -1,0 +1,228 @@
+<dd>
+            <ul style="border-top: 1px solid #D1D1D1; margin-top: 12px; padding-top: 10px;">
+                <li>
+                    <label for="page_date-end">Delivery Date:</label>
+                    <input name="shipping_arrival_date_display" id="shipping_arrival_date_display" value="" title="date" class=" input-text" style="width: 100px;" type="text"> <img src="<?php echo Mage::getBaseUrl('skin') ?>adminhtml/default/default/images/grid-cal.gif" alt="" class="v-middle" id="shipping_arrival_date_trig" title="Select Date" style=""> <a href="javascript:void(0)" id="link_reset" style="margin-left:5px;"><img src="<?php echo $this->getSkinUrl('opcheckout/images/ico_reset.png'); ?>" alt="" class="v-middle" title="Reset"></a>
+                    <input name="shipping_arrival_date" id="shipping_arrival_date" value="" onChange="shippingArrivalDateOnChange(this); return false;" title="date"  type="hidden"> 
+                </li>
+            </ul>
+        </dd>
+
+<script type="text/javascript">
+ 
+    Calendar.prototype._init = function (firstDayOfWeek, date) {
+        var today = new CalendarDateObject(),
+        TY = today.getFullYear(),
+        TM = today.getMonth(),
+        TD = today.getDate();
+        this.table.style.visibility = "hidden";
+        var year = date.getFullYear();
+        if (year < this.minYear) {
+            year = this.minYear;
+            date.setFullYear(year);
+        } else if (year > this.maxYear) {
+            year = this.maxYear;
+            date.setFullYear(year);
+        }
+        this.firstDayOfWeek = firstDayOfWeek;
+        this.date = new CalendarDateObject(date);
+        var month = date.getMonth();
+        var mday = date.getDate();
+        var no_days = date.getMonthDays();
+        /* Added By B.C. on date 18/02/2013 */
+        var check_flag = false;
+        /* END */
+
+        // calendar voodoo for computing the first day that would actually be
+        // displayed in the calendar, even if it's from the previous month.
+        // WARNING: this is magic. ;-)
+        date.setDate(1);
+        var day1 = (date.getDay() - this.firstDayOfWeek) % 7;
+        if (day1 < 0)
+            day1 += 7;
+        date.setDate(-day1);
+        date.setDate(date.getDate() + 1);
+
+        var row = this.tbody.firstChild;
+        var MN = Calendar._SMN[month];
+        var ar_days = this.ar_days = new Array();
+        var weekend = Calendar._TT["WEEKEND"];
+        var dates = this.multiple ? (this.datesCells = {}) : null;
+        for (var i = 0; i < 6; ++i, row = row.nextSibling) {
+            var cell = row.firstChild;
+            if (this.weekNumbers) {
+                cell.className = "day wn";
+                cell.innerHTML = date.getWeekNumber();
+                cell = cell.nextSibling;
+            }
+            row.className = "daysrow";
+            var hasdays = false, iday, dpos = ar_days[i] = [];
+            for (var j = 0; j < 7; ++j, cell = cell.nextSibling, date.setDate(iday + 1)) {
+                iday = date.getDate();
+                var wday = date.getDay();
+                cell.className = "day";
+                cell.pos = i << 4 | j;
+                dpos[j] = cell;
+                var current_month = (date.getMonth() == month);
+                if (!current_month) {
+                    if (this.showsOtherMonths) {
+                        cell.className += " othermonth";
+                        cell.otherMonth = true;
+                    } else {
+                        cell.className = "emptycell";
+                        cell.innerHTML = "&nbsp;";
+                        cell.disabled = true;
+                        continue;
+                    }
+                } else {
+                    cell.otherMonth = false;
+                    hasdays = true;
+                }
+                cell.disabled = false;
+                cell.innerHTML = this.getDateText ? this.getDateText(date, iday) : iday;
+                if (dates)
+                    dates[date.print("%Y%m%d")] = cell;
+                if (this.getDateStatus) {
+                    var status = this.getDateStatus(date, year, month, iday);
+                    if (this.getDateToolTip) {
+                        var toolTip = this.getDateToolTip(date, year, month, iday);
+                        if (toolTip)
+                            cell.title = toolTip;
+                    }
+                    if (status === true) {
+                        cell.className += " disabled";
+                        cell.disabled = true;
+                    } else {
+                        if (/disabled/i.test(status))
+                            cell.disabled = true;
+                        cell.className += " " + status;
+                    }
+                }
+                if (!cell.disabled) {
+                    cell.caldate = new CalendarDateObject(date);
+                    cell.ttip = "_";
+                    if (!this.multiple && current_month
+                        && iday == mday && this.hiliteToday) {
+                        cell.className += " selected";
+                        this.currentDateEl = cell;
+                    }
+                    if (date.getFullYear() == TY &&
+                        date.getMonth() == TM &&
+                        iday == TD) {
+                        cell.className += " today";
+                        cell.ttip += Calendar._TT["PART_TODAY"];
+                    }
+                    if (weekend.indexOf(wday.toString()) != -1)
+                        cell.className += cell.otherMonth ? " oweekend" : " weekend";
+                    if (check_flag){
+                        cell.className += " selected";
+                        this.currentDateEl = cell; 
+                        check_flag=false;
+                    }
+                }else{
+                    /* Added By B.C. on date 18/02/2013 */
+                    if (!this.multiple && current_month
+                        && iday == mday && this.hiliteToday) {
+                        check_flag=true;
+                    }
+
+                    /* END */
+                }
+            }
+            if (!(hasdays || this.showsOtherMonths))
+                row.className = "emptyrow";
+        }
+        this.title.innerHTML = Calendar._MN[month] + ", " + year;
+        this.onSetTime();
+        this.table.style.visibility = "visible";
+        this._initMultipleDates();
+        // PROFILE
+        // this.tooltips.innerHTML = "Generated in " + ((new CalendarDateObject()) - today) + " ms";
+    };
+    Calendar.setup({
+        inputField: "shipping_arrival_date",
+        ifFormat: "%Y-%mm-%ee %H:%M:%S",
+        showsTime: true,
+        button: "shipping_arrival_date_trig",
+        align: "Bl",
+        singleClick :true,
+        onSelect :function()
+        {
+            //var y = calendar.date.getFullYear();
+            currentTime1 = new Date();
+            var m = parseInt(currentTime1.getMonth())+parseInt(1);
+            var y=currentTime1.getFullYear();
+            var d = currentTime1.getDate();   
+
+            currentTime = new Date(calendar.date.getTime()); 
+            var d1=currentTime.getDate();
+            var m1=parseInt(currentTime.getMonth())+parseInt(1);
+            var y1=currentTime.getFullYear();
+            var h1 = currentTime.getHours();
+            var min1= currentTime.getMinutes();
+
+
+            if (calendar.dateClicked) 
+            {
+                if(d1 < d && m1==m && y1==y)
+                {
+                    alert("You can not select previous date.")
+                    document.getElementById('shipping_arrival_date_display').value="";
+                    document.getElementById('shipping_arrival_date').value="";
+                    calendar.hide();
+                }
+                else
+                {
+                    document.getElementById('shipping_arrival_date_display').value=y1+"-"+m1+"-"+d1+" "+h1+":"+min1;
+                    document.getElementById('shipping_arrival_date').value=y1+"-"+m1+"-"+d1+" "+h1+":"+min1;
+                    calendar.hide();
+                }
+            }
+            else
+            {
+                calendar.show();
+            }
+        },
+        disableFunc : function(date)
+        {  
+            var y = calendar.date.getFullYear();
+            var m = calendar.date.getMonth();     
+            var d = calendar.date.getDate();
+            
+            currentTime = new Date();
+            var d1=currentTime.getDate();
+            var m1=currentTime.getMonth();
+            var y1=currentTime.getFullYear();
+          
+            if(y < y1)
+            {
+                return true;
+            }
+            else if(m1 > m && y==y1)
+            {
+                return true;
+            }
+        }
+    });
+    
+    function shippingArrivalDateOnChange(el)
+    {
+        var displayDate = $('shipping_arrival_date_display');
+        var date = $('shipping_arrival_date').getValue();
+        displayDate.setValue(date);
+    }
+
+    function resetArrivalDate()
+    {
+        //clear both fields
+
+    }
+    //MRD added disable field to only allow calendar input
+    //TODO: need to enable field when form is submitted
+    Form.Element.disable('shipping_arrival_date_display');
+    Event.observe($('link_reset'),'click',function(){
+        $('shipping_arrival_date').setValue('');
+        $('shipping_arrival_date_display').setValue('');
+    });
+    //]]>
+</script>

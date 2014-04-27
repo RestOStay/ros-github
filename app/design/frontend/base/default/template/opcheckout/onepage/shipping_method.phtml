@@ -1,0 +1,13 @@
+<form id="co-shipping-method-form" action="">
+    <div class="inner-box">
+        <div class="default-box" id="checkout-shipping-method-load">
+            <?php echo $this->getChildHtml('availablex') ?>
+        </div>
+    </div>
+    <script type="text/javascript">
+        var shippingMethod = new ShippingMethodStep('co-shipping-method-form', "<?php echo $this->getUrl('opcheckout/onepage/saveShippingMethod', array('_secure' => true)) ?>");
+    </script>
+    <div id="onepage-checkout-shipping-method-additional-load">
+        <?php echo $this->getChildHtml('additionalx') ?>
+    </div>
+</form>

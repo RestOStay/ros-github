@@ -1,0 +1,124 @@
+div.uni-wrapperIn{font:11px/1.55em arial,helvetica,sans-serif;}
+input.input-text, select, textarea { border:1px solid #b6b6b6; font:12px arial, helvetica, sans-serif; }
+input.input-text, textarea { padding:2px; margin-right: 5px;}
+.payment-methods dd {padding:2px 10px;}
+.payment-methods dt {margin-bottom:2px;}
+.uni-wrapperIn{position: relative; background-color:#FFFFFF; border:1px solid #d1d1d1; margin:5px 0; padding:20px 10px; min-height:500px;}
+.uni-wrapperIn td{font-weight:bold;}
+.uni-borderDiv{border-top:1px solid #d1d1d1; border-bottom:1px solid #d1d1d1; padding-top:5px; padding-bottom:5px;}
+.uni-wrapperIn h1{margin:0; padding:0px; font-weight:lighter;}
+/***************************************************************************/
+.com-box{width: 230px;}
+.normal-box{width: 110px}
+
+#authorizenet_cc_type{width: 180px !important;}
+#authorizenet_expiration{width: 85px !important;}
+#authorizenet_expiration_yr{width: 85px !important;}
+
+#ccsave_cc_owner{width: 180px !important;}
+#ccsave_cc_type{width: 216px !important;}
+#ccsave_cc_number{width: 180px !important;}
+#ccsave_expiration{width: 108px !important;}
+#ccsave_expiration_yr{width: 108px !important;}
+
+#verisign_cc_type{width: 180px !important;}
+#verisign_cc_number{width: 180px !important;}
+#verisign_expiration{width: 85px !important;}
+#verisign_expiration_yr{width: 85px !important;}
+
+div#uni-main-loader-checkout,#sub-loader{position: absolute; display: none; z-index: 1000;}
+div#uni-main-loader-checkout{margin: 0 auto; top:0px; left: 0px; width: 100%; height: 820px; background-color: #AAAAAA; filter:alpha(opacity=1); opacity: 0.2; -moz-opacity:0.2; -khtml-opacity: 0.2;}
+div#sub-loader{width: 31px; height: 31px; top: 49%; left: 49%; background: url(../images/ajax-loader-tr.gif) no-repeat;}
+/***************************************************************************/
+#one-step-checkout-review{border:1px solid #CCCCCC;}
+#one-step-checkout-review .data-table td{ padding:1px 8px;}
+#one-step-checkout-review .data-table tfoot tr.last td{padding-bottom:5px;}
+.uni-wrapperIn span.price{font-size:12px;}
+#co-payment-form .form-list{margin-bottom:2px; margin-left:20px; width:216px;}
+#co-payment-form .payment-methods dd{padding:0;}
+#checkout-shipping-method-load dt{font-size: 1.05em; margin-bottom:0.1em;}
+#checkout-shipping-method-load .shipment-methods dd { margin-bottom:5px;}
+form#checkout-agreements ol.checkout-agreements-ol{float:left; width:310px;}
+form#checkout-agreements ol.checkout-agreements-ol li {margin:20px 0;}
+form#checkout-agreements ol.checkout-agreements-ol .agreement-content {background-color:#FBFAF6; border:1px solid #BBB6A5; height:5em; overflow:auto; padding:10px;}
+#co-shipping-method-form .giftmessages{width: 240px;}
+#co-shipping-method-form .giftmessages .gift-box { background-color:#F4F4F4; border:1px solid #E9E4DE; padding:10px 6px 10px 10px;}
+#co-shipping-method-form .giftmessages .group-select li .input-box .input-text, .group-select li .input-box textarea {width:150px;}
+#co-shipping-method-form .giftmessages .group-select li .input-text, .group-select li select, .group-select li textarea {width:200px;}
+#co-shipping-method-form .giftmessages textarea { height:50px;}
+#co-shipping-method-form .giftmessages .numeration {color:#8A8987; font-weight:bold; font-size:12px;}
+#co-shipping-method-form .f-left {width:210px;}
+#co-shipping-method-form .giftmessages .giftmessage-product-info {padding-left:5px; font-size:12px;}
+#co-shipping-method-form .giftmessages .group-select li .input-box {float:left; width:200px;}
+#co-shipping-method-form .group-select li {margin:0 3px 5px 0; padding-left:8px;}
+#co-shipping-method-form .giftmessages .gift-box .scroll-box {height:260px; overflow:auto; width:222px;}
+
+div.uni-wrapperIn span.uni-steps{font-size:14px; font-weight:bold; position:relative; text-transform:uppercase; top:2px;}
+div.uni-wrapperIn label{font-weight: normal}
+div.uni-wrapperIn td.uni-main-td-first{vertical-align: top; padding:0 10px;}
+div.uni-wrapperIn td.uni-main-td{vertical-align: top; padding-right: 10px; display:block; width:250px;}
+div.uni-wrapperIn td.uni-main-td-last{vertical-align: top; padding-right: 10px;}
+div.uni-wrapperIn table.review-main{padding-left: 20px;}
+div.uni-wrapperIn .shipment-methods .error-msg { background-color:#FAEBE7; color:#FF0000; margin-bottom:0 !important; }
+div.uni-wrapperIn .payment-methods .input-box{width: 220px;}
+div.uni-wrapperIn .uni-login-link{cursor: pointer; text-decoration: underline; color:#DF280A;}
+
+/************************************Popup**********************************************/
+#opcheckout_login_popup{opacity: 0.7; filter: alpha(opacity = 80); height: 100%; width: 100%; position: absolute; left: 0px; top: 0px; z-index: 1001; background-color: #000000; cursor:pointer;}
+/* Popup CSS (login link) */
+#opcheckout-login-popup{width: 350px; position: absolute; z-index: 1000001;/*position: fixed;*/}
+#opcheckout-login-popup .page-title{background-color:#DDDDDD; border-bottom:1px solid #CCCCCC; height:28px;}
+#opcheckout-login-popup .page-title h2{font:bold 85% "Lucida Grande",Arial,sans-serif; margin:0; padding:0.5em 2em 0 0.75em; text-align:left; text-shadow:0 1px 0 #FFFFFF; color:#000} 
+#opcheckout-login-popup{background-color:#FFFFFF; border:2px solid #CCCCCC;}
+#opcheckout-login-popup h2.legend{background-position:0 1px; background-repeat:no-repeat; border-bottom:1px solid #DDDDDD; color:#E76200; font-size:13px; font-weight:bold; margin:0; padding:5px 0 5px 10px; text-transform:uppercase;}
+#opcheckout-login-popup .fieldset{height:30px;}
+#opcheckout-login-popup .opcheckout-popup-fiels{ padding:10px;}
+#opcheckout-login-popup .opcheckout-popup-fiels label.required{color:#555555}
+#opcheckout-login-popup .opcheckout-popup-fiels .form-list {margin-bottom:10px; padding:0 0 0 35px;}
+#opcheckout-login-popup .opcheckout-popup-fiels .form-list li .input-text{ width:220px;}
+#opcheckout-login-popup .buttons-set{height: 50px;}
+#opcheckout-login-popup .switcher-link{float: left}
+#opcheckout-login-popup .buttons-set  p.required{margin-right:10px; margin-bottom:0;}
+#opcheckout-login-popup button{border:medium none; height:26px; padding:3px 10px; width:57px;}
+div.opcheckout-error{background-color: #FAEBE7; color: #DF280A; border: 1px solid #DF280A; margin: 5px; text-align: left; padding-top: 3px; padding-bottom: 3px; padding-left: 25px; background-image: url(../images/error_msg_icon.gif); background-repeat: no-repeat; background-position: 5px 5px;}
+div.loading-ajax{height: 210px; text-align: center; background-image: url(../images/spinner.gif); background-repeat: no-repeat; background-position: center 60px;}
+div#opcheckout-forgotpassword-loading.loading-ajax{height: 150px;}
+.uni-popup-close { display:block; font-size:13px; font-weight:bold; padding:2px 3px; position:absolute; right:5px; text-decoration:none; top:4px; }
+/*div.opcheckout-place-button { margin-top: 10px; text-align: right; float:right; width:188px; height:42px; cursor: pointer; background-image: url(../../images/btn_place_order.gif) }*/
+div.opcheckout-place-button { margin-top: 10px; text-align: right; float:right; width:188px; height:42px; cursor: pointer; background-image: url(../images/btn_place_order.gif) }
+div#opcheckout-payment-method .form-list input.input-text { width: 210px !important;}
+
+.opcheckout-newsletter-subscribe{padding: 20px 0 0 20px}
+#billing-address-select,#shipping-address-select{width:237px;}
+.opcheckout_order_comment{width:300px; height:57px; max-width: 300px;}
+
+.uni-wrapperIn .step-count{width: 22px; height: 28px; display: block;}
+.uni-wrapperIn .step-count.count1{background-image: url(../images/one.png);}
+.uni-wrapperIn .step-count.count2{background-image: url(../images/two.png); margin-right: 12px;}
+.uni-wrapperIn .step-count.count3{background-image: url(../images/three.png);}
+#co-shipping-method-form .inner-box dd ul{width: 222px;}
+
+/*   fix gift message css   */
+select.com-box{width: 236px;}
+input#billing:postcode, input#shipping:postcode{width: 114px;}
+.uni-wrapperIn .allow-gift-messages-for-order-container{width: 215px;}
+.uni-wrapperIn .allow-gift-messages-for-order-container .gift-messages-form .form-list .field{width: 215px;}
+.uni-wrapperIn .allow-gift-messages-for-order-container p{width: 215px; margin-bottom: 3px;}
+.uni-wrapperIn .allow-gift-messages-for-order-container .form-list{width: 215px;}
+.uni-wrapperIn .allow-gift-messages-for-order-container .form-list li{width: 215px;}
+.uni-wrapperIn .allow-gift-messages-for-order-container .form-list .field{width: 215px;}
+.uni-wrapperIn .allow-gift-messages-for-order-container .form-list .input-box{width: 210px;}
+.uni-wrapperIn .allow-gift-messages-for-order-container .form-list input.input-text{width: 230px;}
+.uni-wrapperIn .allow-gift-messages-for-order-container .form-list li.wide .input-box textarea{width: 230px; height: 60px;}
+
+.gift-messages-form .item .details .form-list li.wide textarea{width:230px !important;}
+.gift-messages-form .item .details .form-list li.wide .input-box{width:230px !important;}
+.gift-messages-form .item .details{clear:both; margin-left:0 !important; float:left;}
+.gift-messages-form .item .details .form-list .field, 
+.gift-messages-form .item .details .form-list .input-box,
+.gift-messages-form .item .details .form-list input.input-text
+{width:230px !important;}
+
+.discount input#coupon_code{width: 195px !important; }
+div.uni-wrapperIn .discount{margin: 10px 0 0 20px; padding: 15px !important;}
+div.uni-wrapperIn .error-msg{margin: 5px 0 0 20px; padding: 8px 8px 0 32px !important; width: 200px;}
