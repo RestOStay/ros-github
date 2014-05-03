@@ -618,6 +618,63 @@ class Uni_Opcheckout_Model_Type_Onepage extends Mage_Checkout_Model_Type_Onepage
             } else {
                 $order->setEmailSent(true);
             }
+            
+            $order_id = $order->getId(); //use your own order id
+            $order = Mage::getModel("sales/order")->load($order_id); //load order by order id
+            $ordered_items = $order->getAllItems();
+            Foreach ($ordered_items as $item) {
+                $productId = $item->getItemId();
+            }
+            $_product = Mage::getModel('catalog/product')->load($productId);
+            $customer = Mage::getModel('customer/customer')->load($_product->getUserid());
+            $productOption = $item->getProductOptions();
+            $to = str_replace("@", ".", $productOption['info_buyRequest']['todate']);
+            $from = str_replace("@", ".", $productOption['info_buyRequest']['fromdate']);
+            $todate = date('Y-m-d', strtotime(str_replace('.', '/', $to)));
+            $fromdate = date('Y-m-d', strtotime(str_replace('.', '/', $from)));
+            $date1 = new DateTime($fromdate);
+            $date2 = new Datetime($todate);
+            $interval = $date1->diff($date2);
+            $diff = $interval->format('%R%d Night');
+
+            $to = $_product->getHostemail();
+            $from = 'sales@restostay.com';
+            $subject = 'Restostay Reservation confirmation Number ' . $order->getIncrementId() . ' – ' . $_product->getName();
+            $message = '<html>
+<head>
+  <title>Restostay Reservation confirmation</title>
+</head>
+<body><p><a href="http://www.restostay.com/index.php/" target="_blank"><img src="http://www.restostay.com/skin/frontend/default/stylish/images/logo.png"></a></p>
+								<br clear="ALL">
+								<p>Dear  ' . $customer->getFirstname() . ' ' . $customer->getLastname() . '<br>
+								  The  following Reservation was made on Restostay for your ' . $_product->getName() . ' <br>
+								  If  you have any questions about this order please contact us at  support@restostay.com or call us at +1 91-8130-596-780 (India) Monday - Friday,  8am - 5pm.<br>
+								  You  can find Reservation details here. Thank you again for your continued patronage.<br>
+								  Reservation  #' . $order->getIncrementId() . ' <br>
+								  Reservation  details:<br>
+								  Guest  House Name : ' . $_product->getName() . '<br>
+								  Guest  House Address  : <br>
+								  ' . $_product->getCity() . ',  ' . $_product->getState() . ', ' . $_product->getCountry() . '<br>
+								  Phone no:' . $_product->getPhoneno() . ' <br>
+								  Reservation Status:' . $order->getStatus() . '<br>
+								  Check In : ' . $fromdate . ' <br>
+								  Check Out : ' . $todate . '<br>
+								  Number of nights : ' . $diff . ' <br>
+								  Number of Rooms : ' . $productOption['info_buyRequest']['rooms'] . ' <br>
+								  Number of Guests : ' . $productOption['info_buyRequest']['accomodate'] . ' Adults, ' . $productOption['info_buyRequest']['child'] . ' Children <br>
+								  Total Amount:' . round($order->getGrandTotal(), 2) . ' amount (Including Processing fees &amp; Taxes)</p></body>
+</html>';
+
+            // To send HTML mail, the Content-type header must be set
+            $headers = 'MIME-Version: 1.0' . "\r\n";
+            $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
+
+            // Additional headers
+            $headers .= 'To: ' . $customer->getFirstname() . ' <' . $to . '>' . "\r\n";
+            $headers .= 'From: Restostay Reservation confirmation <support@restostay.com>' . "\r\n";
+
+            // Mail it
+            mail($to, $subject, $message, $headers);
         }
 
         Mage::dispatchEvent('checkout_type_onepage_save_order_after', array('order' => $order, 'quote' => $this->getQuote()));
