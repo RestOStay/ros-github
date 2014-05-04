@@ -275,7 +275,7 @@ foreach ($bedtypeAttribute->getSource()->getAllOptions() as $bedtype_option) {
                     </div> 
                     <div class="field">
                         <div class="selectpropcountry">
-                            <label for="propcountry" class="required lable_inner left">  <?php echo $this->__('Country') ?> <em>*</em></label>
+                            <label for="propcountry" class="required lable_inner left">  <?php echo $this->__('Country') ?></label>
                             <div class="floatleft"> 
                                 <select  onchange="print_state('state', this.selectedIndex);" id="country" name="country" title="<?php echo $this->__('Select country name of your property location'); ?>" class="input-text" >
                                     <option value="">Select Country</option>
@@ -285,7 +285,7 @@ foreach ($bedtypeAttribute->getSource()->getAllOptions() as $bedtype_option) {
                         </div>
                     </div>
                     <div class="input-box input-box_inner">
-                        <label for="state" class="required lable_inner left"> <?php echo $this->__('State / Province / Region') ?> <em>*</em></label>
+                        <label for="state" class="required lable_inner left"> <?php echo $this->__('State / Province / Region') ?> </label>
                         <div class="floatleft">
                             <select name ="state" id="state" title="<?php echo $this->__('Select State or Province your property location'); ?>" class="input-text" >
                                 <option value=" ">Select State</option>
@@ -303,10 +303,10 @@ foreach ($bedtypeAttribute->getSource()->getAllOptions() as $bedtype_option) {
                     </div>
 
                     <div class=" field input-box input-box_inner">
-                        <label for="map" class="required lable_inner left"><?php echo $this->__('Map Location') ?> <em>*</em></label>
+                        <label for="map" class="required lable_inner left"><?php echo $this->__('Map Location') ?></label>
 
                         <div class="floatleft">
-                            <textarea name="map" id="map" title="<?php echo $this->__('Enter google map iframe location of your property location'); ?>" class="required-entry input-text_map" cols="5" rows="5"></textarea>
+                            <textarea name="map" id="map" title="<?php echo $this->__('Enter google map iframe location of your property location'); ?>" class="input-text_map" cols="5" rows="5"></textarea>
                             <span><a href="http://maps.google.com/help/maps/getmaps/plot-one.html" target="_blank">        <?php echo $this->__('Paste Iframe code for Google map'); ?></a></span>
                         </div>
                     </div>
