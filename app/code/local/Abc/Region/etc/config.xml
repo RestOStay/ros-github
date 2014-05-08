@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<config>
+  <modules>
+    <Abc_Region>
+      <version>0.1.0</version>
+    </Abc_Region>
+  </modules>
+  <global>
+    <helpers>
+      <region>
+        <class>Abc_Region_Helper</class>
+      </region>
+    </helpers>
+	<resources>
+	  <region_setup>
+		<setup>
+		  <module>Abc_Region</module>
+		</setup>
+		<connection>
+		  <use>core_setup</use>
+		</connection>
+	  </region_setup>
+	  <region_write>
+		<connection>
+		  <use>core_write</use>
+		</connection>
+	  </region_write>
+	  <region_read>
+		<connection>
+		  <use>core_read</use>
+		</connection>
+	  </region_read>
+	</resources>
+  </global>
+</config> 

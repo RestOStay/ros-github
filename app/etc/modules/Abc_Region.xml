@@ -1,0 +1,9 @@
+<config>
+  <modules>
+    <Abc_Region>
+      <active>true</active>
+      <codePool>local</codePool>
+      <version>0.1.0</version>
+    </Abc_Region>
+  </modules>
+</config>
