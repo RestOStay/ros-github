@@ -382,9 +382,19 @@ class Uni_Opcheckout_OnepageController extends Mage_Checkout_OnepageController {
             try {
                 $billingRes = $checkout->saveBilling($billingAddress, $billingCustomerAddressId);
                 if (is_array($billingRes) && isset($billingRes['error'])) {
+                    
+                    if(is_array($billingRes['message'])){
+                        foreach ($billingRes['message'] as $billingResMessage) {
+                            $billingResMessage.=$billingResMessage;
+                        }
+                    }else{
+                        $billingResMessage=$billingRes['message'];
+                    }
+                  //  print_r($billingRes['message']);
+                    
                     $result['success'] = false;
                     $result['error'] = true;
-                    $result['error_messages'] = Mage::helper('checkout')->__($billingRes['message']);
+                    $result['error_messages'] = Mage::helper('checkout')->__($billingResMessage);
                     $this->getResponse()->setBody(Zend_Json::encode($result));
                     return;
                 }
