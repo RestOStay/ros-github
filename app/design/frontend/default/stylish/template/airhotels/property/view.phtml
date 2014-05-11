@@ -135,7 +135,7 @@ if (empty($productIds)) {
 							$storeId = $_product->getStoreId();
 							
 							$productData = $_product->getData(); // Get data of product
-							$allowedroom = $productData['no_of_allow_room'];
+							$allowedroom = $productData['totalrooms'];
 							if($allowedroom==""){
 								$allowedroom=10;
 							}
@@ -798,7 +798,7 @@ if (empty($productIds)) {
                                                    <input type="text" id="to" name="to" autocomplete="off" value="<?php if(isset($_SESSION['search_record'])) { echo $checkout_s;  } else { echo $this->__('mm/dd/yyyy'); } ?>"/>
                                                 </div>
                                                <div class="select_grid">
-                                                	<label for="number_of_rooms"><?php echo $this->__('Rooms') ?> </label>
+                                                	<label style=" float: left;padding: 0 " for="number_of_rooms"><?php echo $this->__('Rooms') ?> </label>
                                                     <select id="rooms1" name="rooms1" style="margin-top:0px;" onchange="changePrice(pricePer.value,this.value)">
                                                     <?php
                                                     	for($j=1;$j<=$allowedroom;$j++){
