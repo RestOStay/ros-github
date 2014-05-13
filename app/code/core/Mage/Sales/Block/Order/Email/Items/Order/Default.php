@@ -96,9 +96,7 @@ class Mage_Sales_Block_Order_Email_Items_Order_Default extends Mage_Core_Block_T
 	   $sql = "Select * from sales_flat_order_item where item_id=$productOptionid";
 	   $rows = $connection->fetchRow($sql);
 	   $productOption = unserialize($rows['product_options']);	
-	   echo '<pre>';
-	   print_r($productOption);
-	   die;
+	    
 	   $to = str_replace("@",".",$productOption['info_buyRequest']['todate']);
 	   $from = str_replace("@",".",$productOption['info_buyRequest']['fromdate']);
 	   $to = date('Y-m-d', strtotime(str_replace('.', '/', $to)));

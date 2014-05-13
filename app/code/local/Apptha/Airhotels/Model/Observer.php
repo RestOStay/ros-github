@@ -102,7 +102,8 @@ class Apptha_Airhotels_Model_Observer
 				$fromdate = $rows[$i]['fromdate'];
 				$todate = $rows[$i]['todate'];
 				$productId= $rows[$i]['entity_id'];
-				$accomodates = $rows[$i]['accomodates'];
+				//$accomodates = $rows[$i]['accomodates'];
+                                $accomodates = 2;
                                 $rooms= $rows[$i]['rooms'];
 				$price = $rows[$i]['subtotal'];
 				$fromD = explode("-",$fromdate);
