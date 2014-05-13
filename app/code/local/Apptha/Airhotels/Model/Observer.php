@@ -8,8 +8,8 @@
  */
 class Apptha_Airhotels_Model_Observer
 {
-    public function booking()
-    {
+    public function booking($observer)
+    {    $order = $observer->getEvent()->getOrder();
          $fromdate =  Mage::getSingleton('core/session')->getFromdate();
 
         //$todate = Mage::getSingleton('core/session')->getTodate();
@@ -20,6 +20,7 @@ class Apptha_Airhotels_Model_Observer
 
          if($fromdate && $todate && $fromdate != '' && $todate!= ''){
      	 $accomodate = Mage::getSingleton('core/session')->getAccomodate();
+         $rooms = Mage::getSingleton('core/session')->getRooms();
      	 $subtotal = Mage::getSingleton('core/session')->getSubtotal();
      	 $session = Mage::getSingleton('checkout/session');
 
@@ -35,7 +36,7 @@ class Apptha_Airhotels_Model_Observer
          $orderCurrency = $orders->getFirstItem()->getOrderCurrencyCode();
          $address = Mage::getModel('sales/order_address')->load($order_item_id)->getBillingAddress();
 
-     	 foreach ($session->getQuote()->getAllItems() as $item){
+     	 foreach ($order->getAllItems() as $item){
 
      	 	$productId = $item->getProductId();
                  $productData = Mage::getModel('catalog/product')->load($productId);
@@ -43,10 +44,15 @@ class Apptha_Airhotels_Model_Observer
                 $hostId = $productData->getUserid();
 
      	 }
-     	 $customer = Mage::getSingleton('customer/session')->getCustomer();
-     	 $cusId = $customer->getId();
-         $buyerEmail = $customer->getEmail();
-
+     	 $customer = Mage::getSingleton('customer/session');
+         if($customer->isLoggedIn()){
+              $cusId = $customer->getCustomer()->getId();
+         }else{
+             $cusId =0;
+         }
+         
+         $buyerEmail = $order->getCustomerEmail();
+         
      	 $resource = Mage::getSingleton('core/resource');
      	 $read = $resource->getConnection('core_write');
      	 $tPrefix = (string) Mage::getConfig()->getTablePrefix();
@@ -61,9 +67,9 @@ class Apptha_Airhotels_Model_Observer
          //Commission fee calculation
          $hostFee = ($subtotal/100) * ($config["airhotels_hostfee"] ) ;
          $hostFee = number_format($hostFee,2,'.','' ) ;
-
-         $read->query("Insert into $booking_table (entity_id,product_name,customer_id,customer_email,fromdate,todate,accomodates,host_fee,service_fee,order_id,base_currency_code,order_currency_code,subtotal,order_item_id)
-       	 values ($productId,'".$productName."',$cusId,'".$buyerEmail."','".$fromdate."','".$todate."',$accomodate,$hostFee,$serviceFee,$order_id,'".$baseCurrency."','".$orderCurrency."',$subtotal,$order_item_id)");
+ 
+         $read->query("Insert into $booking_table (entity_id,product_name,customer_id,customer_email,fromdate,todate,accomodates,rooms,host_fee,service_fee,order_id,base_currency_code,order_currency_code,subtotal,order_item_id)
+       	 values ($productId,'".$productName."',$cusId,'".$buyerEmail."','".$fromdate."','".$todate."',$accomodate,$rooms,$hostFee,$serviceFee,$order_id,'".$baseCurrency."','".$orderCurrency."',$subtotal,$order_item_id)");
          Mage::getSingleton('core/session')->setProductID($productId);
          }
 
@@ -96,7 +102,8 @@ class Apptha_Airhotels_Model_Observer
 				$fromdate = $rows[$i]['fromdate'];
 				$todate = $rows[$i]['todate'];
 				$productId= $rows[$i]['entity_id'];
-				$accomodates = 2;
+				$accomodates = $rows[$i]['accomodates'];
+                                $rooms= $rows[$i]['rooms'];
 				$price = $rows[$i]['subtotal'];
 				$fromD = explode("-",$fromdate);
 				$fromY = $fromD[0];
@@ -138,8 +145,8 @@ class Apptha_Airhotels_Model_Observer
 			}
 		
 		 
-		 $read->query("Insert into airhotels_calendar (product_id,book_avail,month,year,blockfrom,price)
-       	 values ($productId,$accomodates,$month,$year,'".$dates."',$price)");
+		 $read->query("Insert into airhotels_calendar (product_id,book_avail,rooms,month,year,blockfrom,price)
+       	 values ($productId,$accomodates,$rooms,$month,$year,'".$dates."',$price)");
 			}
 		
 		/////////////////////get booking details from airhotels_booking/////////////////////

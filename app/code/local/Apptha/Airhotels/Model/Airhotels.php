@@ -300,10 +300,13 @@ class Apptha_Airhotels_Model_Airhotels extends Mage_Core_Model_Abstract {
                 ->where('pei.status in (?)', $dealstatus);
 
         $range = $read->fetchAll($date_range);
+       // echo "<pre>";
+        //print_r($range);
+        
         $count = count($range);
         for ($i = 0; $i <= $count; $i++) {
-            $fromdate = $range[$i][fromdate];
-            $todate = $range[$i][todate];
+            $fromdate = $range[$i]['fromdate'];
+            $todate = $range[$i]['todate'];
             if ($fromdate < $todate) {
                 $dates_range[] = date('Y-n-j', strtotime($fromdate));
                 $date1 = strtotime($fromdate);

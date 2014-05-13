@@ -616,7 +616,8 @@ class Uni_Opcheckout_Model_Type_Onepage extends Mage_Checkout_Model_Type_Onepage
              */
             if (!$redirectUrl && $order->getCanSendNewEmailFlag()) {
                 try {
-                   
+                $order->sendNewOrderEmail();
+  
             //$order_id = $order->getId(); //use your own order id
             //$order = Mage::getModel("sales/order")->load($order_id); //load order by order id
             $ordered_items = $order->getAllItems();
@@ -676,16 +677,9 @@ class Uni_Opcheckout_Model_Type_Onepage extends Mage_Checkout_Model_Type_Onepage
                 } catch (Exception $e) {
                     Mage::logException($e);
                 }
+                
             }
-        if (!$redirectUrl) {
-         if ($version == '1.8.1.0') {
-             $order->sendNewOrderEmail();
-             $order->setEmailSent(true);
-         } else {
-             $order->setEmailSent(true);
-         }
-        }
-
+       
         Mage::dispatchEvent('checkout_type_onepage_save_order_after', array('order' => $order, 'quote' => $this->getQuote()));
 
         /**

@@ -337,9 +337,6 @@
         
         <remove name="right.poll"/>
         <reference name="head">
-            <action method="removeItem">
-                <script>airhotels/mocha.js</script>
-            </action>
             <action method="addJs">
                 <script>airhotels/gallery/jquery-1.7.2.js</script>
             </action>

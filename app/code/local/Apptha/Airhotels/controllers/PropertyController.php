@@ -289,6 +289,7 @@ class Apptha_Airhotels_PropertyController extends Mage_Core_Controller_Front_Act
         // start new concept for booked date
         $blockedArrayCust = Mage::getModel('airhotels/airhotels')->getBlockdateBook($productId,$_GET["date"]);
         $blocked=array_merge($blockedArr, $blockedArrayCust);
+        $selectedArray=array();
 		/*echo '<pre>';
 		echo $blocked;
 		exit;*/
