@@ -625,7 +625,7 @@ class Uni_Opcheckout_Model_Type_Onepage extends Mage_Checkout_Model_Type_Onepage
                 $productId = $item->getProductId();
             }
             $_product = Mage::getModel('catalog/product')->load($productId);
-            $customer = Mage::getModel('customer/customer')->load($_product->getUserid());
+            $customer1 = Mage::getModel('customer/customer')->load($_product->getUserid());
             $productOption = $item->getProductOptions();
             $toD = str_replace("@",".",$productOption['info_buyRequest']['todate']);
             $fromD = str_replace("@",".",$productOption['info_buyRequest']['fromdate']);
@@ -645,7 +645,7 @@ class Uni_Opcheckout_Model_Type_Onepage extends Mage_Checkout_Model_Type_Onepage
                             </head>
                             <body><p><a href="http://www.restostay.com/index.php/" target="_blank"><img src="http://www.restostay.com/skin/frontend/default/stylish/images/logo.png"></a></p>
                                     <br clear="ALL">
-                                    <p>Dear  '.$customer->getFirstname().' '.$customer->getLastname().'<br>
+                                    <p>Dear  '.$customer1->getFirstname().' '.$customer1->getLastname().'<br>
                                       The  following Reservation was made on Restostay for your '.$_product->getName().' <br>
                                       If  you have any questions about this order please contact us at  support@restostay.com or call us at +1 91-8130-596-780 (India) Monday - Friday,  8am - 5pm.<br>
                                       You  can find Reservation details here. Thank you again for your continued patronage.<br>
@@ -669,7 +669,7 @@ class Uni_Opcheckout_Model_Type_Onepage extends Mage_Checkout_Model_Type_Onepage
                         $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
 
                         // Additional headers
-                        $headers .= 'To: '.$customer->getFirstname().' <'.$to.'>' . "\r\n";
+                        $headers .= 'To: '.$customer1->getFirstname().' <'.$to.'>' . "\r\n";
                         $headers .= 'From: Restostay Reservation confirmation <support@restostay.com>' . "\r\n";
 
                         // Mail it
