@@ -8,8 +8,18 @@
  */
 class Apptha_Airhotels_Helper_Data extends Mage_Core_Helper_Abstract
 {
+    const NO_OF_ACCOMMODATES = 90;
+    const NO_OF_ROOMS = 90;
 
-	/**
+    public function getNoOfAccomodates() {
+        return self:: NO_OF_ACCOMMODATES;
+    }
+
+    public function getNoOfRooms() {
+        return self:: NO_OF_ACCOMMODATES;
+    }
+
+    /**
 	 * Retrieve property form post url
 	 *
 	 * @return string

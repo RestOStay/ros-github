@@ -26,10 +26,8 @@
 
 ?>
 <?php 
-$accommodatesAttr = Mage::getModel('eav/config')->getAttribute('catalog_product', Mage::helper('airhotels')->getaccomodatesType());
-$acc_default = $accommodatesAttr->getDefaultValue();
-$roomsAttr = Mage::getModel('eav/config')->getAttribute('catalog_product', Mage::helper('airhotels')->getrooms());
-$roomAvail = $roomsAttr->getDefaultValue();
+$acc_default = Mage::helper('airhotels')->getNoOfAccomodates();
+$roomAvail = Mage::helper('airhotels')->getNoOfRooms();
 $entity_id= $this->getRequest()->getParam('id');
 $model = Mage::getModel('catalog/product');
 $_product = $model->load($entity_id);

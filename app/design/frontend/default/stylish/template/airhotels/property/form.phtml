@@ -195,7 +195,7 @@ foreach ($bedtypeAttribute->getSource()->getAllOptions() as $bedtype_option) {
                             <label for="accomodate" class="required left lable_inner"><?php echo $this->__('Accommodates') ?> <em>*</em></label>
                             <div class="floatleft"> <select id="accomodate" name="accomodate"  class="select select input-text required-entry input-text_acc">
                                     <option value=""><?php echo $this->__('Select Maximum Accommodates'); ?></option>
-                                    <?php for ($i = 1; $i <= 30; $i++) { ?>  <option value="<?php echo $i; ?>"><?php echo $i; ?></option>    <?php } ?>
+                                    <?php for ($i = 1; $i <= Mage::helper('airhotels')->getNoOfAccomodates(); $i++) { ?>  <option value="<?php echo $i; ?>"><?php echo $i; ?></option>    <?php } ?>
 
                                 </select>
                                 <span><?php echo $this->__('This refers number of guest allowed in your place'); ?></span>
@@ -211,7 +211,7 @@ foreach ($bedtypeAttribute->getSource()->getAllOptions() as $bedtype_option) {
                             <div class="floatleft">
                                 <select id="room" name="room"  class="select select input-text required-entry input-text_bed" title="<?php echo $this->__('Select the number of available bedrooms'); ?>" >
                                     <option  value=""><?php echo $this->__('Bedrooms Available'); ?></option>
-                                    <?php for ($i = 1; $i <= 15; $i++) { ?>  <option value="<?php echo $i; ?>"><?php echo $i; ?></option>    <?php } ?>            </select>
+                                    <?php for ($i = 1; $i <= Mage::helper('airhotels')->getNoOfRooms(); $i++) { ?>  <option value="<?php echo $i; ?>"><?php echo $i; ?></option>    <?php } ?>            </select>
 
                                 <span><?php echo $this->__('Select the number of bedrooms excluding living rooms.'); ?></span>
                             </div>
