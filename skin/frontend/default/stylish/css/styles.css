@@ -3608,4 +3608,4 @@ ul.shorting-part li a:hover{text-decoration:underline;}
 	transform: scale(1.1, 1.1);
 }
 
-#description_text_wrapper .content .left_desc{width: auto}
+#description_text_wrapper .content .left_desc{width: 100%}
